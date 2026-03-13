@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer utilities {
+  .content-auto {
+    content-visibility: auto;
+  }
+  .accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  .accordion-expanded .accordion-content {
+    max-height: 500px;
+  }
+  .chat-height {
+    height: calc(100vh - 120px);
+  }
+  .sidebar-height {
+    height: calc(100vh - 80px);
+  }
+}
