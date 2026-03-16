@@ -3,6 +3,7 @@ import time
 from sqlmodel import SQLModel, Field
 from typing import Optional
 
+from service.utils.untils import get_current_time
 
 
 class UserModel(SQLModel, table=True):
@@ -14,4 +15,4 @@ class UserModel(SQLModel, table=True):
     dept_id:int = Field(index=True)
     role_id:int = Field(index=True)
     # ✅ 关键：明确用无时区的 TIMESTAMP
-    create_time: str = Field(default=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+    create_time: str = Field(default_factory=get_current_time)

@@ -21,10 +21,14 @@ class Settings(BaseSettings):
     vector_table_name:str = Field(default=os.getenv("VECTOR_TABLE_NAME"))
     hf_token:str = Field(default=os.getenv("HF_TOKEN"))
     embedding_name:str = Field(default=os.getenv("EMBEDDING_NAME"))
-    embedding_dim:str = Field(default=os.getenv("EMBEDDING_DIM"))
+    embedding_dim:int = Field(default=os.getenv("EMBEDDING_DIM"))
 
-    chunk_size:int = Field(default=os.getenv("CHUNK_SIZE"))
-    chunk_overlap:int = Field(default=os.getenv("CHUNK_OVERLAP"))
+    txt_chunk_size:int = Field(default=os.getenv("TXT_CHUNK_SIZE"))
+    txt_chunk_overlap:int = Field(default=os.getenv("TXT_CHUNK_OVERLAP"))
+    docx_chunk_size:int = Field(default=os.getenv("DOCX_CHUNK_SIZE"))
+    docx_chunk_overlap:int = Field(default=os.getenv("DOCX_CHUNK_OVERLAP"))
+    md_chunk_size:int =  Field(default=os.getenv("MD_CHUNK_SIZE"))
+    md_chunk_overlap:int = Field(default=os.getenv("MD_CHUNK_OVERLAP"))
 
     log_dir:pathlib.Path = Field(default=pathlib.Path(__file__).parent.parent / "logs")
     log_format:logging.Formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")

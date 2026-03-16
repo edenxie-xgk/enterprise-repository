@@ -15,7 +15,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 
 fake = Faker("zh_CN")
 
-ROOT = "finance_rag_corpus"
+ROOT = "data"
 
 folders = [
 "01_公司治理",
@@ -178,7 +178,7 @@ def generate_docx(path):
                 row[2].text=str(random.randint(100,600))+"亿"
                 row[3].text=str(random.randint(5,30))+"%"
 
-
+    doc.save(path)
 # PDF
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from reportlab.lib.styles import ParagraphStyle
@@ -349,6 +349,7 @@ def generate_files():
 
     for i in tqdm(range(60)):
         generate_md(f"{ROOT}/02_行业研究/行业研究报告_{i+1}.md")
+
 
     for i in tqdm(range(40)):
         generate_docx(f"{ROOT}/03_客户与项目/客户投资分析报告_{i+1}.docx")

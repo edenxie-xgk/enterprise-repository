@@ -93,11 +93,10 @@ async def upload_document(
         file_size=file.size,
         file_type=file.filename.split('.')[-1],
         user_id=user_id,
-        department=department.dept_name
+        dept_id=department.dept_id
     )
 
-    # 进行向量数据库存(切片->存储)
-    rag_service.pipeline(file_content,document)
+
 
     # 数据库存储
     file_data = FileModel(
@@ -113,15 +112,21 @@ async def upload_document(
     with open(file_path, "wb") as f:
         f.write(file_content)
 
-    await session.commit()
-    # 刷新以获取数据库生成的时间戳
-    await session.refresh(file_data)
+    try:
+        # 进行向量数据库存(切片->存储) ---- 一定要等文件存储好再取读取
+        rag_service.pipeline(str(UPLOAD_DIR / department.dept_name / file.filename), document)
 
+        await session.commit()
+        # 刷新以获取数据库生成的时间戳
+        await session.refresh(file_data)
 
+        return {
+            "message": "upload success",
+            "document": document,
+            "code": 200
+        }
+    except Exception as e:
+        os.remove(file_path)
+        await session.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
 
-
-    return {
-        "message": "upload success",
-        "document": document,
-        "code": 200
-    }
