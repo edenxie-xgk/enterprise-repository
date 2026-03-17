@@ -30,7 +30,7 @@ class RAGService:
         try:
             start_time = time.time()
             docs = load_file(path, metadata)
-            if not docs:
+            if not docs or len(docs) == 0:
                 logger.info(f"[rag向量存储失败]:内容为空")
                 return False
             nodes = chunk_file(docs)
@@ -39,7 +39,7 @@ class RAGService:
                 vector_store=vector_store,
             )
 
-            index = VectorStoreIndex(
+            VectorStoreIndex(
                 nodes=nodes,
                 storage_context=storage_context,
                 embed_model=embed_model,
@@ -58,11 +58,13 @@ rag_service = RAGService()
 if  __name__ == "__main__":
 
     data = DocumentMetadata(
-         dept_id=1,
+         department_id=1,
+         department_name="TQ",
          user_id=1,
-         file_path="D:\\python\\agent_project\\rag-agent\\service\\public\\uploads\\TQ\\industry_report_1.md",
+         user_name="EdenXie",
+         file_path="public\\uploads\\TQ\\文档上传测试.pdf",
          file_name= "内部讨论邮件_1.txt",
          file_size=100,
-         file_type="txt"
+         file_type="pdf"
      )
-    rag_service.pipeline("D:\\python\\agent_project\\rag-agent\\service\\public\\uploads\\TQ\\industry_report_1.md",data)
+    rag_service.pipeline("D:\\python\\agent_project\\rag-agent\\service\\public\\uploads\\TQ\\文档上传测试.pdf",data)

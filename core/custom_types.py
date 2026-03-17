@@ -2,6 +2,8 @@ import time
 
 from pydantic import BaseModel
 
+from core.settings import settings
+
 
 class DocumentMetadata(BaseModel):
     """文档元数据结构。"""
@@ -9,11 +11,16 @@ class DocumentMetadata(BaseModel):
     file_path:str
     file_type:str
     file_size:int
+    source:str = None
+
     section_title:str = None
-    create_time:str | int = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    user_id: int | str
-    dept_id:int
+    page:int = None
+
+    user_id: int
+    user_name: str
+    department_id:int
+    department_name:str
+
+    version:int = settings.metadata_version
 
 
-if  __name__ == "__main__":
-    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))

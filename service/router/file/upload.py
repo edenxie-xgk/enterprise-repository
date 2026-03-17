@@ -50,6 +50,8 @@ async def upload_document(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
+    user: UserModel = user[0]
+
     os.makedirs(UPLOAD_DIR, exist_ok=True)
     os.makedirs(str(UPLOAD_DIR / department.dept_name), exist_ok=True)
     file_path = str(UPLOAD_DIR / department.dept_name / file.filename)
@@ -66,7 +68,8 @@ async def upload_document(
             time_str = str(old_file.create_time).replace(" ", "_").replace(":", "_")
             new_file_name = f"{''.join(file.filename.split('.')[:-1])}_{time_str}.{file.filename.split('.')[-1]}"
             new_file_path = str(UPLOAD_DIR / department.dept_name / new_file_name)
-            os.rename(file_path, new_file_path)
+            if not os.path.exists(new_file_path) and os.path.exists(file_path):
+                os.rename(file_path, new_file_path)
             await session.execute(
                 update(FileModel)
                 .where(FileModel.file_path == db_filepath, FileModel.state == '1')
@@ -92,8 +95,11 @@ async def upload_document(
         file_path=db_filepath,
         file_size=file.size,
         file_type=file.filename.split('.')[-1],
+
         user_id=user_id,
-        dept_id=department.dept_id
+        user_name=user.username,
+        department_id=department.dept_id,
+        department_name=department.dept_name
     )
 
 
@@ -114,8 +120,13 @@ async def upload_document(
 
     try:
         # 进行向量数据库存(切片->存储) ---- 一定要等文件存储好再取读取
-        rag_service.pipeline(str(UPLOAD_DIR / department.dept_name / file.filename), document)
+        is_success = rag_service.pipeline(str(UPLOAD_DIR / department.dept_name / file.filename), document)
 
+        if not is_success:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+            await session.rollback()
+            raise HTTPException(status_code=400, detail="内容为空")
         await session.commit()
         # 刷新以获取数据库生成的时间戳
         await session.refresh(file_data)
@@ -126,7 +137,8 @@ async def upload_document(
             "code": 200
         }
     except Exception as e:
-        os.remove(file_path)
+        if os.path.exists(file_path):
+            os.remove(file_path)
         await session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 

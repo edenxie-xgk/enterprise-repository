@@ -38,6 +38,17 @@ def chunk_markdown(doc: Sequence[Document]):
     nodes = splitter.get_nodes_from_documents(doc)
     return nodes
 
+def chunk_pdf(doc: Sequence[Document]):
+    """
+    将pdf切成 nodes
+    """
+    splitter = SentenceSplitter(
+        chunk_size=settings.pdf_chunk_size,
+        chunk_overlap=settings.pdf_chunk_overlap
+    )
+    nodes = splitter.get_nodes_from_documents(doc)
+    return nodes
+
 
 def chunk_file(doc: Sequence[Document]):
     if doc[0].metadata["file_type"] == "txt":
@@ -46,5 +57,7 @@ def chunk_file(doc: Sequence[Document]):
         return chunk_docx(doc)
     elif doc[0].metadata["file_type"] == "md":
         return chunk_markdown(doc)
+    elif doc[0].metadata["file_type"] == "pdf":
+        return chunk_pdf(doc)
     else:
-        return []
+        return chunk_txt(doc)
