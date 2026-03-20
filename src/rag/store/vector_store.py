@@ -19,7 +19,6 @@ vector_store = PGVectorStore.from_params(
     embed_dim=settings.embedding_dim,  # 你的向量维度
 )
 
-
 if __name__=="__main__":
     Settings.llm = deepseek_llm
     Settings.embed_model = embed_model
@@ -27,5 +26,5 @@ if __name__=="__main__":
         similarity_top_k=3,
     )
 
-    print(query_engine.retrieve("远航智能制造市值多少"))
+    print(query_engine.retrieve("新格林耐特网络有限公司"))
     print(query_engine.query("远航智能制造市值多少"))
