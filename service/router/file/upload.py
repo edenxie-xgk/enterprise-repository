@@ -1,21 +1,22 @@
+import asyncio
+from functools import partial
 
-
-from fastapi import UploadFile, File, Form, Depends, HTTPException
+from fastapi import UploadFile, File, Form, Depends, HTTPException, BackgroundTasks
 import os
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select, update
 
 from core.settings import settings
-from src.rag import rag_service
-from service.database.connect import get_session
+from src.rag.rag_service import rag_service
+from service.database.connect import get_session, async_session_maker
 from service.models.department import DepartmentModel
 from service.models.file import FileModel
 from service.models.users import UserModel
 from service.router.file.index import file_router
 from core.custom_types import DocumentMetadata
 from service.utils.config import upload_dir
-
+from utils.logger_handler import  logger
 UPLOAD_DIR =  upload_dir
 
 
@@ -24,6 +25,7 @@ async def upload_document(
         file: UploadFile = File(...),
         user_id: int = Form(...),
         dept_id: int = Form(...),
+        background_tasks: BackgroundTasks = None,
         session: AsyncSession = Depends(get_session)
 ):
     if not dept_id:
@@ -72,7 +74,7 @@ async def upload_document(
                 os.rename(file_path, new_file_path)
             await session.execute(
                 update(FileModel)
-                .where(FileModel.file_path == db_filepath, FileModel.state == '1')
+                .where(FileModel.file_path == db_filepath, FileModel.state != '0')
                 .values(
                     state='0',
                     file_path='/public/uploads/' + department.dept_name + "/" + new_file_name,
@@ -119,17 +121,48 @@ async def upload_document(
         f.write(file_content)
 
     try:
-        # 进行向量数据库存(切片->存储) ---- 一定要等文件存储好再取读取
-        is_success = rag_service.ingestion(str(UPLOAD_DIR / department.dept_name / file.filename), document)
 
-        if not is_success:
-            if os.path.exists(file_path):
-                os.remove(file_path)
-            await session.rollback()
-            raise HTTPException(status_code=400, detail="内容为空")
         await session.commit()
         # 刷新以获取数据库生成的时间戳
         await session.refresh(file_data)
+
+        file_id = file_data.file_id
+
+        async def background_ingestion():
+            """完全异步的后台任务"""
+
+            async def update_state(state: str):
+                async with async_session_maker() as s:
+                    await s.execute(
+                        update(FileModel)
+                        .where(FileModel.file_id == file_id)
+                        .values(state=state)
+                    )
+                    await s.commit()
+
+            try:
+
+                is_success = await asyncio.to_thread(
+                    rag_service.ingestion,
+                    file_path,
+                    document
+                )
+                if is_success:
+                    await update_state('1')  # 完成
+                    settings.is_need_doc = True
+                else:
+                    await update_state('3')  # 失败
+
+            except Exception as e:
+                logger.error(f"后台ingestion失败: {e}")
+                try:
+                    await update_state('3')
+                except:
+                    pass
+
+            # 添加异步后台任务
+
+        background_tasks.add_task(background_ingestion)
 
         return {
             "message": "upload success",

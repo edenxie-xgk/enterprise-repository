@@ -16,20 +16,14 @@ class GeneratorResult(BaseModel):
     answer: str = Field(...,description="回答内容")
     citations: list[str] = Field(...,description="引用的chunk编号")
 
-class Generator:
-
-    def __init__(self, llm:BaseChatModel):
-        self.llm = llm
-
-    def run(self, query: str, context: str):
-
+def generate_answer (llm:BaseChatModel, query: str, context: str):
         prompt = GEN_PROMPT.format(
             query=query,
             context=context
         )
 
         response:GeneratorResult = LLMService.invoke(
-            llm=self.llm,
+            llm=llm,
             messages=[HumanMessage(content=prompt)],
             schema=GeneratorResult
         )

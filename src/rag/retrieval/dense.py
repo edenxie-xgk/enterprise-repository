@@ -20,9 +20,10 @@ class DenseRetriever:
             filters=None,
         )
 
-    def run(self,search_queries:list[str],filters=None):
+    def run(self,search_queries:list[str],filters=None,top_k:int=None):
         all_results = []
-
+        if top_k:
+            self.retriever.similarity_top_k = top_k
         for query in search_queries:
             self.retriever._filters = filters
             results = self.retriever.retrieve(query)
@@ -41,7 +42,8 @@ class DenseRetriever:
                 doc = {
                     "content": node.text,
                     "metadata": node.metadata,
-                    "score": node.score
+                    "score": node.score,
+                    "node_id": node.node_id
                 }
                 all_results.append(doc)
 

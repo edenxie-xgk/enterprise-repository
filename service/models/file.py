@@ -18,4 +18,4 @@ class FileModel(SQLModel, table=True):
     file_name: str = Field(index=True)
     file_path: str = Field(index=True)
     file_type: str = Field(index=True)
-    state: str = Field(default='1', index=True)
+    state: str = Field(default='2', index=True)

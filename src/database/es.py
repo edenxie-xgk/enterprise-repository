@@ -23,6 +23,9 @@ class ElasticsearchClient:
                     },
                     "metadata": {
                         "type": "object",
+                    },
+                    "node_id": {
+                        "type": "text",
                     }
                 }
             }
@@ -44,7 +47,8 @@ class ElasticsearchClient:
                  "_index": self.index,
                 "_source": {
                     "content": doc["content"],
-                    "metadata": doc["metadata"]
+                    "metadata": doc["metadata"],
+                    "node_id": doc["node_id"]
                 }
             }
             actions.append(action)

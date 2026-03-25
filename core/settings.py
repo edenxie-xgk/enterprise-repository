@@ -28,6 +28,7 @@ class Settings(BaseSettings):
     mongodb_url:str = Field(default=os.getenv("MONGODB_URL"))
     mongodb_db_name:str = Field(default=os.getenv("MONGODB_DB_NAME"))
     doc_collection_name:str = Field(default=os.getenv("DOC_COLLECTION_NAME"))
+    qa_collection_name:str = Field(default=os.getenv("QA_COLLECTION_NAME"))
     elasticsearch_url:str = Field(default=os.getenv("ELASTICSEARCH_URL"))
 
     metadata_version:int = Field(default=os.getenv("METADATA_VERSION"))
@@ -62,6 +63,9 @@ class Settings(BaseSettings):
     reranker_min_score:float = Field(default=os.getenv("RERANKER_MIN_SCORE"))
     context_max_len:int = Field(default=os.getenv("CONTEXT_MAX_LEN"))
     max_expand:int = Field(default=os.getenv("MAX_EXPAND"))
+    update_doc_time:int = Field(default=os.getenv("UPDATE_DOC_TIME"))
+    is_need_doc:bool = Field(default=False)
+
 
     log_dir:pathlib.Path = Field(default=pathlib.Path(__file__).parent.parent / "logs")
     log_format:logging.Formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
@@ -76,6 +80,7 @@ class Settings(BaseSettings):
     deepseek_base_url:str = Field(default=os.getenv("DEEPSEEK_URL"))
     deepseek_model:str = Field(default=os.getenv("DEEPSEEK_MODEL"))
     deepseek_api_key:str = Field(default=os.getenv("DEEPSEEK_API_KEY"))
+
 
 settings = Settings()
 
