@@ -171,22 +171,18 @@ const getFileIcon = (fileType) => {
 // 处理文件上传
 const handleFilesUpload = (files, isFolder) => {
   if (files.length === 0) return
-
-  // 假设只上传第一个文件，实际项目可循环上传
-  const formData = new FormData()
-  formData.append("file", files[0])
-  formData.append("user_id", 1)
-  formData.append("dept_id", 2)
-
-  upload_file(formData).then(res => {
-    if (res.code === 200) {
-      // 上传成功后刷新文件列表
-      queryFileList()
-      // 可以添加成功提示
-      // this.$message.success('文件上传成功')
-    } else {
-      // this.$message.error(res.msg || '文件上传失败')
-    }
+  const p_all = []
+  Array.from(files).forEach((file,i) => {
+    const formData = new FormData()
+    formData.append("file", file,file.name)
+    formData.append("user_id", 1)
+    formData.append("dept_id", i % 3  + 1)
+    p_all.push(upload_file(formData))
+  })
+  Promise.all(p_all).then(res => {
+    queryFileList()
+  }).catch(err => {
+    console.error('上传文件失败:', err)
   })
 }
 

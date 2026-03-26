@@ -1,9 +1,8 @@
 from core.settings import settings
 from src.models.reranker import reranker_model
 class  CrossEncoderReRanker:
-    def __init__(self, model = reranker_model, top_k = settings.reranker_top_k):
+    def __init__(self, model = reranker_model):
         self.model = model
-        self.top_k = top_k
 
 
     def run(self, query: str, docs: list[dict])->list[dict]:
@@ -25,5 +24,5 @@ class  CrossEncoderReRanker:
         # 排序
         docs.sort(key=lambda x: x["rerank_score"], reverse=True)
 
-        return docs[:self.top_k]
+        return docs
 

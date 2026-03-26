@@ -9,7 +9,7 @@ from sqlmodel import select, update
 
 from core.settings import settings
 from src.rag.rag_service import rag_service
-from service.database.connect import get_session, async_session_maker
+from service.database.connect import get_session, async_session_maker, INGESTION_SEMAPHORE
 from service.models.department import DepartmentModel
 from service.models.file import FileModel
 from service.models.users import UserModel
@@ -128,47 +128,55 @@ async def upload_document(
 
         file_id = file_data.file_id
 
-        async def background_ingestion():
-            """完全异步的后台任务"""
+        # 后台任务 - 关键修复在这里
+        async def controlled_ingestion():
+            """用信号量限制并发, 避免连接池耗尽"""
+            async with INGESTION_SEMAPHORE:  # ← 关键: 限制并发
+                async with async_session_maker() as s:  # 上下文管理确保释放
+                    try:
+                        settings.await_upload_file_num +=1
+                        # 先更新为处理中状态
+                        await s.execute(
+                            update(FileModel)
+                            .where(FileModel.file_id == file_id)
+                            .values(state='2')  # processing
+                        )
+                        await s.commit()
+                        # 执行 ingestion (在线程池, 但信号量限制了并发数)
+                        is_success = await asyncio.to_thread(
+                            rag_service.ingestion,
+                            file_path,
+                            document
+                        )
 
-            async def update_state(state: str):
-                async with async_session_maker() as s:
-                    await s.execute(
-                        update(FileModel)
-                        .where(FileModel.file_id == file_id)
-                        .values(state=state)
-                    )
-                    await s.commit()
+                        # 更新最终状态
+                        final_state = '1' if is_success else '4'
+                        await s.execute(
+                            update(FileModel)
+                            .where(FileModel.file_id == file_id)
+                            .values(state=final_state)
+                        )
+                        await s.commit()
 
-            try:
+                        if is_success:
+                            settings.is_need_doc = True
+                        settings.await_upload_file_num -=1
+                    except Exception as e:
+                        logger.error(f"Ingestion failed: {e}")
+                        settings.await_upload_file_num -= 1
+                        try:
+                            await s.execute(
+                                update(FileModel)
+                                .where(FileModel.file_id == file_id)
+                                .values(state='4')
+                            )
+                            await s.commit()
+                        except:
+                            pass
+        # 添加到后台任务
+        background_tasks.add_task(controlled_ingestion)
 
-                is_success = await asyncio.to_thread(
-                    rag_service.ingestion,
-                    file_path,
-                    document
-                )
-                if is_success:
-                    await update_state('1')  # 完成
-                    settings.is_need_doc = True
-                else:
-                    await update_state('3')  # 失败
-
-            except Exception as e:
-                logger.error(f"后台ingestion失败: {e}")
-                try:
-                    await update_state('3')
-                except:
-                    pass
-
-            # 添加异步后台任务
-
-        background_tasks.add_task(background_ingestion)
-
-        return {
-            "message": "upload success",
-            "document": document,
-            "code": 200
-        }
+        return {"message": "upload success", "file_id": file_id, "code": 200}
     except Exception as e:
         if os.path.exists(file_path):
             os.remove(file_path)

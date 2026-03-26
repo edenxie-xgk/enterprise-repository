@@ -8,9 +8,8 @@ from src.prompts.rag.rerank_prompt import RERANK_PROMPT
 
 
 class LLMReRanker:
-    def __init__(self, llm:BaseChatModel, top_k: int = settings.reranker_top_k):
+    def __init__(self, llm:BaseChatModel):
         self.llm = llm
-        self.top_k = top_k
 
 
     def score_doc(self, query: str, doc: dict):
@@ -36,5 +35,5 @@ class LLMReRanker:
             score = self.score_doc(query, doc)
             doc["rerank_score"] = score
             scored_docs.append(doc)
-        return sorted(scored_docs, key=lambda x: x["rerank_score"], reverse=True)[:self.top_k]
+        return sorted(scored_docs, key=lambda x: x["rerank_score"], reverse=True)
 

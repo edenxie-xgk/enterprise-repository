@@ -16,7 +16,6 @@ class Settings(BaseSettings):
     delete_file:bool = Field(default=os.getenv("DELETE_FILE"))
 
 
-
     #PostgerSQL
     database_name:str = Field(default= os.getenv("DATABASE_NAME"))
     database_string:str =  Field(default=str(os.getenv("DATABASE_STRING")))
@@ -60,12 +59,13 @@ class Settings(BaseSettings):
     reranker_type:Literal["llm",'cross-encoder'] = Field(default=os.getenv("RERANKER_TYPE"))
     bm25_retrieval_mode:Literal["lite",'es'] = Field(default=os.getenv("BM25_RETRIEVAL_MODE"))
     reranker_max_len:int = Field(default=os.getenv("RERANKER_MAX_LEN"))
+    retrieval_min_score:float = Field(default=os.getenv("RETRIEVAL_MIN_SCORE"))
     reranker_min_score:float = Field(default=os.getenv("RERANKER_MIN_SCORE"))
     context_max_len:int = Field(default=os.getenv("CONTEXT_MAX_LEN"))
     max_expand:int = Field(default=os.getenv("MAX_EXPAND"))
     update_doc_time:int = Field(default=os.getenv("UPDATE_DOC_TIME"))
     is_need_doc:bool = Field(default=False)
-
+    await_upload_file_num:int = Field(default=0)
 
     log_dir:pathlib.Path = Field(default=pathlib.Path(__file__).parent.parent / "logs")
     log_format:logging.Formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")

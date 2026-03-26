@@ -4,7 +4,7 @@ from typing import Optional
 # 新增导入
 from sqlmodel import SQLModel, Field, Relationship
 
-from service.utils.untils import get_current_time
+from utils.utils import get_current_time
 
 
 class FileModel(SQLModel, table=True):
@@ -18,4 +18,4 @@ class FileModel(SQLModel, table=True):
     file_name: str = Field(index=True)
     file_path: str = Field(index=True)
     file_type: str = Field(index=True)
-    state: str = Field(default='2', index=True)
+    state: str = Field(default='3', index=True)

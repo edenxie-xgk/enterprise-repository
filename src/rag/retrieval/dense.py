@@ -20,7 +20,7 @@ class DenseRetriever:
             filters=None,
         )
 
-    def run(self,search_queries:list[str],filters=None,top_k:int=None):
+    def run(self,search_queries:list[str],filters=None,top_k:int=None,score=settings.retrieval_min_score):
         all_results = []
         if top_k:
             self.retriever.similarity_top_k = top_k
@@ -28,7 +28,8 @@ class DenseRetriever:
             self.retriever._filters = filters
             results = self.retriever.retrieve(query)
             for node in results:
-
+                if node.score < score:
+                    continue
                 # metadata过滤
                 if filters:
                     skip = False

@@ -2,23 +2,24 @@ QA_GENERATION_PROMPT = """
 你是企业级RAG系统的数据构建助手。
 
 任务：
-基于给定文本，生成高质量问答对（QA）。
+基于多个文本片段，生成需要“综合多个片段”才能回答的问题。
 
 ---
 
 【要求】
 
-1.  问题必须可以通过该文本检索得到
-2.  答案必须完全来自文本（不能编造）
-3.  问题要具体，不能模糊
-4.  避免“这个、那个”之类指代
+1.  问题必须依赖多个node才能回答
+2.  答案必须来自这些node
+3.  标注涉及的node_id
+4.  不要生成单node即可回答的问题
 5.  每个问题独立成立
 6.  识别文本的语言（简体中文->language: zh-cn, 英文->language: en）
 7.  同种语言最多生成3个QA
 8.  至少必须同时生成英文版本和中文版本
 9.  对问题进行分级（easy/medium/hard）
 10. 对问题进行意图分类（factoid/analysis/comparison）
-11. 输出格式必须是JSON格式
+11. 参考文档质量差可以不生成数据，直接返回JSON空数组
+12. 输出格式必须是JSON格式
 
 ---
 
@@ -50,8 +51,9 @@ QA_GENERATION_PROMPT = """
 
 ---
 
-【文本】
-{chunk}
+
+【多个片段内容】
+{nodes}
 
 ---
 
@@ -62,7 +64,8 @@ QA_GENERATION_PROMPT = """
     "answer": "...",
     "language": "...",
     "difficulty": "...",
-    "intent": "..."
+    "intent": "...",
+    "node_ids": ["node1", "node2"]
   }}
 ]
 

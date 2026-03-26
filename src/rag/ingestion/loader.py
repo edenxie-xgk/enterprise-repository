@@ -72,6 +72,8 @@ def load_docx(file_path: str, metadata: DocumentMetadata)->Sequence[LlamaDocumen
 
     for title,section in sections:
         metadata.section_title = title
+        if len(section) < 10:
+            continue
         documents.append(
             LlamaDocument(
                 text=section,
@@ -104,6 +106,9 @@ def load_markdown(path: str, metadata: DocumentMetadata) -> Sequence[LlamaDocume
         if not part:
             continue
         metadata.section_title = extract_md_title(part)
+        if len(part) < 10:
+            continue
+
         sections.append(
             LlamaDocument(
                 text=part,

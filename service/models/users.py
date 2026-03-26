@@ -3,7 +3,7 @@ import time
 from sqlmodel import SQLModel, Field
 from typing import Optional
 
-from service.utils.untils import get_current_time
+from utils.utils import get_current_time
 
 
 class UserModel(SQLModel, table=True):

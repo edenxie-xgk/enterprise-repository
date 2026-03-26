@@ -14,6 +14,7 @@ class DocumentMetadata(BaseModel):
     sheet_name:str = None
     section_title:str = None
     page:int = None
+    chunk_index:int=None
 
     user_id: int
     user_name: str

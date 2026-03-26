@@ -8,14 +8,14 @@ def evaluate_generation(llm_service, embed_model, benchmark, retriever):
     total_score = 0
 
     for item in benchmark:
-        docs = retriever.run([item["query"]], top_k=5)
-        answer = generate_answer(llm_service, item["query"], docs)
+        docs = retriever.run([item["question"]], top_k=5)
+        answer = generate_answer(llm_service, item["question"], docs)
 
         # 🔥 LLM评估
         score = evaluate_answer(
             llm_service,
-            item["query"],
-            item["ground_truth_answer"],
+            item["question"],
+            item["node_ids"],
             answer["answer"]
         )
         if score > 0.8:

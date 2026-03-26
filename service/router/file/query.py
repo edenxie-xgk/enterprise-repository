@@ -28,7 +28,8 @@ async def query_file(
     file_result = await session.execute(
         select(*[getattr(FileModel, c.name) for c in FileModel.__table__.columns],DepartmentModel.dept_name).join(DepartmentModel,FileModel.dept_id == DepartmentModel.dept_id,isouter=True).where(
             FileModel.dept_id.in_(dept_ids),
-            FileModel.state == '1'
+            FileModel.state != '0',
+            FileModel.state != '4',
         )
     )
     return {

@@ -9,17 +9,17 @@ from src.rag.rerank.llm_reranker import LLMReRanker
 
 
 class Reranker:
-    def __init__(self, llm:BaseChatModel = None,top_k: int= settings.reranker_top_k):
+    def __init__(self, llm:BaseChatModel = None):
         if  settings.reranker_type == "llm":
-            self.reranker = LLMReRanker(llm=llm, top_k=top_k)
+            self.reranker = LLMReRanker(llm=llm)
         elif settings.reranker_type == "cross-encoder":
-            self.reranker = CrossEncoderReRanker(model=reranker_model, top_k=top_k)
+            self.reranker = CrossEncoderReRanker(model=reranker_model)
         else:
             raise Exception("reranker type error")
 
 
-    def run(self,query: str, docs: List[dict],score=settings.reranker_min_score):
-        return [doc for doc in self.reranker.run(query, docs) if doc["rerank_score"] >= score]
+    def run(self,query: str, docs: List[dict],score=settings.reranker_min_score,top_k:int=settings.reranker_top_k):
+        return [doc for doc in self.reranker.run(query, docs) if doc["rerank_score"] >= score][:top_k]
 
 
 
