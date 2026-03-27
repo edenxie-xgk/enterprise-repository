@@ -9,16 +9,16 @@ from src.database.mongodb import mongodb_client
 from src.models.embedding import embed_model
 from src.models.llm import deepseek_llm, chatgpt_llm
 from src.rag.context.builder import ContextBuilder
+from src.rag.evaluate.generation import evaluate_generation
 from src.rag.evaluate.qa import generate_qa
 from src.rag.evaluate.rerank import evaluate_rerank
 from src.rag.evaluate.retrieval import evaluate_retrieval
 from src.rag.generation.answer_verify import verify_answer
 from src.rag.generation.generator import  generate_answer
-from src.rag.generation.translate import translate
-from src.rag.query.query_processor import QueryProcessor
 from src.rag.rerank.reranker import Reranker
 from src.rag.retrieval.dense import DenseRetriever
 from src.rag.retrieval.hybrid import HybridRetriever
+from src.types.rag_type import RAGResult, RagContext
 from utils.logger_handler import logger
 from llama_index.core import VectorStoreIndex, Settings, StorageContext
 from src.rag.ingestion.loader import  load_file
@@ -114,57 +114,52 @@ class RAGService:
             logger.error(f"[rag向量存储失败]:存储文件:${metadata.file_path}---错误信息:${str(e)}")
             raise Exception(f"[rag向量存储失败]:存储文件:${metadata.file_path}---错误信息:${str(e)}") from e
 
-    def query(self,query:str,user_context:dict):
+    def query(self,query_context:RagContext,user_context:dict):
         """检索RAG内容"""
+
+
 
         # 输入规范化、重写
         # 1. Query处理
-        print("***" * 50)
-        print(f"💻对用户数据进行规范化、重写")
-        query_processor = QueryProcessor(llm=self.llm)
-        query_result = query_processor.run(query)
-        print(query_result)
+        # print("***" * 50)
+        # print(f"💻对用户数据进行规范化、重写")
+        # query_result = rewrite_tool.run(query)
+        # print(query_result)
 
-        # 2. Dense检索
-        print("***" * 50)
-        print(f"⌛检索数据")
-        print(f"🎯Dense检索")
-        docs = []
+        search_queries = []
+        if query_context.query and query_context.query.strip()!='':
+            search_queries.append(query_context.query)
+        if query_context.rewritten_query and query_context.rewritten_query.strip() != '':
+            search_queries.append(query_context.rewritten_query)
+        if query_context.expand_query:
+            search_queries.extend([item for item in query_context.expand_query if item and item.strip() != ""])
+        if query_context.decompose_query:
+            search_queries.extend([item for item in query_context.decompose_query if item and item.strip() != ""])
 
-        dense_docs = self.dense_retriever.run(query_result.search_queries)
-        docs.extend(dense_docs)
-        for doc in dense_docs[:3]:
-            print(doc["score"], doc["content"])
-            print("***" * 50)
+        if not search_queries:
+            return RAGResult(
+                answer="暂无查询句子",
+                documents=[],
+                is_sufficient=False
+            )
 
-
-        if not self.bm25_retriever or (time.time() - self.update_doc_time > settings.update_doc_time and settings.is_need_doc):  #定期更新文档
-            self._create_bm25_retrieval()
-        if self.bm25_retriever:
-            print("🎯bm25检索")
-            bm25_docs = self.bm25_retriever.run(query_result.search_queries)
-            docs.extend(bm25_docs)
-            for doc in bm25_docs[:3]:
-                print(doc["bm25_score"], doc["content"])
-                print("***" * 50)
-
-
-            print("🎯hybrid检索")
-            hybrid_docs = HybridRetriever(self.dense_retriever, self.bm25_retriever).run(query_result.search_queries)
-            docs.extend(hybrid_docs)
-            for doc in hybrid_docs[:3]:
-                print(doc['content'])
+        # 2. 召回检索
+        print("🎯hybrid检索")
+        hybrid_docs = HybridRetriever(self.dense_retriever, self.bm25_retriever).run(search_queries)
+        for doc in hybrid_docs[:3]:
+            print(doc['content'])
 
         doc_ids = []
-        new_docs = []
-        for doc in docs:
+        docs= []
+        for doc in hybrid_docs:
             if doc['node_id'] not in doc_ids: #去重
                 doc_ids.append(doc['node_id'])
-                new_docs.append(doc)
+                docs.append(doc)
+
         # 3.reranker重排
         print("***" * 50)
         print("🥇reranker重排")
-        docs = self.rerank.run(query_result.rewrite_query, docs[:settings.retriever_top_k])
+        docs = self.rerank.run(f"{query_context.query} {query_context.rewritten_query}", docs[:settings.retriever_top_k])
         for doc in docs[:3]:
             print(doc["rerank_score"], doc["content"])
             print("***" * 50)
@@ -180,15 +175,25 @@ class RAGService:
         # 5. 生成答案
         print("***" * 50)
         print("💬生成答案")
-        response = generate_answer(query_result.rewrite_query, context)
-        print(response.answer)
+        response = generate_answer(self.chatgpt_llm,f"{query_context.query} {query_context.rewritten_query}", context)
+
+        # documents = [node_id in [item['node_id'] for item in docs ]  for node_id in response.citations]
 
         # 6. 验证跟翻译
         verify = verify_answer(llm=self.llm, context=response.citations, answer=response.answer)
         if not verify:
-            return response.answer
+            return RAGResult(
+                answer=response.answer,
+                documents=docs,
+                is_sufficient=True
+            )
         else:
-            return translate(llm=self.llm, query=query)
+            # return translate(llm=self.llm, query=query)
+            return RAGResult(
+                answer=response.answer,
+                documents=docs,
+                is_sufficient=False
+            )
 
 
     def generation_evaluate_data(self):
@@ -236,9 +241,20 @@ class RAGService:
 
         retrieval_report = evaluate_retrieval(self.dense_retriever,benchmark_data)
         print(f"🎯召回数据：{retrieval_report}")
-        # rerank_report = evaluate_rerank(self.dense_retriever,self.rerank,benchmark_data)
-        # print(f"🥇重排数据：{rerank_report}")
-        return None
+        rerank_report = evaluate_rerank(self.dense_retriever,self.rerank,benchmark_data)
+        print(f"🥇重排数据：{rerank_report}")
+        generation_report = evaluate_generation(
+            llm=self.llm,
+            benchmark=benchmark_data,
+            retriever=self.dense_retriever,
+            rerank=self.rerank
+        )
+        print(f"💬答案数据：{rerank_report}")
+        return {
+            "retrieval_report":retrieval_report,
+            "rerank_report":rerank_report,
+            "generation_report":generation_report
+        }
 
 
 rag_service = RAGService()
@@ -269,6 +285,5 @@ if  __name__ == "__main__":
     )
     # rag_service.ingestion("D:\\python\\agent_project\\rag-agent\\service\\public\\uploads\\TQ\\文档上传测试.pdf", data)
     # rag_service.ingestion("D:\\python\\agent_project\\rag-agent\\service\\public\\uploads\\OE\\fund_report_1.pdf",data)
-    # print(rag_service.query("Give me a brief introduction to financial knowledge",{}))
-    rag_service.benchmark()
+    # rag_service.benchmark()
     # rag_service.generation_evaluate_data()

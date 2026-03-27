@@ -2,7 +2,7 @@ from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import HumanMessage
 
 from src.congfig.llm_config import LLMService
-from src.prompts.rag.translate import TRANSLATE_PROMPT
+from src.prompts.agent.translate import TRANSLATE_PROMPT
 
 
 def translate(llm:BaseChatModel, query: str):

@@ -25,6 +25,8 @@ class DenseRetriever:
         if top_k:
             self.retriever.similarity_top_k = top_k
         for query in search_queries:
+            if not query:
+                continue
             self.retriever._filters = filters
             results = self.retriever.retrieve(query)
             for node in results:

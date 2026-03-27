@@ -35,6 +35,9 @@ class ContextBuilder:
 
         return results
 
+    def _expand_context(self,docs, all_chunks, window=1):
+        pass
+
     def _build_context(self,docs):
         """拼接文档"""
         context_parts = []
@@ -45,6 +48,7 @@ class ContextBuilder:
             )
 
         return "\n\n".join(context_parts)
+
 
 
     def run(self,docs):

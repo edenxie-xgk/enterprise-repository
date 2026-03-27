@@ -1,26 +1,39 @@
 from tqdm import tqdm
 
 from core.settings import settings
+from src.rag.evaluate.function import mrr_multi, recall_at_k, coverage
 
 
-def evaluate_retrieval(retriever, benchmark, top_k=settings.retriever_top_k):
+def evaluate_retrieval(retriever, benchmark):
 
-    recalls = []
-    mrrs = []
+    total_recall = 0
+    total_mrr = 0
+    total_coverage = 0
 
-    for item in tqdm(benchmark,desc="召回评估中..."):
-        docs = retriever.run([item["question"]], top_k=top_k)
-        doc_ids = [d["node_id"] for d in docs]
+    for item in tqdm(benchmark, desc="召回评估中..."):
 
-        # Recall
-        recall = int(any(gt in doc_ids for gt in item["node_ids"]))
-        recalls.append(recall)
+        docs = retriever.run([item["question"]])
+        if not docs:
+            continue
+
+        gt = item["node_ids"]
+
+        # Recall@K（比例）
+        recall = recall_at_k(docs, gt)
+        total_recall += recall
 
         # MRR
-        rank = next((i for i, doc_id in enumerate(doc_ids) if doc_id in item["node_ids"]), None)
-        mrrs.append(1 / (rank + 1) if rank is not None else 0)
+        mrr = mrr_multi(docs, gt)
+        total_mrr += mrr
+
+        # Coverage（是否全部命中）
+        cov = coverage(docs, gt)
+        total_coverage += cov
+
+    n = len(benchmark)
 
     return {
-        "recall": sum(recalls)/len(recalls),
-        "mrr": sum(mrrs)/len(mrrs)
+        "recall@k": total_recall / n,
+        "mrr": total_mrr / n,
+        "coverage": total_coverage / n
     }

@@ -35,6 +35,8 @@ class BM25LiteRetriever(BaseBM25Retrieval):
     def run(self, search_queries: list[str], top_k=settings.retriever_top_k,filters=None):
         doc_scores = {}
         for query in search_queries:
+            if not query or not query.split():
+                continue
             if is_chinese(query):
                 tokenized_query = jieba.lcut(query)
             else:
@@ -59,7 +61,8 @@ class BM25LiteRetriever(BaseBM25Retrieval):
                     doc_scores[doc_id] = {
                         "content": doc["content"],
                         "metadata": doc.get("metadata", {}),
-                        "bm25_score": float(score)
+                        "bm25_score": float(score),
+                        "node_id":doc['node_id']
                     }
                 else:
                     doc_scores[doc_id]["bm25_score"] = max(
@@ -81,7 +84,7 @@ class ESRetriever(BaseBM25Retrieval):
 
     def run(self, search_queries: list[str], top_k=settings.retriever_top_k, filters=None):
 
-        should = [{"match": {"content": query}} for query in search_queries]
+        should = [{"match": {"content": query}} for query in search_queries if query and query.split() ]
 
         filter_clause = []
 
@@ -108,7 +111,8 @@ class ESRetriever(BaseBM25Retrieval):
             results.append({
                 "content": hit["_source"]["content"],
                 "metadata": hit["_source"]['metadata'],
-                "bm25_score": hit["_score"]
+                "bm25_score": hit["_score"],
+                "node_id": hit["_score"]['node_id']
             })
 
         return results

@@ -10,8 +10,8 @@ class HybridRetriever:
         self.dense = dense_retriever
         self.bm25 = bm25_retriever
 
-    def run(self, queries,top_k=settings.retriever_top_k):
+    def run(self, queries):
         dense_results = self.dense.run(queries)
         bm25_results = self.bm25.run(queries)
         fused = rrf_fusion([dense_results, bm25_results])
-        return fused[:top_k]
+        return fused

@@ -14,7 +14,7 @@ class GeneratorResult(BaseModel):
         问答系统返回的数据
     """
     answer: str = Field(...,description="回答内容")
-    citations: list[str] = Field(...,description="引用的chunk编号")
+    citations: list[str] = Field(...,description="引用的node编号")
 
 def generate_answer (llm:BaseChatModel, query: str, context: str):
         prompt = GEN_PROMPT.format(
