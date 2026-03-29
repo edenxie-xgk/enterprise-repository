@@ -37,13 +37,15 @@ class RAGResult(BaseToolResult):
     documents: List[DocumentInfo] = Field(default=[], description="检索到的文档")
 
     # ===== 诊断信息（给Agent用）=====
-    # fail_reason:  Literal[
-    #     "low_recall",      # 没召回
-    #     "bad_ranking",     # 排序差
-    #     "ambiguous_query", # query不清晰
-    #     "no_data",         # 没数据
-    # ] = Field(default=None,description="诊断信息")
-    #
+    fail_reason:  Literal[
+        "low_recall",      # 没召回
+        "bad_ranking",     # 排序差
+        "ambiguous_query", # query不清晰
+        "no_data",         # 没数据
+        "verification_failed", # 验证不通过
+        "nothing_abnormal", #没有异常
+    ] = Field(default=None,description="诊断信息")
+
     # # ===== 行为建议（关键设计）=====
     # suggested_actions: List[Literal[
     #     "retry",

@@ -20,6 +20,7 @@ def build_agent_context(event) -> Dict[str, Any]:
             "evidence": [
                 getattr(doc, "content", "") for doc in result.documents[:5]
             ],
+            "fail_reason": result.fail_reason,
             "quality_hint": {
                 "has_data": len(result.documents) > 0,
                 "is_sufficient": result.is_sufficient,
@@ -56,6 +57,7 @@ def build_agent_context(event) -> Dict[str, Any]:
         "tool_name": event.tool_name,
         "query": "",
         "answer": str(event.output),
+        "fail_reason":"",
         "evidence": [],
         "quality_hint": {
             "has_data": True,

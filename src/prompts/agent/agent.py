@@ -23,13 +23,16 @@ AGENT_PROMPT = """
 {last_tool_query}
 
 输出结果:
-{last_answer}
+{last_tool_answer}
 
 证据:
-{last_evidence}
+{last_tool_evidence}
 
 质量提示:
-{last_quality_hint}
+{last_tool_quality_hint}
+
+工具诊断信息:
+{last_tool_fail_reason}
 
 ====================
 
@@ -85,7 +88,7 @@ AGENT_PROMPT = """
 【决策规则（非常重要）】
 
 - 如果答案完整且可信 → 选择 finish
-- 如果没有检索到数据 → 优先考虑 rewrite_query
+- 如果没有检索到数据并且当前检索已使用 → rewrite_query
 - 如果有数据但不够 → 选择 rag（继续检索）
 - 如果问题表达不清 → 选择 rewrite_query
 - 如果多次尝试失败 → 可以直接 finish

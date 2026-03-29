@@ -41,7 +41,9 @@ def rag_node(state:State):
         new_input.rewritten_query =  state.working_query or new_input.rewritten_query
     else:
         new_input.rewritten_query = None
+
     tool_result:RAGResult = rag_tool(RagContext(**new_input.dict()),state.user_profile)
+
     if last_rag:
         tool_result.attempt = last_rag.output.attempt + 1
     else:

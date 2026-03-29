@@ -17,6 +17,7 @@ def agent_node(state: State):
         "tool_name": None,
         "query":"",
         "answer": "",
+        "fail_reason":"",
         "evidence": [],
         "quality_hint": {}
     }
@@ -30,9 +31,10 @@ def agent_node(state: State):
         last_action=state.last_action,
         last_tool_query=ctx['query'],
         last_tool_name=ctx['tool_name'],
-        last_answer=ctx["answer"],
-        last_evidence=ctx["evidence"],
-        last_quality_hint=ctx["quality_hint"],
+        last_tool_answer=ctx["answer"],
+        last_tool_evidence=ctx["evidence"],
+        last_tool_quality_hint=ctx["quality_hint"],
+        last_tool_fail_reason=ctx["fail_reason"],
         rewrite_attempt=state.rewrite_attempt,
         query_used=state.query_used
     )

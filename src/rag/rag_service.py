@@ -187,6 +187,7 @@ class RAGService:
             else:
                 return RAGResult(
                     answer=response.answer,
+                    fail_reason="verification_failed",
                     documents=docs,
                     is_sufficient=False
                 )
@@ -194,7 +195,8 @@ class RAGService:
             return RAGResult(
                 answer=response.answer,
                 documents=docs,
-                is_sufficient=False
+                is_sufficient=False,
+                fail_reason=response.fail_reason
             )
 
 
