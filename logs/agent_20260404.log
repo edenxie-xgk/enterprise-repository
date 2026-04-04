@@ -1,0 +1,61 @@
+2026-04-04 00:06:01,827 - agent - INFO - MongoDB数据库连接成功
+2026-04-04 00:06:10,495 - agent - INFO - [LLM调用成功] 耗时: 4.55s
+2026-04-04 00:06:10,495 - agent - INFO - [tokens]: {'completion_tokens': 101, 'prompt_tokens': 814, 'total_tokens': 915, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 0}, 'prompt_cache_hit_tokens': 0, 'prompt_cache_miss_tokens': 814}
+2026-04-04 00:07:37,517 - agent - INFO - [LLM调用成功] 耗时: 3.97s
+2026-04-04 00:07:37,518 - agent - INFO - [tokens]: {'completion_tokens': 104, 'prompt_tokens': 943, 'total_tokens': 1047, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 0}, 'prompt_cache_hit_tokens': 0, 'prompt_cache_miss_tokens': 943}
+2026-04-04 00:07:42,608 - agent - INFO - [LLM调用成功] 耗时: 4.90s
+2026-04-04 00:07:42,608 - agent - INFO - [tokens]: {'completion_tokens': 169, 'prompt_tokens': 644, 'total_tokens': 813, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 192}, 'prompt_cache_hit_tokens': 192, 'prompt_cache_miss_tokens': 452}
+2026-04-04 00:07:46,933 - agent - INFO - [LLM调用成功] 耗时: 4.32s
+2026-04-04 00:07:46,933 - agent - INFO - [tokens]: {'completion_tokens': 129, 'prompt_tokens': 1151, 'total_tokens': 1280, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 576}, 'prompt_cache_hit_tokens': 576, 'prompt_cache_miss_tokens': 575}
+2026-04-04 00:07:51,130 - agent - INFO - [LLM调用成功] 耗时: 4.19s
+2026-04-04 00:07:51,130 - agent - INFO - [tokens]: {'completion_tokens': 137, 'prompt_tokens': 784, 'total_tokens': 921, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 192}, 'prompt_cache_hit_tokens': 192, 'prompt_cache_miss_tokens': 592}
+2026-04-04 00:20:10,736 - agent - INFO - MongoDB数据库连接成功
+2026-04-04 00:20:18,150 - agent - INFO - [LLM调用成功] 耗时: 4.16s
+2026-04-04 00:20:18,150 - agent - INFO - [tokens]: {'completion_tokens': 101, 'prompt_tokens': 814, 'total_tokens': 915, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 640}, 'prompt_cache_hit_tokens': 640, 'prompt_cache_miss_tokens': 174}
+2026-04-04 00:21:27,266 - agent - INFO - [LLM调用成功] 耗时: 4.43s
+2026-04-04 00:21:27,266 - agent - INFO - [tokens]: {'completion_tokens': 113, 'prompt_tokens': 943, 'total_tokens': 1056, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 896}, 'prompt_cache_hit_tokens': 896, 'prompt_cache_miss_tokens': 47}
+2026-04-04 00:21:31,887 - agent - INFO - [LLM调用成功] 耗时: 4.62s
+2026-04-04 00:21:31,888 - agent - INFO - [tokens]: {'completion_tokens': 138, 'prompt_tokens': 644, 'total_tokens': 782, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 640}, 'prompt_cache_hit_tokens': 640, 'prompt_cache_miss_tokens': 4}
+2026-04-04 00:21:36,471 - agent - INFO - [LLM调用成功] 耗时: 4.58s
+2026-04-04 00:21:36,471 - agent - INFO - [tokens]: {'completion_tokens': 130, 'prompt_tokens': 1085, 'total_tokens': 1215, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 640}, 'prompt_cache_hit_tokens': 640, 'prompt_cache_miss_tokens': 445}
+2026-04-04 00:21:40,246 - agent - INFO - [LLM调用成功] 耗时: 3.77s
+2026-04-04 00:21:40,247 - agent - INFO - [tokens]: {'completion_tokens': 112, 'prompt_tokens': 751, 'total_tokens': 863, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 192}, 'prompt_cache_hit_tokens': 192, 'prompt_cache_miss_tokens': 559}
+2026-04-04 00:31:35,760 - agent - INFO - MongoDB数据库连接成功
+2026-04-04 00:31:53,921 - agent - INFO - [LLM调用成功] 耗时: 3.58s
+2026-04-04 00:31:53,921 - agent - INFO - [tokens]: {'completion_tokens': 98, 'prompt_tokens': 814, 'total_tokens': 912, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 640}, 'prompt_cache_hit_tokens': 640, 'prompt_cache_miss_tokens': 174}
+2026-04-04 00:36:42,709 - agent - INFO - [LLM调用成功] 耗时: 3.95s
+2026-04-04 00:36:42,710 - agent - INFO - [tokens]: {'completion_tokens': 113, 'prompt_tokens': 943, 'total_tokens': 1056, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 896}, 'prompt_cache_hit_tokens': 896, 'prompt_cache_miss_tokens': 47}
+2026-04-04 00:37:19,445 - agent - INFO - [LLM调用成功] 耗时: 4.69s
+2026-04-04 00:37:19,446 - agent - INFO - [tokens]: {'completion_tokens': 138, 'prompt_tokens': 644, 'total_tokens': 782, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 640}, 'prompt_cache_hit_tokens': 640, 'prompt_cache_miss_tokens': 4}
+2026-04-04 00:38:01,544 - agent - INFO - [LLM调用成功] 耗时: 4.72s
+2026-04-04 00:38:01,545 - agent - INFO - [tokens]: {'completion_tokens': 134, 'prompt_tokens': 1085, 'total_tokens': 1219, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 1024}, 'prompt_cache_hit_tokens': 1024, 'prompt_cache_miss_tokens': 61}
+2026-04-04 00:38:19,322 - agent - INFO - [LLM调用成功] 耗时: 4.35s
+2026-04-04 00:38:19,323 - agent - INFO - [tokens]: {'completion_tokens': 130, 'prompt_tokens': 751, 'total_tokens': 881, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 192}, 'prompt_cache_hit_tokens': 192, 'prompt_cache_miss_tokens': 559}
+2026-04-04 00:45:38,831 - agent - INFO - MongoDB数据库连接成功
+2026-04-04 00:45:46,043 - agent - INFO - [LLM调用成功] 耗时: 4.05s
+2026-04-04 00:45:46,044 - agent - INFO - [tokens]: {'completion_tokens': 99, 'prompt_tokens': 814, 'total_tokens': 913, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 768}, 'prompt_cache_hit_tokens': 768, 'prompt_cache_miss_tokens': 46}
+2026-04-04 00:46:55,565 - agent - INFO - [LLM调用成功] 耗时: 4.48s
+2026-04-04 00:46:55,565 - agent - INFO - [tokens]: {'completion_tokens': 109, 'prompt_tokens': 943, 'total_tokens': 1052, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 896}, 'prompt_cache_hit_tokens': 896, 'prompt_cache_miss_tokens': 47}
+2026-04-04 00:47:00,112 - agent - INFO - [LLM调用成功] 耗时: 4.54s
+2026-04-04 00:47:00,112 - agent - INFO - [tokens]: {'completion_tokens': 136, 'prompt_tokens': 644, 'total_tokens': 780, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 640}, 'prompt_cache_hit_tokens': 640, 'prompt_cache_miss_tokens': 4}
+2026-04-04 00:47:05,700 - agent - INFO - [LLM调用成功] 耗时: 5.58s
+2026-04-04 00:47:05,701 - agent - INFO - [tokens]: {'completion_tokens': 198, 'prompt_tokens': 1081, 'total_tokens': 1279, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 640}, 'prompt_cache_hit_tokens': 640, 'prompt_cache_miss_tokens': 441}
+2026-04-04 00:47:09,484 - agent - INFO - [LLM调用成功] 耗时: 3.78s
+2026-04-04 00:47:09,484 - agent - INFO - [tokens]: {'completion_tokens': 113, 'prompt_tokens': 749, 'total_tokens': 862, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 640}, 'prompt_cache_hit_tokens': 640, 'prompt_cache_miss_tokens': 109}
+2026-04-04 00:51:17,278 - agent - INFO - MongoDB数据库连接成功
+2026-04-04 00:51:24,585 - agent - INFO - [LLM调用成功] 耗时: 4.08s
+2026-04-04 00:51:24,585 - agent - INFO - [tokens]: {'completion_tokens': 95, 'prompt_tokens': 814, 'total_tokens': 909, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 768}, 'prompt_cache_hit_tokens': 768, 'prompt_cache_miss_tokens': 46}
+2026-04-04 00:52:34,501 - agent - INFO - [LLM调用成功] 耗时: 4.52s
+2026-04-04 00:52:34,501 - agent - INFO - [tokens]: {'completion_tokens': 109, 'prompt_tokens': 943, 'total_tokens': 1052, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 896}, 'prompt_cache_hit_tokens': 896, 'prompt_cache_miss_tokens': 47}
+2026-04-04 00:52:39,096 - agent - INFO - [LLM调用成功] 耗时: 4.59s
+2026-04-04 00:52:39,097 - agent - INFO - [tokens]: {'completion_tokens': 138, 'prompt_tokens': 644, 'total_tokens': 782, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 640}, 'prompt_cache_hit_tokens': 640, 'prompt_cache_miss_tokens': 4}
+2026-04-04 00:52:43,517 - agent - INFO - [LLM调用成功] 耗时: 4.41s
+2026-04-04 00:52:43,518 - agent - INFO - [tokens]: {'completion_tokens': 126, 'prompt_tokens': 1085, 'total_tokens': 1211, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 1024}, 'prompt_cache_hit_tokens': 1024, 'prompt_cache_miss_tokens': 61}
+2026-04-04 00:52:47,697 - agent - INFO - [LLM调用成功] 耗时: 4.17s
+2026-04-04 00:52:47,697 - agent - INFO - [tokens]: {'completion_tokens': 105, 'prompt_tokens': 755, 'total_tokens': 860, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 384}, 'prompt_cache_hit_tokens': 384, 'prompt_cache_miss_tokens': 371}
+2026-04-04 00:52:52,603 - agent - INFO - [LLM调用成功] 耗时: 4.90s
+2026-04-04 00:52:52,603 - agent - INFO - [tokens]: {'completion_tokens': 163, 'prompt_tokens': 1149, 'total_tokens': 1312, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 704}, 'prompt_cache_hit_tokens': 704, 'prompt_cache_miss_tokens': 445}
+2026-04-04 00:54:08,008 - agent - INFO - [LLM调用成功] 耗时: 6.17s
+2026-04-04 00:54:08,008 - agent - INFO - [tokens]: {'completion_tokens': 192, 'prompt_tokens': 867, 'total_tokens': 1059, 'completion_tokens_details': {'accepted_prediction_tokens': 0, 'audio_tokens': 0, 'reasoning_tokens': 0, 'rejected_prediction_tokens': 0, 'text_tokens': 0, 'image_tokens': 0, 'video_tokens': 0}, 'prompt_tokens_details': {'audio_tokens': 0, 'cached_tokens': 0, 'cache_creation_input_tokens': 0, 'cache_read_input_tokens': 0, 'text_tokens': 0, 'image_tokens': 0, 'video_tokens': 0}}
+2026-04-04 00:54:12,985 - agent - INFO - [LLM调用成功] 耗时: 4.97s
+2026-04-04 00:54:12,986 - agent - INFO - [tokens]: {'completion_tokens': 134, 'prompt_tokens': 1515, 'total_tokens': 1649, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 960}, 'prompt_cache_hit_tokens': 960, 'prompt_cache_miss_tokens': 555}

@@ -1,6 +1,6 @@
 import time
 
-from src.nodes.helpers import create_event, finalize_event, get_next_attempt
+from src.nodes.helpers import build_state_patch, create_event, finalize_event, get_next_attempt
 from src.models.llm import deepseek_llm
 from src.tools.rewrite_query_tool import rewrite_query_tool, RewriteResult
 from src.types.agent_state import State
@@ -16,16 +16,20 @@ def rewrite_query_node(state:State):
         input_data={"query": query},
     )
     if len(query) > 10:
-        rewritten:RewriteResult = rewrite_query_tool(deepseek_llm,state.working_query,state.chat_history)
+        rewritten = rewrite_query_tool(deepseek_llm,state.working_query,state.chat_history)
     else:
         rewritten = RewriteResult(
             answer=query,
             success=True,
         )
+    print("**"*100)
+    print(rewritten)
+    print("**" * 100)
     reasoning_event.attempt = get_next_attempt(state.action_history, "rewrite_query")
     reasoning_event = finalize_event(reasoning_event, rewritten, start_time)
-    return {
-        "working_query":rewritten.answer,
-        "rewrite_query":rewritten.answer,
-        "action_history": state.action_history + [reasoning_event],
-    }
+    return build_state_patch(
+        state,
+        reasoning_event,
+        working_query=rewritten.answer,
+        rewrite_query=rewritten.answer,
+    )

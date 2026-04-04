@@ -2,7 +2,7 @@ import time
 
 from src.types.agent_state import State
 
-from src.nodes.helpers import create_event, finalize_event
+from src.nodes.helpers import build_state_patch, create_event, finalize_event
 from src.tools.normalize_query_tool import normalize_query
 from src.types.base_type import BaseNodeResult
 from src.types.event_type import ReasoningEvent
@@ -26,8 +26,9 @@ def normalize_query_node(state:State):
         NormalizeQueryResult(answer=query, success=True),
         start_time,
     )
-    return {
-        "query":query,
-        "working_query":query,
-        "action_history": state.action_history + [event],
-    }
+    return build_state_patch(
+        state,
+        event,
+        normalized_query=query,
+        working_query=query,
+    )

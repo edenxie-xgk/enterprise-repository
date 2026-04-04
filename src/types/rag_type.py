@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 from core.custom_types import DocumentMetadata
 from core.settings import settings
-from src.types.base_type import BaseToolResult
+from src.types.base_type import BaseToolResult, FailReason
 
 
 class RagContext(BaseModel):
@@ -32,15 +32,7 @@ class RAGResult(BaseToolResult):
     documents: List[DocumentInfo] = Field(default_factory=list, description="检索到的文档")
     citations: List[str] = Field(default_factory=list, description="生成答案中的引用")
     is_sufficient: bool = Field(default=False, description="是否足够回答")
-    fail_reason: Literal[
-        "no_data",
-        "low_recall",
-        "bad_ranking",
-        "ambiguous_query",
-        "insufficient_context",
-        "verification_failed",
-        "tool_error",
-    ] = Field(default=None, description="诊断信息")
+    fail_reason: Optional[FailReason] = Field(default=None, description="诊断信息")
     confidence: Optional[float] = Field(default=None, description="置信度")
     retrieval_queries: List[str] = Field(default_factory=list, description="检索查询")
     diagnostics: List[str] = Field(default_factory=list, description="诊断信息")

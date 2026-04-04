@@ -53,6 +53,42 @@ class RAGService:
 
         self.qa_collection = mongodb_client.get_collection(settings.qa_collection_name)
 
+    @staticmethod
+    def _dedupe_queries(queries: list[str]) -> list[str]:
+        seen = set()
+        result = []
+        for query in queries:
+            normalized = query.strip()
+            if not normalized or normalized in seen:
+                continue
+            seen.add(normalized)
+            result.append(normalized)
+        return result
+
+    @staticmethod
+    def _build_rag_result(
+        answer: str,
+        *,
+        documents=None,
+        citations=None,
+        is_sufficient: bool,
+        fail_reason=None,
+        retrieval_queries=None,
+        diagnostics=None,
+        success: bool = True,
+    ) -> RAGResult:
+        return RAGResult(
+            answer=answer,
+            documents=documents or [],
+            citations=citations or [],
+            is_sufficient=is_sufficient,
+            fail_reason=fail_reason,
+            success=success,
+            tool_name="rag",
+            retrieval_queries=retrieval_queries or [],
+            diagnostics=diagnostics or [],
+        )
+
 
 
     def _create_bm25_retrieval(self):
@@ -116,16 +152,6 @@ class RAGService:
 
     def query(self,query_context:RagContext,user_context:dict):
         """检索RAG内容"""
-
-
-
-        # 输入规范化、重写
-        # 1. Query处理
-        # print("***" * 50)
-        # print(f"💻对用户数据进行规范化、重写")
-        # query_result = rewrite_tool.run(query)
-        # print(query_result)
-
         search_queries = []
         if query_context.query and query_context.query.strip()!='':
             search_queries.append(query_context.query)
@@ -135,76 +161,106 @@ class RAGService:
             search_queries.extend([item for item in query_context.expand_query if item and item.strip() != ""])
         if query_context.decompose_query:
             search_queries.extend([item for item in query_context.decompose_query if item and item.strip() != ""])
+        search_queries = self._dedupe_queries(search_queries)
 
         if not search_queries:
-            return RAGResult(
-                answer="暂无查询语句",
-                documents=[],
+            return self._build_rag_result(
+                "暂无查询语句",
                 is_sufficient=False,
-                success=True,
-                fail_reason="no_data"
+                fail_reason="no_data",
+                retrieval_queries=[],
+                diagnostics=["empty_search_queries"],
             )
 
-        # 2. 召回检索
-        print("🎯hybrid检索")
-        hybrid_docs = HybridRetriever(self.dense_retriever, self.bm25_retriever).run(search_queries)
-        doc_ids = []
-        docs= []
-        for doc in hybrid_docs:
-            if doc['node_id'] not in doc_ids: #去重
-                doc_ids.append(doc['node_id'])
-                docs.append(doc)
+        try:
+            print("🎯hybrid检索")
+            hybrid_docs = HybridRetriever(self.dense_retriever, self.bm25_retriever).run(search_queries)
+            doc_ids = []
+            docs = []
+            for doc in hybrid_docs:
+                if doc['node_id'] not in doc_ids:
+                    doc_ids.append(doc['node_id'])
+                    docs.append(doc)
 
-        # 3.reranker重排
-        print("***" * 50)
-        print("🥇reranker重排")
-        docs = self.rerank.run(f"{query_context.query} {query_context.rewritten_query}", docs[:settings.retriever_top_k])
-        for doc in docs:
-            print(doc["rerank_score"], doc["content"])
-            print("***" * 50)
-
-
-        # 4. 拼接上下文
-        print("***" * 50)
-        print("📜去重、截断、拼接上下文")
-        context_builder = ContextBuilder()
-        context = context_builder.run(docs)
-        print(context)
-        # 5. 生成答案
-        print("***" * 50)
-        print("💬生成答案")
-        response = generate_answer(self.chatgpt_llm,f"{query_context.query} {query_context.rewritten_query}", context)
-
-        # documents = [node_id in [item['node_id'] for item in docs ]  for node_id in response.citations]
-
-        if response.is_sufficient:
-            # 6. 验证跟翻译
-            verify = verify_answer(llm=self.chatgpt_llm, context=context, answer=response.answer)
-            if verify:
-                return RAGResult(
-                    answer=response.answer,
-                    documents=docs,
-                    is_sufficient=True,
-                    citations=response.citations,
-                    success=True
-                )
-            else:
-                return RAGResult(
-                    answer=response.answer,
-                    fail_reason="verification_failed",
-                    documents=docs,
+            if not docs:
+                return self._build_rag_result(
+                    "未检索到相关文档",
                     is_sufficient=False,
-                    citations=response.citations,
-                    success=True
+                    fail_reason="no_data",
+                    retrieval_queries=search_queries,
+                    diagnostics=["hybrid_retrieval_returned_no_docs"],
                 )
-        else:
-            return RAGResult(
-                answer=response.answer,
+
+            print("***" * 50)
+            print("🥇reranker重排")
+            docs = self.rerank.run(
+                f"{query_context.query} {query_context.rewritten_query}",
+                docs[:settings.retriever_top_k],
+            )
+
+            if not docs:
+                return self._build_rag_result(
+                    "检索到了候选文档，但重排后没有足够相关的结果",
+                    is_sufficient=False,
+                    fail_reason="bad_ranking",
+                    retrieval_queries=search_queries,
+                    diagnostics=["reranker_filtered_all_docs"],
+                )
+
+            print("***" * 50)
+            print("📜去重、截断、拼接上下文")
+            context_builder = ContextBuilder()
+            context = context_builder.run(docs)
+            print(context)
+
+            print("***" * 50)
+            print("💬生成答案")
+            response = generate_answer(
+                self.chatgpt_llm,
+                f"{query_context.query} {query_context.rewritten_query}",
+                context,
+            )
+
+            if response.is_sufficient:
+                verify = verify_answer(llm=self.chatgpt_llm, context=context, answer=response.answer)
+                if verify:
+                    return self._build_rag_result(
+                        response.answer,
+                        documents=docs,
+                        citations=response.citations,
+                        is_sufficient=True,
+                        retrieval_queries=search_queries,
+                        diagnostics=["generation_sufficient", "answer_verified"],
+                    )
+
+                return self._build_rag_result(
+                    response.answer,
+                    documents=docs,
+                    citations=response.citations,
+                    is_sufficient=False,
+                    fail_reason="verification_failed",
+                    retrieval_queries=search_queries,
+                    diagnostics=["generation_sufficient", "answer_verification_failed"],
+                )
+
+            return self._build_rag_result(
+                response.answer,
                 documents=docs,
+                citations=response.citations,
                 is_sufficient=False,
                 fail_reason=response.fail_reason,
-                citations=response.citations,
-                success=True
+                retrieval_queries=search_queries,
+                diagnostics=["generation_insufficient"],
+            )
+        except Exception as exc:
+            logger.exception("RAG query failed")
+            return self._build_rag_result(
+                "RAG查询失败",
+                is_sufficient=False,
+                fail_reason="tool_error",
+                retrieval_queries=search_queries,
+                diagnostics=["rag_query_exception", str(exc)],
+                success=False,
             )
 
 

@@ -1,6 +1,6 @@
 import time
 
-from src.nodes.helpers import create_event, finalize_event, get_next_attempt
+from src.nodes.helpers import build_state_patch, create_event, finalize_event, get_next_attempt
 from src.models.llm import deepseek_llm
 from src.tools.expand_query_tool import expand_query_tool
 from src.types.agent_state import State
@@ -18,8 +18,9 @@ def expand_query_node(state:State):
     expand_query = expand_query_tool(deepseek_llm,state.working_query,state.chat_history)
     event.attempt = get_next_attempt(state.action_history, "expand_query")
     event = finalize_event(event, expand_query, start_time)
-    return {
-        "working_query":"|".join(expand_query.answer),
-        "expand_query":expand_query.answer,
-        "action_history": state.action_history + [event],
-    }
+    return build_state_patch(
+        state,
+        event,
+        working_query="|".join(expand_query.answer),
+        expand_query=expand_query.answer,
+    )

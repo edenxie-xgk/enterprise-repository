@@ -1,6 +1,6 @@
 import time
 
-from src.nodes.helpers import create_event, finalize_event, get_next_attempt
+from src.nodes.helpers import build_state_patch, create_event, finalize_event, get_next_attempt
 from src.types.agent_state import State
 from src.tools.rag_tool import rag_tool
 from src.types.event_type import ToolEvent
@@ -34,8 +34,9 @@ def rag_node(state:State):
     new_tool.input = new_input
     new_tool = finalize_event(new_tool, tool_result, start_time)
 
-    return {
-        "last_rag_context": new_input,
-        "last_rag_result": tool_result,
-        "action_history":state.action_history + [new_tool],
-    }
+    return build_state_patch(
+        state,
+        new_tool,
+        last_rag_context=new_input,
+        last_rag_result=tool_result,
+    )

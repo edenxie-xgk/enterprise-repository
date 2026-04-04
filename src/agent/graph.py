@@ -7,7 +7,7 @@ from src.nodes.expand_query_node import expand_query_node
 from src.nodes.normalize_query_node import normalize_query_node
 from src.nodes.rag_node import rag_node
 from src.nodes.rewrite_query_node import rewrite_query_node
-from src.router.index import route_map
+from src.agent.router import route_map
 from src.types.agent_state import State
 
 builder = StateGraph(State)
