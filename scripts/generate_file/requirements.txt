@@ -10,3 +10,5 @@ sentence-transformers
 scikit-learn
 tenacity
 python-dotenv
+matplotlib
+seaborn

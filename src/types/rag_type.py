@@ -1,4 +1,4 @@
-﻿from typing import Any, Dict, List, Literal, Optional
+from typing import Any, Dict, List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -26,6 +26,16 @@ class DocumentInfo(BaseModel):
     dense_score: Optional[float] = Field(default=None, description="向量分数")
     bm25_score: Optional[float] = Field(default=None, description="关键词分数")
     rerank_score: Optional[float] = Field(default=None, description="重排分数")
+
+
+class SubQueryResult(BaseModel):
+    sub_query: str = Field(default="", description="子问题")
+    answer: str = Field(default="", description="子问题回答")
+    citations: List[str] = Field(default_factory=list, description="子问题引用")
+    documents: List[DocumentInfo] = Field(default_factory=list, description="子问题文档")
+    is_sufficient: bool = Field(default=False, description="是否足够回答子问题")
+    fail_reason: Optional[FailReason] = Field(default=None, description="子问题失败原因")
+    diagnostics: List[str] = Field(default_factory=list, description="子问题诊断信息")
 
 
 class RAGResult(BaseToolResult):

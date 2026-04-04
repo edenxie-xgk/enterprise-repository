@@ -21,10 +21,10 @@ def rewrite_query_node(state:State):
         rewritten = RewriteResult(
             answer=query,
             success=True,
+            tool_name="rewrite_query",
+            message="重写为短查询跳过的查询",
+            diagnostics=["rewrite_query_skipped_short_query"],
         )
-    print("**"*100)
-    print(rewritten)
-    print("**" * 100)
     reasoning_event.attempt = get_next_attempt(state.action_history, "rewrite_query")
     reasoning_event = finalize_event(reasoning_event, rewritten, start_time)
     return build_state_patch(

@@ -1,21 +1,25 @@
-﻿from typing import Any, Optional
+from typing import Any, Optional
 
 from typing import Literal
 
 from pydantic import BaseModel, Field
 
 
+# 定义系统可能的失败原因枚举类型
+# 每个值对应特定的错误场景，用于系统错误分类和处理
 FailReason = Literal[
-    "no_data",
-    "low_recall",
-    "bad_ranking",
-    "ambiguous_query",
-    "insufficient_context",
-    "verification_failed",
-    "tool_error",
-    "permission_denied",
-    "timeout",
-    "max_steps_exceeded",
+    "invalid_input",          # 输入无效或不合法
+    "disallowed_query",       # 查询被禁止(如安全策略)
+    "no_data",                # 无数据返回
+    "low_recall",             # 召回率低(搜索结果不足)
+    "bad_ranking",            # 结果排序质量差
+    "ambiguous_query",        # 查询模糊不清
+    "insufficient_context",   # 上下文信息不足
+    "verification_failed",    # 验证失败
+    "tool_error",             # 工具执行错误
+    "permission_denied",      # 权限不足
+    "timeout",                # 操作超时
+    "max_steps_exceeded",     # 超过最大步骤限制
 ]
 
 

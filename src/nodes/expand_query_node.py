@@ -21,6 +21,6 @@ def expand_query_node(state:State):
     return build_state_patch(
         state,
         event,
-        working_query="|".join(expand_query.answer),
+        working_query=state.working_query,
         expand_query=expand_query.answer,
     )

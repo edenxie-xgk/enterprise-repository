@@ -12,7 +12,7 @@ from src.types.base_type import BaseNodeResult
 class RewriteResult(BaseNodeResult):
     tool_name: Optional[str] = Field(default="rewrite_query", description="工具名称")
     max_attempt: Optional[int] = Field(default=2, description="最大调用次数")
-    answer:Optional[str] = Field(default="", description="回答")
+    answer: Optional[str] = Field(default="", description="改写后的查询")
 
 def rewrite_query_tool(
     llm: BaseChatModel,
@@ -33,14 +33,16 @@ def rewrite_query_tool(
         )
         response.success = True
         response.tool_name = "rewrite_query"
+        response.answer = (response.answer or query or "").strip()
         response.message = "rewrite query success"
+        response.diagnostics = list(response.diagnostics or []) + ["rewrite_query_completed"]
         return response
     except Exception as exc:
         return RewriteResult(
-            answer=query,
+            answer=(query or "").strip(),
             success=False,
             tool_name="rewrite_query",
             message="rewrite query failed",
             error_detail=str(exc),
-            diagnostics=["rewrite query failed"],
+            diagnostics=["rewrite_query_failed"],
         )

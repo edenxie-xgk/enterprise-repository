@@ -14,6 +14,21 @@ class DecomposeResult(BaseNodeResult):
     answer: List[str] = Field(default_factory=list, description="拆解后的子问题")
 
 
+def _normalize_sub_queries(queries: list[str]) -> list[str]:
+    normalized = []
+    seen = set()
+    for item in queries or []:
+        candidate = (item or "").strip()
+        if not candidate:
+            continue
+        key = candidate.lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        normalized.append(candidate)
+    return normalized[:3]
+
+
 def decompose_query_tool(llm: BaseChatModel, query: str, chat_history=None) -> DecomposeResult:
     prompt = DECOMPOSE_PROMPT.format(query=query, chat_history=chat_history or [])
     try:
@@ -24,7 +39,9 @@ def decompose_query_tool(llm: BaseChatModel, query: str, chat_history=None) -> D
         )
         response.success = True
         response.tool_name = "decompose_query"
+        response.answer = _normalize_sub_queries(response.answer)
         response.message = "decompose query success"
+        response.diagnostics = list(response.diagnostics or []) + ["decompose_query_completed"]
         return response
     except Exception as exc:
         return DecomposeResult(
@@ -33,5 +50,5 @@ def decompose_query_tool(llm: BaseChatModel, query: str, chat_history=None) -> D
             tool_name="decompose_query",
             message="decompose query failed",
             error_detail=str(exc),
-            diagnostics=["decompose query failed"],
+            diagnostics=["decompose_query_failed"],
         )

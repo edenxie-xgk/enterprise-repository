@@ -7,6 +7,7 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.staticfiles import StaticFiles
 
 from service.database.connect import async_engine
+from service.router.agent.index import agent_router
 from service.router.file.index import file_router
 import uvicorn
 
@@ -44,6 +45,7 @@ def create_server():
     app.mount("/public", StaticFiles(directory=public_dir), name="static")
 
     app.include_router(router=file_router)
+    app.include_router(router=agent_router)
     app.include_router(router=user_router)
     app.include_router(router=role_router)
     uvicorn.run(app, host="127.0.0.1", port=1016)

@@ -20,6 +20,25 @@ class DenseRetriever:
             filters=None,
         )
 
+    @staticmethod
+    def _value_matches(actual, expected) -> bool:
+        if isinstance(expected, (list, tuple, set)):
+            return any(DenseRetriever._value_matches(actual, item) for item in expected)
+        if actual == expected:
+            return True
+        return str(actual) == str(expected)
+
+    @staticmethod
+    def _matches_filters(metadata: dict, filters=None) -> bool:
+        if not filters:
+            return True
+
+        for key, expected in filters.items():
+            actual = metadata.get(key)
+            if not DenseRetriever._value_matches(actual, expected):
+                return False
+        return True
+
     def run(self,search_queries:list[str],filters=None,top_k:int=None,score=settings.retrieval_min_score):
         all_results = []
         if top_k:
@@ -33,14 +52,8 @@ class DenseRetriever:
                 if node.score < score:
                     continue
                 # metadata过滤
-                if filters:
-                    skip = False
-                    for k, v in filters.items():
-                        if node["metadata"].get(k) != v:
-                            skip = True
-                            break
-                    if skip:
-                        continue
+                if not self._matches_filters(node["metadata"], filters):
+                    continue
 
                 doc = {
                     "content": node.text,

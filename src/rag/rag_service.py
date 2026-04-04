@@ -1,4 +1,4 @@
-﻿import time
+import time
 
 import os
 
@@ -89,6 +89,33 @@ class RAGService:
             diagnostics=diagnostics or [],
         )
 
+    @staticmethod
+    def _normalize_candidate_docs(documents):
+        """
+        规范化候选文档格式，统一转换为字典形式
+
+        该方法用于处理不同格式的文档对象，将其统一转换为字典形式：
+        1. 如果文档对象有 model_dump() 方法，调用该方法转换为字典
+        2. 如果已经是字典形式，直接保留
+        3. 其他格式将被忽略
+
+        Args:
+            documents: 待处理的文档列表，可以是包含不同格式文档的列表或None
+
+        Returns:
+            list: 规范化后的文档字典列表
+        """
+        normalized = []
+        # 遍历文档列表（如果输入为None则视为空列表处理）
+        for doc in documents or []:
+            # 检查文档是否有 model_dump 方法（如Pydantic模型对象）
+            if hasattr(doc, "model_dump"):
+                normalized.append(doc.model_dump())
+            # 检查是否是字典类型
+            elif isinstance(doc, dict):
+                normalized.append(doc)
+        return normalized
+
 
 
     def _create_bm25_retrieval(self):
@@ -117,7 +144,7 @@ class RAGService:
         try:
             start_time = time.time()
             docs = load_file(path, metadata)
-            logger.info(f"📤开始向量入库 等待加载文件个数：{settings.await_upload_file_num}")
+            logger.info(f"开始向量入库，等待加载文件个数：{settings.await_upload_file_num}")
 
             if not docs or len(docs) == 0:
                 logger.error(f"[rag向量存储失败]:内容为空")
@@ -150,7 +177,7 @@ class RAGService:
             logger.error(f"[rag向量存储失败]:存储文件:${metadata.file_path}---错误信息:${str(e)}")
             raise Exception(f"[rag向量存储失败]:存储文件:${metadata.file_path}---错误信息:${str(e)}") from e
 
-    def query(self,query_context:RagContext,user_context:dict):
+    def query(self,query_context:RagContext,user_context:dict, previous_result: RAGResult | None = None):
         """检索RAG内容"""
         search_queries = []
         if query_context.query and query_context.query.strip()!='':
@@ -173,14 +200,23 @@ class RAGService:
             )
 
         try:
-            print("🎯hybrid检索")
-            hybrid_docs = HybridRetriever(self.dense_retriever, self.bm25_retriever).run(search_queries)
-            doc_ids = []
             docs = []
-            for doc in hybrid_docs:
-                if doc['node_id'] not in doc_ids:
-                    doc_ids.append(doc['node_id'])
-                    docs.append(doc)
+            if query_context.use_retrieval or not previous_result or not previous_result.documents:
+                print("hybrid retrieval")
+                hybrid_docs = HybridRetriever(self.dense_retriever, self.bm25_retriever).run(
+                    search_queries,
+                    top_k=query_context.retrieval_top_k,
+                    filters=query_context.filters,
+                )
+                doc_ids = []
+                for doc in hybrid_docs:
+                    if doc['node_id'] not in doc_ids:
+                        doc_ids.append(doc['node_id'])
+                        docs.append(doc)
+                retrieval_diagnostics = ["hybrid_retrieval_executed"]
+            else:
+                docs = self._normalize_candidate_docs(previous_result.documents)
+                retrieval_diagnostics = ["retrieval_reused_previous_docs"]
 
             if not docs:
                 return self._build_rag_result(
@@ -188,15 +224,21 @@ class RAGService:
                     is_sufficient=False,
                     fail_reason="no_data",
                     retrieval_queries=search_queries,
-                    diagnostics=["hybrid_retrieval_returned_no_docs"],
+                    diagnostics=retrieval_diagnostics + ["hybrid_retrieval_returned_no_docs"],
                 )
 
-            print("***" * 50)
-            print("🥇reranker重排")
-            docs = self.rerank.run(
-                f"{query_context.query} {query_context.rewritten_query}",
-                docs[:settings.retriever_top_k],
-            )
+            if query_context.use_rerank:
+                print("***" * 50)
+                print("reranker")
+                docs = self.rerank.run(
+                    f"{query_context.query} {query_context.rewritten_query}",
+                    docs[:query_context.retrieval_top_k],
+                    top_k=query_context.rerank_top_k,
+                )
+                rerank_diagnostics = ["reranker_executed"]
+            else:
+                docs = docs[:query_context.rerank_top_k]
+                rerank_diagnostics = ["reranker_skipped"]
 
             if not docs:
                 return self._build_rag_result(
@@ -204,17 +246,17 @@ class RAGService:
                     is_sufficient=False,
                     fail_reason="bad_ranking",
                     retrieval_queries=search_queries,
-                    diagnostics=["reranker_filtered_all_docs"],
+                    diagnostics=retrieval_diagnostics + rerank_diagnostics + ["reranker_filtered_all_docs"],
                 )
 
             print("***" * 50)
-            print("📜去重、截断、拼接上下文")
+            print("build context")
             context_builder = ContextBuilder()
             context = context_builder.run(docs)
             print(context)
 
             print("***" * 50)
-            print("💬生成答案")
+            print("generate answer")
             response = generate_answer(
                 self.chatgpt_llm,
                 f"{query_context.query} {query_context.rewritten_query}",
@@ -230,7 +272,7 @@ class RAGService:
                         citations=response.citations,
                         is_sufficient=True,
                         retrieval_queries=search_queries,
-                        diagnostics=["generation_sufficient", "answer_verified"],
+                        diagnostics=retrieval_diagnostics + rerank_diagnostics + ["generation_sufficient", "answer_verified"],
                     )
 
                 return self._build_rag_result(
@@ -240,7 +282,7 @@ class RAGService:
                     is_sufficient=False,
                     fail_reason="verification_failed",
                     retrieval_queries=search_queries,
-                    diagnostics=["generation_sufficient", "answer_verification_failed"],
+                    diagnostics=retrieval_diagnostics + rerank_diagnostics + ["generation_sufficient", "answer_verification_failed"],
                 )
 
             return self._build_rag_result(
@@ -250,7 +292,7 @@ class RAGService:
                 is_sufficient=False,
                 fail_reason=response.fail_reason,
                 retrieval_queries=search_queries,
-                diagnostics=["generation_insufficient"],
+                diagnostics=retrieval_diagnostics + rerank_diagnostics + ["generation_insufficient"],
             )
         except Exception as exc:
             logger.exception("RAG query failed")
@@ -283,6 +325,7 @@ class RAGService:
                 qa_list = generate_qa(llm=self.llm, nodes=[doc, *dense_docs], metadata=doc['metadata'])
                 if qa_list:
                     self.qa_collection.insert_many(qa_list)
+                self.doc_collection.update_one({"node_id":doc['node_id']},{"$set":{"state":1}})
             except Exception:
                 error_nodes.append(doc['node_id'])
         if error_nodes:
@@ -307,16 +350,16 @@ class RAGService:
             }
 
         retrieval_report = evaluate_retrieval(self.dense_retriever,benchmark_data)
-        print(f"🎯召回数据：{retrieval_report}")
+        print(f"retrieval report: {retrieval_report}")
         rerank_report = evaluate_rerank(self.dense_retriever,self.rerank,benchmark_data)
-        print(f"🥇重排数据：{rerank_report}")
+        print(f"rerank report: {rerank_report}")
         generation_report = evaluate_generation(
             llm=self.llm,
             benchmark=benchmark_data,
             retriever=self.dense_retriever,
             rerank=self.rerank
         )
-        print(f"💬答案数据：{rerank_report}")
+        print(f"generation report: {rerank_report}")
         return {
             "retrieval_report":retrieval_report,
             "rerank_report":rerank_report,

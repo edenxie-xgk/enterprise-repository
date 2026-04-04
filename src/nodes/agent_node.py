@@ -1,6 +1,6 @@
 from langchain_core.messages import HumanMessage
 
-from src.agent.router import reasoning_route, tool_route
+from src.agent.policy import decide_initial_action, get_allowed_actions, guard_input, should_force_finish
 from src.congfig.llm_config import LLMService
 from src.models.llm import deepseek_llm
 from src.prompts.agent.agent import AGENT_PROMPT
@@ -9,24 +9,46 @@ from src.types.base_type import BaseLLMDecideResult
 from src.types.rag_type import RAGResult
 
 
+DISALLOWED_INPUT_REASONS = {
+    "illegal_cyber_activity",
+    "privacy_exfiltration",
+    "illegal_deception_request",
+}
+
+
 def agent_node(state: State):
-    """Agent 主节点逻辑，负责决定下一步动作
+    """Agent决策主节点函数
+
+    根据当前状态决定下一步动作，处理各种边界条件和决策逻辑
 
     Args:
-        state: 当前状态对象，包含动作历史、查询等信息
+        state: 当前Agent状态对象，包含查询、历史动作等信息
 
     Returns:
-        dict: 包含下一步动作和相关信息的字典，可能包含以下字段：
+        dict: 包含下一步动作和相关信息的字典，结构为:
             - action: 下一步动作类型
-            - answer: 最后获取的答案(如果是结束动作)
-            - reason: 动作原因说明
+            - answer: 当前答案(如果有)
+            - reason: 决策原因
             - status: 执行状态(success/failed)
             - fail_reason: 失败原因(如果失败)
+            - diagnostics: 诊断信息列表
     """
-    # 获取最近一次工具调用记录
+    # 获取最近一次工具调用事件
     last_tool = next((event for event in reversed(state.action_history) if event.kind == "tool"), None)
 
-    # 检查是否超过最大步数限制
+    # 输入安全检查
+    input_guard = guard_input(state.query or state.working_query or "")
+    if not input_guard.is_valid:
+        return {
+            "action": "finish",
+            "answer": input_guard.response,
+            "reason": input_guard.reason,
+            "status": "failed",
+            "fail_reason": "disallowed_query" if input_guard.reason in DISALLOWED_INPUT_REASONS else "invalid_input",
+            "diagnostics": state.diagnostics + [f"agent:input_blocked:{input_guard.reason}"],
+        }
+
+    # 最大步数检查
     if state.current_step >= state.max_steps:
         return {
             "action": "finish",
@@ -37,11 +59,10 @@ def agent_node(state: State):
             "diagnostics": state.diagnostics + ["agent:max_steps_exceeded"],
         }
 
-    # 检查最近一次工具调用是否已返回足够结果
+    # 检查最近工具调用是否已提供足够答案
     last_event = state.action_history[-1] if state.action_history else None
     if last_event and last_event.kind == "tool" and getattr(last_event.output, "is_sufficient", False):
         answer = get_last_answer(last_tool)
-        # 验证任务是否已完成
         if verify_task_complete(state, answer):
             return {
                 "action": "finish",
@@ -50,9 +71,39 @@ def agent_node(state: State):
                 "diagnostics": state.diagnostics + ["agent:task_complete"],
             }
 
-    # 获取当前允许的动作列表
+    force_finish, finish_reason = should_force_finish(state)
+    if force_finish:
+        return {
+            "action": "finish",
+            "answer": get_last_answer(last_tool) or build_fallback_answer(state),
+            "reason": finish_reason,
+            "status": "failed",
+            "fail_reason": getattr(state.last_rag_result, "fail_reason", None) or "insufficient_context",
+            "diagnostics": state.diagnostics + [f"agent:force_finish:{finish_reason}"],
+        }
+
+    # 初始决策逻辑(当没有推理历史时)
+    reasoning_history = [event for event in state.action_history if event.kind == "reasoning"]
+    if not reasoning_history:
+        initial_decision = decide_initial_action(state)
+        if initial_decision.next_action == "clarify_question":
+            return {
+                "action": "finish",
+                "answer": initial_decision.clarification_question or "请补充你的问题背景、对象或范围。",
+                "reason": initial_decision.reason,
+                "status": "success",
+                "fail_reason": "ambiguous_query",
+                "diagnostics": state.diagnostics + ["agent:clarify_question"],
+            }
+
+        return {
+            "action": initial_decision.next_action,
+            "reason": initial_decision.reason,
+            "diagnostics": state.diagnostics + [f"agent:initial={initial_decision.next_action}"],
+        }
+
+    # 准备LLM决策所需的上下文和提示
     allowed_actions = get_allowed_actions(state)
-    # 构建Agent提示词
     prompt = AGENT_PROMPT.format(
         query=state.query,
         context=build_agent_context(state),
@@ -60,24 +111,31 @@ def agent_node(state: State):
         allowed_actions=allowed_actions,
     )
 
-    # 调用LLM服务决定下一步动作
+    # 调用LLM进行决策
     llm_result: BaseLLMDecideResult = LLMService.invoke(
         llm=deepseek_llm,
         messages=[HumanMessage(content=prompt)],
         schema=BaseLLMDecideResult,
     )
 
-    # 处理LLM返回的动作
-    action = llm_result.next_action
-    # 如果动作不在允许列表中，则使用第一个允许的动作
+    # 处理LLM返回的决策结果
+    if llm_result is None:
+        return {
+            "action": allowed_actions[0],
+            "reason": "agent_llm_returned_none_fallback",
+            "diagnostics": state.diagnostics + ["agent:llm_none_fallback"],
+        }
+
+    action = llm_result.next_action or allowed_actions[0]
+    # 确保动作在允许范围内
     if action not in allowed_actions:
         action = allowed_actions[0]
 
-    # 检查该动作是否已达到最大尝试次数
+    # 检查动作尝试次数是否超过限制
     if any(item.name == action and item.attempt >= item.max_attempt for item in reversed(state.action_history)):
         action = "finish"
 
-    # 处理结束或中止动作
+    # 处理终止类动作(finish/abort)
     if action in {"finish", "abort"}:
         return {
             "action": action,
@@ -88,7 +146,7 @@ def agent_node(state: State):
             "diagnostics": state.diagnostics + [f"agent:{action}"],
         }
 
-    # 返回继续执行的动作
+    # 返回常规动作决策
     return {
         "action": action,
         "reason": llm_result.reason,
@@ -102,6 +160,14 @@ def get_last_answer(last_tool) -> str:
     return ""
 
 
+def build_fallback_answer(state: State) -> str:
+    if state.sub_query_results:
+        return "已尝试拆解并检索多个子问题，但当前证据仍不足以稳定回答原问题。"
+    if state.last_rag_result and state.last_rag_result.fail_reason == "no_data":
+        return "当前知识库中未检索到足够相关内容，暂时无法给出可靠答案。"
+    return "当前信息不足，暂时无法稳定回答该问题。"
+
+
 def verify_task_complete(state: State, answer: str) -> bool:
     prompt = f"""
 用户问题:
@@ -110,8 +176,7 @@ def verify_task_complete(state: State, answer: str) -> bool:
 当前答案:
 {answer}
 
-请判断该答案是否已经完整回答用户问题。
-只返回 true 或 false。
+请判断该答案是否已经完整回答用户问题。只返回 true 或 false。
 """
     llm_result = LLMService.invoke(
         llm=deepseek_llm,
@@ -123,46 +188,6 @@ def verify_task_complete(state: State, answer: str) -> bool:
     if isinstance(content, bool):
         return content
     return False
-
-
-def get_allowed_actions(state: State) -> list[str]:
-    if not state.action_history:
-        return ["rag", "rewrite_query", "normalize_query"]
-
-    last_tool = next((event for event in reversed(state.action_history) if event.kind == "tool"), None)
-    if not last_tool:
-        return ["rag"]
-
-    trailing_reasoning = []
-    for item in reversed(state.action_history):
-        if item.kind == "reasoning":
-            trailing_reasoning.append(item.name)
-        else:
-            break
-
-    if trailing_reasoning:
-        if len(trailing_reasoning) >= 2:
-            return list(tool_route)
-        actions = list(tool_route) + list(reasoning_route)
-    else:
-        fail_reason = getattr(last_tool.output, "fail_reason", None)
-        if fail_reason == "no_data":
-            actions = ["rewrite_query", "expand_query"]
-        elif fail_reason == "low_recall":
-            actions = ["expand_query", "rewrite_query", "decompose_query"]
-        elif fail_reason == "ambiguous_query":
-            actions = ["rewrite_query", "decompose_query", "expand_query"]
-        elif fail_reason in {"bad_ranking", "bad_reranking"}:
-            actions = ["decompose_query", "rewrite_query"]
-        elif fail_reason == "verification_failed":
-            actions = ["rag"]
-        else:
-            actions = ["rag"]
-
-    actions = [action for action in actions if action not in trailing_reasoning] or ["rag"]
-    if not trailing_reasoning:
-        actions.extend(["finish", "abort"])
-    return actions
 
 
 def build_query_evolution(state: State) -> str:
@@ -183,6 +208,9 @@ def build_query_evolution(state: State) -> str:
 
 def build_agent_context(state: State, last_tool_num: int = 3) -> str:
     lines = []
+    if state.working_memory:
+        lines.append(f"[Working memory]\n{state.working_memory}")
+
     event_list = [event for event in state.action_history if event.kind == "tool"][-last_tool_num:]
     for index, event in enumerate(event_list, start=1):
         if event.name == "rag":

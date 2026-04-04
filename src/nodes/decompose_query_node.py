@@ -13,7 +13,7 @@ def decompose_query_node(state:State):
         ReasoningEvent,
         name="decompose_query",
         input_data={"query": state.working_query},
-        max_attempt=1,
+        max_attempt=2,
     )
     decompose_query = decompose_query_tool(deepseek_llm,state.working_query,state.chat_history)
     event.attempt = get_next_attempt(state.action_history, "decompose_query")
@@ -21,6 +21,6 @@ def decompose_query_node(state:State):
     return build_state_patch(
         state,
         event,
-        working_query="|".join(decompose_query.answer),
+        working_query=state.working_query,
         decompose_query=decompose_query.answer,
     )

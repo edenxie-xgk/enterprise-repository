@@ -2,6 +2,7 @@ import time
 from uuid import uuid4
 from typing import Any, Optional, TypeVar
 
+from src.memory import build_memory_entry, build_working_memory, compact_short_term_memory
 from src.types.agent_state import State
 from src.types.base_type import BaseResult
 from src.types.event_type import BaseEvent
@@ -78,12 +79,16 @@ def build_state_patch(state: State, event: BaseEvent, **updates: Any) -> dict[st
 
     # 构建基础补丁字典
     diagnostics.append(f"trace_step={next_step}")
+    short_term_memory = compact_short_term_memory(state.short_term_memory + [build_memory_entry(event)])
+    working_memory = build_working_memory(short_term_memory)
 
     patch = {
         "action_history": state.action_history + [event],  # 更新操作历史
         "trace": trace,  # 更新跟踪记录
         "run_id": state.run_id or str(uuid4()),  # 设置或生成运行ID
         "current_step": next_step,  # 更新当前步骤
+        "short_term_memory": short_term_memory,
+        "working_memory": working_memory,
         "diagnostics": diagnostics,  # 更新诊断信息
     }
 

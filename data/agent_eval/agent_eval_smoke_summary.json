@@ -1,0 +1,97 @@
+{
+  "total": 8,
+  "success": 5,
+  "failed": 3,
+  "elapsed_seconds": 3778.927,
+  "output_jsonl": "data\\agent_eval\\agent_eval_smoke.jsonl",
+  "samples": [
+    {
+      "index": 1,
+      "intent": "comparison",
+      "difficulty": "hard",
+      "language": "zh-cn",
+      "run_seconds": 340.128,
+      "status": "error",
+      "action": null,
+      "fail_reason": null,
+      "error": "'AIMessage' object is not subscriptable"
+    },
+    {
+      "index": 2,
+      "intent": "comparison",
+      "difficulty": "hard",
+      "language": "en",
+      "run_seconds": 746.129,
+      "status": "failed",
+      "action": "finish",
+      "fail_reason": "max_steps_exceeded",
+      "error": null
+    },
+    {
+      "index": 3,
+      "intent": "analysis",
+      "difficulty": "hard",
+      "language": "zh-cn",
+      "run_seconds": 650.535,
+      "status": "error",
+      "action": null,
+      "fail_reason": null,
+      "error": "'AIMessage' object is not subscriptable"
+    },
+    {
+      "index": 4,
+      "intent": "analysis",
+      "difficulty": "hard",
+      "language": "en",
+      "run_seconds": 749.111,
+      "status": "success",
+      "action": "finish",
+      "fail_reason": null,
+      "error": null
+    },
+    {
+      "index": 5,
+      "intent": "comparison",
+      "difficulty": "medium",
+      "language": "zh-cn",
+      "run_seconds": 596.052,
+      "status": "failed",
+      "action": "finish",
+      "fail_reason": "max_steps_exceeded",
+      "error": null
+    },
+    {
+      "index": 6,
+      "intent": "comparison",
+      "difficulty": "medium",
+      "language": "en",
+      "run_seconds": 311.774,
+      "status": "success",
+      "action": "finish",
+      "fail_reason": null,
+      "error": null
+    },
+    {
+      "index": 7,
+      "intent": "analysis",
+      "difficulty": "medium",
+      "language": "zh-cn",
+      "run_seconds": 95.815,
+      "status": "error",
+      "action": null,
+      "fail_reason": null,
+      "error": "'AIMessage' object is not subscriptable"
+    },
+    {
+      "index": 8,
+      "intent": "factoid",
+      "difficulty": "medium",
+      "language": "zh-cn",
+      "run_seconds": 289.376,
+      "status": "success",
+      "action": "finish",
+      "fail_reason": null,
+      "error": null
+    }
+  ]
+}

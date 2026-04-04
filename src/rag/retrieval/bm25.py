@@ -14,6 +14,25 @@ class BaseBM25Retrieval:
     def run(self,search_queries: list[str], top_k=settings.retriever_top_k, filters=None):
         raise NotImplementedError
 
+    @staticmethod
+    def _value_matches(actual, expected) -> bool:
+        if isinstance(expected, (list, tuple, set)):
+            return any(BaseBM25Retrieval._value_matches(actual, item) for item in expected)
+        if actual == expected:
+            return True
+        return str(actual) == str(expected)
+
+    @staticmethod
+    def matches_filters(metadata: dict, filters=None) -> bool:
+        if not filters:
+            return True
+
+        for key, expected in filters.items():
+            actual = metadata.get(key)
+            if not BaseBM25Retrieval._value_matches(actual, expected):
+                return False
+        return True
+
 
 class BM25LiteRetriever(BaseBM25Retrieval):
 
@@ -46,14 +65,8 @@ class BM25LiteRetriever(BaseBM25Retrieval):
             for doc, score in zip(self.docs, scores):
 
                 # metadata过滤
-                if filters:
-                    skip = False
-                    for k, v in filters.items():
-                        if doc["metadata"].get(k) != v:
-                            skip = True
-                            break
-                    if skip:
-                        continue
+                if not self.matches_filters(doc["metadata"], filters):
+                    continue
 
                 doc_id = doc["content"]
 
@@ -90,9 +103,14 @@ class ESRetriever(BaseBM25Retrieval):
 
         if filters:
             for k, v in filters.items():
-                filter_clause.append({
-                    "term": {f"metadata.{k}.keyword": v}
-                })
+                if isinstance(v, (list, tuple, set)):
+                    filter_clause.append({
+                        "terms": {f"metadata.{k}.keyword": list(v)}
+                    })
+                else:
+                    filter_clause.append({
+                        "term": {f"metadata.{k}.keyword": v}
+                    })
 
         body = {
             "size": top_k,
@@ -112,7 +130,7 @@ class ESRetriever(BaseBM25Retrieval):
                 "content": hit["_source"]["content"],
                 "metadata": hit["_source"]['metadata'],
                 "bm25_score": hit["_score"],
-                "node_id": hit["_score"]['node_id']
+                "node_id": hit["_source"]["node_id"]
             })
 
         return results

@@ -1,0 +1,72 @@
+{
+  "meeting_title": "新能源行业投研讨论会 - 2016-05-11",
+  "duration": "45分钟",
+  "participants": [
+    "行业专家",
+    "基金经理",
+    "研究员B",
+    "主持人",
+    "研究员A"
+  ],
+  "segments": [
+    {
+      "time": "14:00:00",
+      "speaker": "主持人",
+      "text": "各位下午好，今天我们讨论一下新能源行业的投资机会，首先请研究员A介绍一下近期调研情况。",
+      "confidence": 0.98
+    },
+    {
+      "time": "14:02:00",
+      "speaker": "行业专家",
+      "text": "关于行业景气度，海外市场拓展顺利，全球化布局初见成效。",
+      "confidence": 0.97,
+      "emotion": "neutral"
+    },
+    {
+      "time": "14:08:00",
+      "speaker": "行业专家",
+      "text": "关于竞争格局，研发投入持续增加，新产品管线有望在未来两年贡献增量收入。，对吧",
+      "confidence": 0.87,
+      "emotion": "concerned"
+    },
+    {
+      "time": "14:14:00",
+      "speaker": "研究员B",
+      "text": "关于技术路线，海外市场拓展顺利，全球化布局初见成效。，对吧",
+      "confidence": 0.88,
+      "emotion": "concerned"
+    },
+    {
+      "time": "14:14:30",
+      "speaker": "基金经理",
+      "text": "我补充一点，短期受宏观情绪影响波动加大，但基本面支撑坚实。",
+      "confidence": 0.92,
+      "interruption": true
+    },
+    {
+      "time": "14:22:00",
+      "speaker": "研究员B",
+      "text": "关于政策影响，研发投入持续增加，新产品管线有望在未来两年贡献增量收入。，嗯",
+      "confidence": 0.92,
+      "emotion": "concerned"
+    },
+    {
+      "time": "14:27:00",
+      "speaker": "研究员A",
+      "text": "关于风险提示，行业景气度持续上行，龙头公司市占率提升逻辑清晰。",
+      "confidence": 0.85,
+      "emotion": "positive"
+    },
+    {
+      "time": "14:31:00",
+      "speaker": "主持人",
+      "text": "好的，今天的讨论很有价值，后续我们会形成正式报告，散会。",
+      "confidence": 0.99
+    }
+  ],
+  "action_items": [
+    "跟进智飞生物订单情况",
+    "整理政策文件",
+    "下周复盘讨论"
+  ]
+}
