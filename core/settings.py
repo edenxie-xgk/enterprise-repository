@@ -80,6 +80,7 @@ class Settings(BaseSettings):
     deepseek_base_url:str = Field(default=os.getenv("DEEPSEEK_URL"))
     deepseek_model:str = Field(default=os.getenv("DEEPSEEK_MODEL"))
     deepseek_api_key:str = Field(default=os.getenv("DEEPSEEK_API_KEY"))
+    zhipuai_api_key:str = Field(default=os.getenv("ZHIPUAI_API_KEY"))
 
 
 settings = Settings()

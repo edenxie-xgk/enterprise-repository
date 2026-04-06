@@ -19,13 +19,14 @@ MAX_SUB_QUERIES = 3
 class AggregateResult(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    answer: Optional[str] = Field(default="", description="聚合后的最终答案")
-    is_sufficient: bool = Field(default=False, description="聚合后的答案是否足够")
-    reason: Optional[str] = Field(default=None, description="聚合理由")
+    evidence_summary: Optional[str] = Field(default="", description="Aggregated evidence summary")
+    is_sufficient: bool = Field(default=False, description="Whether aggregated evidence is sufficient")
+    reason: Optional[str] = Field(default=None, description="Aggregation reason")
     fail_reason: Optional[Literal["insufficient_context", "ambiguous_query", "no_data"]] = Field(
         default=None,
-        description="聚合失败原因",
+        description="Aggregation failure reason",
     )
+
 
 def compute_confidence(rag_result: RAGResult) -> float:
     if not rag_result.documents:
@@ -68,19 +69,7 @@ def decide_fail_reason(rag_result: RAGResult):
 
 
 def should_run_multi_pass(query: RagContext) -> bool:
-    """判断是否应该执行多轮RAG查询
-
-    根据查询分解后的子查询数量决定是否需要执行多轮RAG查询
-
-    Args:
-        query: RagContext对象，包含分解后的子查询列表
-
-    Returns:
-        bool: 返回True表示应该执行多轮查询(子查询数量在2到MAX_SUB_QUERIES之间)
-    """
-    # 从分解查询中获取非空且非纯空格的子查询，并去除前后空格
     sub_queries = [item.strip() for item in query.decompose_query if item and item.strip()]
-    # 检查子查询数量是否在2到MAX_SUB_QUERIES(默认为3)之间
     return 2 <= len(sub_queries) <= MAX_SUB_QUERIES
 
 
@@ -108,6 +97,18 @@ def merge_citations(results: list[SubQueryResult]) -> list[str]:
     return merged
 
 
+def merge_node_ids(results: list[SubQueryResult], field_name: str) -> list[str]:
+    merged = []
+    seen = set()
+    for result in results:
+        for node_id in getattr(result, field_name, []) or []:
+            if node_id in seen:
+                continue
+            seen.add(node_id)
+            merged.append(node_id)
+    return merged
+
+
 def build_sub_query_context(results: list[SubQueryResult]) -> str:
     blocks = []
     for index, result in enumerate(results, start=1):
@@ -116,7 +117,7 @@ def build_sub_query_context(results: list[SubQueryResult]) -> str:
                 [
                     f"[Sub-query {index}]",
                     f"Question: {result.sub_query}",
-                    f"Answer: {result.answer}",
+                    f"Evidence summary: {result.evidence_summary or result.answer}",
                     f"Is sufficient: {result.is_sufficient}",
                     f"Fail reason: {result.fail_reason or ''}",
                     f"Diagnostics: {', '.join(result.diagnostics)}",
@@ -139,11 +140,14 @@ def aggregate_sub_query_results(query: str, sub_results: list[SubQueryResult]) -
         )
         return result
     except Exception:
-        fallback_answer = "\n\n".join(
-            [f"{index}. {item.sub_query}\n{item.answer}" for index, item in enumerate(sub_results, start=1)]
+        fallback_summary = "\n\n".join(
+            [
+                f"{index}. {item.sub_query}\n{item.evidence_summary or item.answer}"
+                for index, item in enumerate(sub_results, start=1)
+            ]
         )
         return AggregateResult(
-            answer=fallback_answer,
+            evidence_summary=fallback_summary,
             is_sufficient=any(item.is_sufficient for item in sub_results),
             fail_reason="insufficient_context",
             reason="aggregation_fallback",
@@ -151,25 +155,11 @@ def aggregate_sub_query_results(query: str, sub_results: list[SubQueryResult]) -
 
 
 def execute_multi_pass_rag(query: RagContext, user_context: dict) -> RAGResult:
-    """执行多轮RAG查询
-
-    将复杂查询分解为多个子查询，分别执行RAG查询后聚合结果
-
-    Args:
-        query: RagContext对象，包含原始查询及分解后的子查询
-        user_context: 用户上下文信息
-
-    Returns:
-        RAGResult: 包含聚合后的最终结果
-    """
-    # 从分解查询中获取子查询列表，最多取MAX_SUB_QUERIES个
     sub_queries = [item.strip() for item in query.decompose_query if item and item.strip()][:MAX_SUB_QUERIES]
     sub_results: list[SubQueryResult] = []
     successful_results: list[SubQueryResult] = []
 
-    # 遍历每个子查询并执行RAG查询
     for sub_query in sub_queries:
-        # 为每个子查询创建新的RagContext，保留原始查询的检索参数
         sub_context = RagContext(
             query=sub_query,
             rewritten_query="",
@@ -181,57 +171,60 @@ def execute_multi_pass_rag(query: RagContext, user_context: dict) -> RAGResult:
             use_retrieval=query.use_retrieval,
             use_rerank=query.use_rerank,
         )
-        # 执行RAG查询
         result = rag_service.query(sub_context, user_context)
-        # 将结果封装为SubQueryResult对象
         sub_result = SubQueryResult(
             sub_query=sub_query,
             answer=result.answer or "",
+            evidence_summary=result.evidence_summary or result.answer or "",
             citations=result.citations,
+            retrieval_candidate_node_ids=result.retrieval_candidate_node_ids,
+            rerank_node_ids=result.rerank_node_ids,
             documents=result.documents,
             is_sufficient=result.is_sufficient,
             fail_reason=result.fail_reason,
             diagnostics=result.diagnostics,
         )
         sub_results.append(sub_result)
-        # 记录成功的查询结果(有文档或答案)
-        if result.success and (result.documents or result.answer):
+        if result.success and (result.documents or result.evidence_summary or result.answer):
             successful_results.append(sub_result)
 
-    # 如果没有成功结果，返回失败响应
     if not successful_results:
         return RAGResult(
             success=False,
             tool_name="rag",
-            answer="子问题执行后仍未获得足够信息来回答原问题。",
+            answer="子问题执行后仍未获得足够证据。",
+            evidence_summary="子问题执行后仍未获得足够证据。",
             is_sufficient=False,
             fail_reason="no_data",
             retrieval_queries=sub_queries,
+            retrieval_candidate_node_ids=[],
+            rerank_node_ids=[],
             diagnostics=["decompose_multi_pass_failed", f"sub_query_count={len(sub_queries)}"],
             metadata={"sub_query_results": sub_results},
         )
 
-    # 聚合所有子查询结果
     aggregate_result = aggregate_sub_query_results(query.query or "", sub_results)
 
-    # 构建最终返回结果
     final_result = RAGResult(
         success=True,
         tool_name="rag",
-        answer=aggregate_result.answer,  # 使用聚合后的答案
-        documents=merge_documents(successful_results),  # 合并成功查询的文档
-        citations=merge_citations(successful_results),  # 合并成功查询的引用
+        answer=aggregate_result.evidence_summary or "",
+        evidence_summary=aggregate_result.evidence_summary or "",
+        documents=merge_documents(successful_results),
+        citations=merge_citations(successful_results),
         is_sufficient=aggregate_result.is_sufficient,
         fail_reason=None if aggregate_result.is_sufficient else (aggregate_result.fail_reason or "insufficient_context"),
         reason=aggregate_result.reason,
         retrieval_queries=sub_queries,
+        retrieval_candidate_node_ids=merge_node_ids(successful_results, "retrieval_candidate_node_ids"),
+        rerank_node_ids=merge_node_ids(successful_results, "rerank_node_ids"),
         diagnostics=[
             "decompose_multi_pass_executed",
             f"sub_query_count={len(sub_queries)}",
             f"sub_query_success_count={len(successful_results)}",
             "sub_query_aggregation_completed" if aggregate_result.is_sufficient else "sub_query_aggregation_finished",
         ],
-        metadata={"sub_query_results": sub_results},  # 包含所有子查询结果的元数据
+        metadata={"sub_query_results": sub_results},
     )
     return final_result
 
@@ -254,5 +247,5 @@ def rag_tool(query: RagContext, user_context: dict, previous_result: RAGResult |
         result.diagnostics = ["rag_query_completed"]
 
     if not result.message:
-        result.message = "rag query success" if result.success else "rag query failed"
+        result.message = "rag evidence ready" if result.success else "rag evidence failed"
     return result

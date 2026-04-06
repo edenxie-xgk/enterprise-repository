@@ -176,7 +176,7 @@ const handleFilesUpload = (files, isFolder) => {
     const formData = new FormData()
     formData.append("file", file,file.name)
     formData.append("user_id", 1)
-    formData.append("dept_id", i % 3  + 1)
+    formData.append("dept_id",  1)
     p_all.push(upload_file(formData))
   })
   Promise.all(p_all).then(res => {

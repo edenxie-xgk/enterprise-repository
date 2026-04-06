@@ -13,8 +13,7 @@ from src.rag.evaluate.generation import evaluate_generation
 from src.rag.evaluate.qa import generate_qa
 from src.rag.evaluate.rerank import evaluate_rerank
 from src.rag.evaluate.retrieval import evaluate_retrieval
-from src.rag.generation.answer_verify import verify_answer
-from src.rag.generation.generator import  generate_answer
+from src.rag.generation.generator import evaluate_evidence
 from src.rag.rerank.reranker import Reranker
 from src.rag.retrieval.dense import DenseRetriever
 from src.rag.retrieval.hybrid import HybridRetriever
@@ -71,9 +70,12 @@ class RAGService:
         *,
         documents=None,
         citations=None,
+        evidence_summary: str | None = None,
         is_sufficient: bool,
         fail_reason=None,
         retrieval_queries=None,
+        retrieval_candidate_node_ids=None,
+        rerank_node_ids=None,
         diagnostics=None,
         success: bool = True,
     ) -> RAGResult:
@@ -81,13 +83,52 @@ class RAGService:
             answer=answer,
             documents=documents or [],
             citations=citations or [],
+            evidence_summary=evidence_summary if evidence_summary is not None else answer,
             is_sufficient=is_sufficient,
             fail_reason=fail_reason,
             success=success,
             tool_name="rag",
             retrieval_queries=retrieval_queries or [],
+            retrieval_candidate_node_ids=retrieval_candidate_node_ids or [],
+            rerank_node_ids=rerank_node_ids or [],
             diagnostics=diagnostics or [],
         )
+
+    @staticmethod
+    def _extract_node_ids(documents) -> list[str]:
+        """
+        从文档集合中提取唯一的节点ID列表
+
+        该方法处理多种格式的文档对象，提取其中的node_id字段：
+        1. 支持对象属性方式获取（如Pydantic模型对象）
+        2. 支持字典方式获取
+        3. 自动去重，确保返回的ID列表唯一
+
+        Args:
+            documents: 待处理的文档集合，可以是None、列表或可迭代对象，
+                      包含字典或有node_id属性的对象
+
+        Returns:
+            list[str]: 去重后的节点ID列表，按首次出现的顺序排列
+        """
+        node_ids = []  # 存储结果的有序列表
+        seen = set()   # 用于快速查找已处理的节点ID
+        for doc in documents or []:  # 处理None输入情况
+            # 尝试从不同格式的文档中获取node_id
+            if hasattr(doc, "node_id"):
+                node_id = getattr(doc, "node_id", None)  # 从对象属性获取
+            elif isinstance(doc, dict):
+                node_id = doc.get("node_id")  # 从字典键获取
+            else:
+                node_id = None  # 不支持的格式
+
+            # 跳过无效或重复的node_id
+            if not node_id or node_id in seen:
+                continue
+
+            seen.add(node_id)  # 记录已处理的ID
+            node_ids.append(node_id)  # 添加到结果列表
+        return node_ids
 
     @staticmethod
     def _normalize_candidate_docs(documents):
@@ -116,7 +157,146 @@ class RAGService:
                 normalized.append(doc)
         return normalized
 
+    @staticmethod
+    def _is_complex_evidence_query(query_context: RagContext) -> bool:
+        text = " ".join(
+            [
+                query_context.query or "",
+                query_context.rewritten_query or "",
+                " ".join(query_context.decompose_query or []),
+            ]
+        ).lower()
+        markers = [
+            "compare",
+            "comparison",
+            "difference",
+            "differences",
+            "commonality",
+            "commonalities",
+            "analysis",
+            "risk",
+            "different meetings",
+            "different speakers",
+            "共同点",
+            "差异",
+            "区别",
+            "比较",
+            "对比",
+            "分析",
+            "风险",
+        ]
+        return len(query_context.decompose_query or []) >= 2 or any(marker in text for marker in markers)
 
+    @staticmethod
+    def _merge_fallback_docs(primary_docs, fallback_docs, keep_count: int):
+        """合并主文档和备用文档，并确保结果不重复且不超过指定数量
+
+        该方法用于在重排序阶段合并主文档集和备用文档集，确保：
+        1. 合并后的文档不重复（基于node_id去重）
+        2. 合并后的文档数量不超过keep_count指定的数量
+        3. 优先保留主文档集中的文档
+
+        Args:
+            primary_docs: 主文档列表，优先保留的文档集
+            fallback_docs: 备用文档列表，在主文档不足时补充
+            keep_count: 最终返回的文档最大数量限制
+
+        Returns:
+            list: 合并后的文档列表，已去重且不超过keep_count限制
+        """
+        merged = []
+        seen = set()
+        for doc in list(primary_docs or []) + list(fallback_docs or []):
+            node_id = doc.get("node_id") if isinstance(doc, dict) else getattr(doc, "node_id", None)
+            if not node_id or node_id in seen:
+                continue
+            seen.add(node_id)
+            merged.append(doc)
+            if len(merged) >= keep_count:
+                break
+        return merged
+
+    @staticmethod
+    def _looks_self_declared_insufficient(text: str) -> bool:
+        normalized = (text or "").strip().lower()
+        if not normalized:
+            return True
+        markers = [
+            "insufficient evidence",
+            "not enough evidence",
+            "unable to answer",
+            "cannot answer",
+            "no relevant evidence",
+            "缺乏",
+            "不足",
+            "无法回答",
+            "无法稳定回答",
+            "没有足够",
+            "未检索到",
+        ]
+        return any(marker in normalized for marker in markers)
+
+    def _apply_evidence_guardrails(self, query_context: RagContext, docs, response):
+        """应用证据护栏检查，评估RAG响应是否充分可靠
+
+        该方法对RAG生成的响应进行多维度验证，确保结果质量：
+        1. 检查证据摘要是否为空
+        2. 检查是否有引用来源
+        3. 验证来源数量是否满足最低要求
+        4. 检测响应是否自声明不足
+
+        Args:
+            query_context: 包含查询上下文的RagContext对象
+            docs: 检索到的文档列表
+            response: RAG生成的响应对象，包含is_sufficient、fail_reason等属性
+
+        Returns:
+            tuple: 包含三个元素的元组：
+                - is_sufficient (bool): 证据是否充分
+                - fail_reason (str): 失败原因（如不足）
+                - diagnostics (list): 诊断信息列表
+        """
+        # 初始化诊断信息和基础变量
+        diagnostics = []
+        is_sufficient = bool(response.is_sufficient)
+        fail_reason = response.fail_reason
+        evidence_summary = (response.evidence_summary or "").strip()
+        citations = list(response.citations or [])
+
+        # 获取文档的唯一节点ID并计算最小所需来源数
+        unique_node_ids = self._extract_node_ids(docs)
+        # 复杂查询需要至少2个来源，普通查询1个
+        min_required_sources = 2 if self._is_complex_evidence_query(query_context) else 1
+
+        # 检查1：证据摘要是否为空
+        if not evidence_summary:
+            is_sufficient = False
+            fail_reason = fail_reason or "insufficient_context"
+            diagnostics.append("evidence_guard_empty_summary")
+
+        # 检查2：是否有引用来源
+        if not citations:
+            is_sufficient = False
+            fail_reason = fail_reason or "insufficient_context"
+            diagnostics.append("evidence_guard_missing_citations")
+
+        # 检查3：来源数量是否足够
+        if len(unique_node_ids) < min_required_sources:
+            is_sufficient = False
+            fail_reason = fail_reason or "insufficient_context"
+            diagnostics.append(f"evidence_guard_min_sources={min_required_sources}")
+
+        # 检查4：响应是否自声明不足
+        if self._looks_self_declared_insufficient(evidence_summary):
+            is_sufficient = False
+            fail_reason = fail_reason or "insufficient_context"
+            diagnostics.append("evidence_guard_self_declared_insufficient")
+
+        # 默认失败原因设置
+        if not is_sufficient and not fail_reason:
+            fail_reason = "insufficient_context"
+
+        return is_sufficient, fail_reason, diagnostics
 
     def _create_bm25_retrieval(self):
         if settings.bm25_retrieval_mode == "lite":
@@ -177,10 +357,20 @@ class RAGService:
             logger.error(f"[rag向量存储失败]:存储文件:${metadata.file_path}---错误信息:${str(e)}")
             raise Exception(f"[rag向量存储失败]:存储文件:${metadata.file_path}---错误信息:${str(e)}") from e
 
-    def query(self,query_context:RagContext,user_context:dict, previous_result: RAGResult | None = None):
-        """检索RAG内容"""
+    def query(self, query_context: RagContext, user_context: dict, previous_result: RAGResult | None = None):
+        """执行RAG查询流程
+
+        Args:
+            query_context: 包含查询相关信息的上下文对象
+            user_context: 用户上下文信息(当前未使用)
+            previous_result: 前一次的RAG查询结果，可选
+
+        Returns:
+            RAGResult: 包含查询结果、文档、引用等信息的封装对象
+        """
+        # 构建搜索查询列表，合并原始查询、改写查询、扩展查询和分解查询
         search_queries = []
-        if query_context.query and query_context.query.strip()!='':
+        if query_context.query and query_context.query.strip() != '':
             search_queries.append(query_context.query)
         if query_context.rewritten_query and query_context.rewritten_query.strip() != '':
             search_queries.append(query_context.rewritten_query)
@@ -188,8 +378,10 @@ class RAGService:
             search_queries.extend([item for item in query_context.expand_query if item and item.strip() != ""])
         if query_context.decompose_query:
             search_queries.extend([item for item in query_context.decompose_query if item and item.strip() != ""])
+        # 去重处理
         search_queries = self._dedupe_queries(search_queries)
 
+        # 无有效查询时的返回处理
         if not search_queries:
             return self._build_rag_result(
                 "暂无查询语句",
@@ -201,43 +393,85 @@ class RAGService:
 
         try:
             docs = []
+            retrieval_candidate_node_ids = []
+            rerank_node_ids = []
+
+            # 检索阶段：使用混合检索或复用之前的结果
             if query_context.use_retrieval or not previous_result or not previous_result.documents:
                 print("hybrid retrieval")
+                # 执行混合检索（稠密检索+BM25）
                 hybrid_docs = HybridRetriever(self.dense_retriever, self.bm25_retriever).run(
                     search_queries,
                     top_k=query_context.retrieval_top_k,
                     filters=query_context.filters,
                 )
+                # 去重处理
                 doc_ids = []
                 for doc in hybrid_docs:
                     if doc['node_id'] not in doc_ids:
                         doc_ids.append(doc['node_id'])
                         docs.append(doc)
+                retrieval_candidate_node_ids = self._extract_node_ids(docs)
                 retrieval_diagnostics = ["hybrid_retrieval_executed"]
             else:
+                # 复用之前的检索结果
                 docs = self._normalize_candidate_docs(previous_result.documents)
+                retrieval_candidate_node_ids = list(
+                    getattr(previous_result, "retrieval_candidate_node_ids", []) or self._extract_node_ids(docs)
+                )
                 retrieval_diagnostics = ["retrieval_reused_previous_docs"]
 
+            # 无检索结果处理
             if not docs:
                 return self._build_rag_result(
                     "未检索到相关文档",
                     is_sufficient=False,
                     fail_reason="no_data",
                     retrieval_queries=search_queries,
+                    retrieval_candidate_node_ids=retrieval_candidate_node_ids,
+                    rerank_node_ids=rerank_node_ids,
                     diagnostics=retrieval_diagnostics + ["hybrid_retrieval_returned_no_docs"],
                 )
 
+            # 重排序阶段
+            retrieval_docs = list(docs)
+            fallback_keep_count = min(
+                len(retrieval_docs),
+                max(
+                    query_context.rerank_top_k,
+                    3 if self._is_complex_evidence_query(query_context) else 1,
+                ),
+            )
             if query_context.use_rerank:
                 print("***" * 50)
                 print("reranker")
-                docs = self.rerank.run(
+                reranked_docs = self.rerank.run(
                     f"{query_context.query} {query_context.rewritten_query}",
-                    docs[:query_context.retrieval_top_k],
+                    retrieval_docs[:query_context.retrieval_top_k],
                     top_k=query_context.rerank_top_k,
                 )
-                rerank_diagnostics = ["reranker_executed"]
+                rerank_diagnostics = ["reranker_executed", f"reranker_result_count={len(reranked_docs)}"]
+                # 重排结果不足处理
+                if not reranked_docs:
+                    docs = retrieval_docs[:fallback_keep_count]
+                    rerank_diagnostics.extend([
+                        "reranker_fallback_applied",
+                        "reranker_filtered_all_docs",
+                        f"reranker_fallback_count={len(docs)}",
+                    ])
+                elif len(reranked_docs) < fallback_keep_count:
+                    docs = self._merge_fallback_docs(reranked_docs, retrieval_docs, fallback_keep_count)
+                    rerank_diagnostics.extend([
+                        "reranker_fallback_supplemented",
+                        f"reranker_fallback_count={len(docs)}",
+                    ])
+                else:
+                    docs = reranked_docs
+
+                rerank_node_ids = self._extract_node_ids(docs)
             else:
-                docs = docs[:query_context.rerank_top_k]
+                docs = retrieval_docs[:query_context.rerank_top_k]
+                rerank_node_ids = self._extract_node_ids(docs)
                 rerank_diagnostics = ["reranker_skipped"]
 
             if not docs:
@@ -246,7 +480,9 @@ class RAGService:
                     is_sufficient=False,
                     fail_reason="bad_ranking",
                     retrieval_queries=search_queries,
-                    diagnostics=retrieval_diagnostics + rerank_diagnostics + ["reranker_filtered_all_docs"],
+                    retrieval_candidate_node_ids=retrieval_candidate_node_ids,
+                    rerank_node_ids=rerank_node_ids,
+                    diagnostics=retrieval_diagnostics + rerank_diagnostics + ["reranker_fallback_failed"],
                 )
 
             print("***" * 50)
@@ -255,46 +491,48 @@ class RAGService:
             context = context_builder.run(docs)
             print(context)
 
+            # 证据评估阶段
             print("***" * 50)
-            print("generate answer")
-            response = generate_answer(
+            print("evaluate evidence")
+            response = evaluate_evidence(
                 self.chatgpt_llm,
                 f"{query_context.query} {query_context.rewritten_query}",
                 context,
             )
+            guarded_is_sufficient, guarded_fail_reason, evidence_guard_diagnostics = self._apply_evidence_guardrails(
+                query_context,
+                docs,
+                response,
+            )
 
-            if response.is_sufficient:
-                verify = verify_answer(llm=self.chatgpt_llm, context=context, answer=response.answer)
-                if verify:
-                    return self._build_rag_result(
-                        response.answer,
-                        documents=docs,
-                        citations=response.citations,
-                        is_sufficient=True,
-                        retrieval_queries=search_queries,
-                        diagnostics=retrieval_diagnostics + rerank_diagnostics + ["generation_sufficient", "answer_verified"],
-                    )
-
+            if guarded_is_sufficient:
                 return self._build_rag_result(
-                    response.answer,
+                    response.evidence_summary,
                     documents=docs,
                     citations=response.citations,
-                    is_sufficient=False,
-                    fail_reason="verification_failed",
+                    evidence_summary=response.evidence_summary,
+                    is_sufficient=True,
                     retrieval_queries=search_queries,
-                    diagnostics=retrieval_diagnostics + rerank_diagnostics + ["generation_sufficient", "answer_verification_failed"],
+                    retrieval_candidate_node_ids=retrieval_candidate_node_ids,
+                    rerank_node_ids=rerank_node_ids,
+                    diagnostics=retrieval_diagnostics + rerank_diagnostics + evidence_guard_diagnostics + ["evidence_sufficient"],
                 )
 
             return self._build_rag_result(
-                response.answer,
+                response.evidence_summary,
                 documents=docs,
                 citations=response.citations,
+                evidence_summary=response.evidence_summary,
                 is_sufficient=False,
-                fail_reason=response.fail_reason,
+                fail_reason=guarded_fail_reason,
                 retrieval_queries=search_queries,
-                diagnostics=retrieval_diagnostics + rerank_diagnostics + ["generation_insufficient"],
+                retrieval_candidate_node_ids=retrieval_candidate_node_ids,
+                rerank_node_ids=rerank_node_ids,
+                diagnostics=retrieval_diagnostics + rerank_diagnostics + evidence_guard_diagnostics + ["evidence_insufficient"],
             )
+
         except Exception as exc:
+            # 异常处理
             logger.exception("RAG query failed")
             return self._build_rag_result(
                 "RAG查询失败",
@@ -302,6 +540,8 @@ class RAGService:
                 fail_reason="tool_error",
                 retrieval_queries=search_queries,
                 diagnostics=["rag_query_exception", str(exc)],
+                retrieval_candidate_node_ids=[],
+                rerank_node_ids=[],
                 success=False,
             )
 
@@ -317,7 +557,9 @@ class RAGService:
         error_nodes = []
         for doc in docs:
             try:
-                dense_docs = self.dense_retriever.run([doc['content']], top_k=5)
+                dense_docs = self.dense_retriever.run([doc['content']], top_k=5,filters={
+                    "department_id":doc['metadata']['department_id'],
+                })
                 dense_docs = [item for item in dense_docs if item['dense_score'] > 0.8]
                 if dense_docs:
                     dense_docs = sorted(dense_docs, key=lambda x: x['dense_score'], reverse=True)[

@@ -10,7 +10,7 @@ tool_route = [
     'rag',
 ]
 
-route_list = reasoning_route + tool_route + ["abort","finish"]
+route_list = reasoning_route + tool_route + ["finalize", "abort", "finish"]
 
 route_map = {
 

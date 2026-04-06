@@ -1,15 +1,15 @@
 [{
   "_id": {
-    "$oid": "69d0f7e38256b55fc6f3a7e0"
+    "$oid": "69d24e0dfb1feb2c91f12226"
   },
-  "question": "根据多个会议记录，不同部门对新能源行业景气度的看法有哪些共同点和差异？",
-  "answer": "根据会议记录分析，各部门对新能源行业景气度的看法存在以下共同点和差异：\n\n共同点：\n1. 海外市场拓展顺利，全球化布局初见成效（多个会议中研究员A、研究员B、基金经理都提到）\n2. 行业景气度持续上行，龙头公司市占率提升逻辑清晰（基金经理和行业专家提到）\n3. 当前PE处于历史中枢偏下位置，具备一定安全边际（多个会议中研究员B、主持人提到）\n\n差异：\n1. 对短期波动的看法不同：有的会议提到短期受宏观情绪影响波动加大，但基本面支撑坚实（行业专家观点），而其他会议未提及此风险\n2. 业绩表现关注点不同：有的会议强调业绩增速符合预期，毛利率环比改善明显（研究员B和基金经理提到），而其他会议更关注估值和竞争格局\n3. 风险提示侧重点不同：有的会议在风险提示中仍强调海外市场拓展顺利，而有的会议提到短期宏观情绪影响",
+  "question": "在新能源行业投资机会讨论中，不同会议对行业景气度的评估有哪些共同点和差异？",
+  "answer": "共同点：1. 行业景气度持续上行；2. 基本面支撑坚实；3. 龙头公司市占率提升逻辑清晰。差异：1. 第一个会议提到海外市场拓展顺利，全球化布局初见成效；2. 第二个会议提到业绩增速符合预期，毛利率环比改善明显，显示议价能力增强；3. 第三个会议提到短期受宏观情绪影响波动加大，但基本面支撑坚实。",
   "language": "zh-cn",
   "difficulty": "medium",
   "intent": "comparison",
   "metadata": {
     "file_name": "meeting_records_001.md",
-    "file_path": "/public/uploads/TQ/meeting_records_001.md",
+    "file_path": "/public/uploads/OE/meeting_records_001.md",
     "file_type": "md",
     "file_size": 1554,
     "source": "md",
@@ -19,31 +19,30 @@
     "chunk_index": 2,
     "user_id": 1,
     "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
+    "department_id": 1,
+    "department_name": "OE",
     "version": 1
   },
   "node_ids": [
-    "583bd2df-255a-447a-a401-91e07bd849e0",
-    "56a31ad7-f4a6-4aff-aff6-42c0e0d7ac71",
-    "7d702d51-89a8-4332-975e-8dc5d7c1d90b",
-    "a1abd26d-90c9-4e0d-9983-9740616dc9e3"
+    "13ab0276-ba67-44f8-b001-209cfc33906a",
+    "d7d6c0fc-a942-4391-bfc7-6269e8e3d8b3",
+    "3f9ba4eb-2d2e-4e2f-a387-621bb821e9fd"
   ],
-  "create_time": "2026-04-04 19:37:07",
+  "create_time": "2026-04-05 19:57:01",
   "state": 0
 },
 {
   "_id": {
-    "$oid": "69d0f7e38256b55fc6f3a7e1"
+    "$oid": "69d24e0dfb1feb2c91f12227"
   },
-  "question": "从多个会议记录中，分析新能源行业在不同讨论主题（行业景气度、竞争格局、技术路线、政策影响、风险提示）下的核心观点是什么？",
-  "answer": "根据多个会议记录的综合分析，新能源行业在不同讨论主题下的核心观点如下：\n\n1. 行业景气度：海外市场拓展顺利，全球化布局初见成效；短期可能受宏观情绪影响波动加大，但基本面支撑坚实；业绩增速符合预期，毛利率环比改善明显\n\n2. 竞争格局：行业景气度持续上行，龙头公司市占率提升逻辑清晰；海外市场拓展顺利，全球化布局初见成效\n\n3. 技术路线：海外市场拓展顺利，全球化布局初见成效；从估值角度看，当前PE处于历史中枢偏下位置，具备一定安全边际\n\n4. 政策影响：业绩增速符合预期，毛利率环比改善明显，显示议价能力增强；行业景气度持续上行，龙头公司市占率提升逻辑清晰\n\n5. 风险提示：海外市场拓展顺利，全球化布局初见成效；短期受宏观情绪影响波动加大，但基本面支撑坚实\n\n6. 估值角度：当前PE处于历史中枢偏下位置，具备一定安全边际（多个会议中反复强调）\n\n7. 研发投入：研发投入持续增加，新产品管线有望在未来两年贡献增量收入",
+  "question": "根据多个会议记录，新能源行业当前估值状况如何？不同发言人对估值安全边际的看法是什么？",
+  "answer": "当前估值状况：当前PE处于历史中枢偏下位置。不同发言人的看法：1. 研究员B（第一个会议）认为具备一定安全边际；2. 主持人（第三个会议）也认为具备一定安全边际；3. 研究员A（第二个会议）在讨论技术路线时提到从估值角度看当前PE处于历史中枢偏下位置，具备一定安全边际；4. 行业专家（第二个会议）补充认为从估值角度看当前PE处于历史中枢偏下位置，具备一定安全边际。",
   "language": "zh-cn",
-  "difficulty": "hard",
+  "difficulty": "easy",
   "intent": "analysis",
   "metadata": {
     "file_name": "meeting_records_001.md",
-    "file_path": "/public/uploads/TQ/meeting_records_001.md",
+    "file_path": "/public/uploads/OE/meeting_records_001.md",
     "file_type": "md",
     "file_size": 1554,
     "source": "md",
@@ -53,31 +52,30 @@
     "chunk_index": 2,
     "user_id": 1,
     "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
+    "department_id": 1,
+    "department_name": "OE",
     "version": 1
   },
   "node_ids": [
-    "583bd2df-255a-447a-a401-91e07bd849e0",
-    "56a31ad7-f4a6-4aff-aff6-42c0e0d7ac71",
-    "7d702d51-89a8-4332-975e-8dc5d7c1d90b",
-    "a1abd26d-90c9-4e0d-9983-9740616dc9e3"
+    "13ab0276-ba67-44f8-b001-209cfc33906a",
+    "d7d6c0fc-a942-4391-bfc7-6269e8e3d8b3",
+    "3f9ba4eb-2d2e-4e2f-a387-621bb821e9fd"
   ],
-  "create_time": "2026-04-04 19:37:07",
+  "create_time": "2026-04-05 19:57:01",
   "state": 0
 },
 {
   "_id": {
-    "$oid": "69d0f7e38256b55fc6f3a7e2"
+    "$oid": "69d24e0dfb1feb2c91f12228"
   },
-  "question": "Based on multiple meeting records, what are the common views and differences among different departments regarding the investment opportunities in the new energy industry?",
-  "answer": "Based on the analysis of multiple meeting records, the common views and differences among different departments regarding investment opportunities in the new energy industry are as follows:\n\nCommon views:\n1. Overseas market expansion is progressing smoothly, with initial achievements in global layout (mentioned by Researcher A, Researcher B, and Fund Manager in multiple meetings)\n2. Industry prosperity continues to rise, with clear logic for leading companies' market share increase (mentioned by Fund Manager and Industry Expert)\n3. Current PE is at the lower end of historical median, providing certain safety margin (mentioned by Researcher B and Host in multiple meetings)\n4. Performance growth meets expectations, with gross margin improving quarter-over-quarter, indicating enhanced bargaining power (mentioned by Researcher B and Fund Manager)\n\nDifferences:\n1. Views on short-term fluctuations: Some meetings mention that short-term volatility may increase due to macro sentiment, but fundamentals remain solid (Industry Expert's view), while other meetings do not mention this risk\n2. Focus on performance aspects: Some meetings emphasize performance growth meeting expectations and gross margin improvement, while others focus more on valuation and competitive landscape\n3. Risk warning emphasis: Some meetings still emphasize smooth overseas market expansion in risk warnings, while others mention short-term macro sentiment impact\n4. R&D investment: Only one meeting specifically mentions continuous increase in R&D investment and potential incremental revenue from new product pipelines in the next two years",
-  "language": "en",
-  "difficulty": "medium",
-  "intent": "comparison",
+  "question": "在新能源行业讨论中，不同会议对风险提示的内容有哪些？这些风险提示反映了行业面临的哪些挑战？",
+  "answer": "风险提示内容：1. 第一个会议（研究员A）：关于风险提示，海外市场拓展顺利，全球化布局初见成效；2. 第三个会议（行业专家）：关于风险提示，海外市场拓展顺利，全球化布局初见成效；3. 第二个会议（研究员B）：关于风险提示，短期受宏观情绪影响波动加大，但基本面支撑坚实。反映的挑战：1. 海外市场拓展和全球化布局的挑战；2. 宏观情绪波动对行业的影响；3. 需要坚实的基本面支撑来应对短期波动。",
+  "language": "zh-cn",
+  "difficulty": "hard",
+  "intent": "analysis",
   "metadata": {
     "file_name": "meeting_records_001.md",
-    "file_path": "/public/uploads/TQ/meeting_records_001.md",
+    "file_path": "/public/uploads/OE/meeting_records_001.md",
     "file_type": "md",
     "file_size": 1554,
     "source": "md",
@@ -87,31 +85,30 @@
     "chunk_index": 2,
     "user_id": 1,
     "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
+    "department_id": 1,
+    "department_name": "OE",
     "version": 1
   },
   "node_ids": [
-    "583bd2df-255a-447a-a401-91e07bd849e0",
-    "56a31ad7-f4a6-4aff-aff6-42c0e0d7ac71",
-    "7d702d51-89a8-4332-975e-8dc5d7c1d90b",
-    "a1abd26d-90c9-4e0d-9983-9740616dc9e3"
+    "13ab0276-ba67-44f8-b001-209cfc33906a",
+    "d7d6c0fc-a942-4391-bfc7-6269e8e3d8b3",
+    "3f9ba4eb-2d2e-4e2f-a387-621bb821e9fd"
   ],
-  "create_time": "2026-04-04 19:37:07",
+  "create_time": "2026-04-05 19:57:01",
   "state": 0
 },
 {
   "_id": {
-    "$oid": "69d0f7e38256b55fc6f3a7e3"
+    "$oid": "69d24e0dfb1feb2c91f12229"
   },
-  "question": "From multiple meeting records, analyze the core viewpoints on the new energy industry across different discussion topics (industry prosperity, competitive landscape, technology roadmap, policy impact, risk warnings).",
-  "answer": "Based on comprehensive analysis of multiple meeting records, the core viewpoints on the new energy industry across different discussion topics are as follows:\n\n1. Industry Prosperity: Overseas market expansion is progressing smoothly with initial achievements in global layout; Short-term volatility may increase due to macro sentiment, but fundamentals remain solid; Performance growth meets expectations with gross margin improving quarter-over-quarter\n\n2. Competitive Landscape: Industry prosperity continues to rise with clear logic for leading companies' market share increase; Overseas market expansion is progressing smoothly with initial achievements in global layout\n\n3. Technology Roadmap: Overseas market expansion is progressing smoothly with initial achievements in global layout; From a valuation perspective, current PE is at the lower end of historical median, providing certain safety margin\n\n4. Policy Impact: Performance growth meets expectations with gross margin improving quarter-over-quarter, indicating enhanced bargaining power; Industry prosperity continues to rise with clear logic for leading companies' market share increase\n\n5. Risk Warnings: Overseas market expansion is progressing smoothly with initial achievements in global layout; Short-term volatility may increase due to macro sentiment, but fundamentals remain solid\n\n6. Valuation Perspective: Current PE is at the lower end of historical median, providing certain safety margin (repeatedly emphasized in multiple meetings)\n\n7. R&D Investment: Continuous increase in R&D investment, with new product pipelines expected to contribute incremental revenue in the next two years\n\n8. Investment Opportunities: The industry shows multiple positive factors including overseas expansion, improving fundamentals, reasonable valuation, and clear competitive advantages for leading companies.",
+  "question": "What are the commonalities and differences in the assessment of industry prosperity in the new energy sector investment opportunity discussions across different meetings?",
+  "answer": "Commonalities: 1. Industry prosperity continues to rise; 2. Fundamental support is solid; 3. The logic for leading companies' market share increase is clear. Differences: 1. The first meeting mentions smooth overseas market expansion and initial success in global layout; 2. The second meeting mentions performance growth meeting expectations, with gross margin improving quarter-over-quarter, indicating enhanced bargaining power; 3. The third meeting mentions increased short-term volatility due to macro sentiment, but fundamental support remains solid.",
   "language": "en",
-  "difficulty": "hard",
-  "intent": "analysis",
+  "difficulty": "medium",
+  "intent": "comparison",
   "metadata": {
     "file_name": "meeting_records_001.md",
-    "file_path": "/public/uploads/TQ/meeting_records_001.md",
+    "file_path": "/public/uploads/OE/meeting_records_001.md",
     "file_type": "md",
     "file_size": 1554,
     "source": "md",
@@ -121,132 +118,32 @@
     "chunk_index": 2,
     "user_id": 1,
     "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
-    "version": 1
-  },
-  "node_ids": [
-    "583bd2df-255a-447a-a401-91e07bd849e0",
-    "56a31ad7-f4a6-4aff-aff6-42c0e0d7ac71",
-    "7d702d51-89a8-4332-975e-8dc5d7c1d90b",
-    "a1abd26d-90c9-4e0d-9983-9740616dc9e3"
-  ],
-  "create_time": "2026-04-04 19:37:07",
-  "state": 0
-},
-{
-  "_id": {
-    "$oid": "69d0f8098256b55fc6f3a7e4"
-  },
-  "question": "在新能源行业投资机会讨论中，不同发言人提到了哪些具体的投资机会和风险因素？",
-  "answer": "投资机会包括：1) 行业景气度持续上行，龙头公司市占率提升逻辑清晰；2) 业绩增速符合预期，毛利率环比改善明显，显示议价能力增强；3) 当前PE处于历史中枢偏下位置，具备一定安全边际；4) 研发投入持续增加，新产品管线有望在未来两年贡献增量收入；5) 海外市场拓展顺利，全球化布局初见成效。风险因素包括：短期受宏观情绪影响波动加大，但基本面支撑坚实。",
-  "language": "zh-cn",
-  "difficulty": "medium",
-  "intent": "analysis",
-  "metadata": {
-    "file_name": "meeting_records_002.md",
-    "file_path": "/public/uploads/OE/meeting_records_002.md",
-    "file_type": "md",
-    "file_size": 1639,
-    "source": "md",
-    "sheet_name": "",
-    "section_title": "会议记录",
-    "page": 0,
-    "chunk_index": 2,
-    "user_id": 1,
-    "user_name": "EdenXie",
     "department_id": 1,
     "department_name": "OE",
     "version": 1
   },
   "node_ids": [
-    "a1abd26d-90c9-4e0d-9983-9740616dc9e3",
-    "3468a2eb-0f9b-4f1c-b1d1-2149ef286807",
-    "56a31ad7-f4a6-4aff-aff6-42c0e0d7ac71"
+    "13ab0276-ba67-44f8-b001-209cfc33906a",
+    "d7d6c0fc-a942-4391-bfc7-6269e8e3d8b3",
+    "3f9ba4eb-2d2e-4e2f-a387-621bb821e9fd"
   ],
-  "create_time": "2026-04-04 19:37:45",
+  "create_time": "2026-04-05 19:57:01",
   "state": 0
 },
 {
   "_id": {
-    "$oid": "69d0f8098256b55fc6f3a7e5"
+    "$oid": "69d24e0dfb1feb2c91f1222a"
   },
-  "question": "对比不同会议记录中关于新能源行业估值和景气度的观点，有哪些共同点和差异？",
-  "answer": "共同点：1) 所有会议都提到行业景气度持续上行；2) 都认为当前PE处于历史中枢偏下位置，具备一定安全边际；3) 都提到龙头公司市占率提升逻辑清晰。差异点：1) 第一个会议更强调毛利率环比改善和议价能力增强；2) 第二个会议与第一个内容基本一致；3) 第三个会议特别强调了海外市场拓展顺利和全球化布局初见成效，而前两个会议没有提到这一点。",
-  "language": "zh-cn",
-  "difficulty": "hard",
-  "intent": "comparison",
-  "metadata": {
-    "file_name": "meeting_records_002.md",
-    "file_path": "/public/uploads/OE/meeting_records_002.md",
-    "file_type": "md",
-    "file_size": 1639,
-    "source": "md",
-    "sheet_name": "",
-    "section_title": "会议记录",
-    "page": 0,
-    "chunk_index": 2,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 1,
-    "department_name": "OE",
-    "version": 1
-  },
-  "node_ids": [
-    "a1abd26d-90c9-4e0d-9983-9740616dc9e3",
-    "3468a2eb-0f9b-4f1c-b1d1-2149ef286807",
-    "56a31ad7-f4a6-4aff-aff6-42c0e0d7ac71"
-  ],
-  "create_time": "2026-04-04 19:37:45",
-  "state": 0
-},
-{
-  "_id": {
-    "$oid": "69d0f8098256b55fc6f3a7e6"
-  },
-  "question": "在新能源行业讨论中，不同发言人从哪些角度分析了行业的发展前景？",
-  "answer": "发言人从以下角度分析了行业发展前景：1) 行业景气度角度：行业景气度持续上行；2) 竞争格局角度：龙头公司市占率提升逻辑清晰；3) 财务表现角度：业绩增速符合预期，毛利率环比改善明显；4) 估值角度：当前PE处于历史中枢偏下位置，具备一定安全边际；5) 研发创新角度：研发投入持续增加，新产品管线有望在未来两年贡献增量收入；6) 国际化角度：海外市场拓展顺利，全球化布局初见成效；7) 政策影响角度：政策对行业有积极影响。",
-  "language": "zh-cn",
-  "difficulty": "medium",
-  "intent": "analysis",
-  "metadata": {
-    "file_name": "meeting_records_002.md",
-    "file_path": "/public/uploads/OE/meeting_records_002.md",
-    "file_type": "md",
-    "file_size": 1639,
-    "source": "md",
-    "sheet_name": "",
-    "section_title": "会议记录",
-    "page": 0,
-    "chunk_index": 2,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 1,
-    "department_name": "OE",
-    "version": 1
-  },
-  "node_ids": [
-    "a1abd26d-90c9-4e0d-9983-9740616dc9e3",
-    "3468a2eb-0f9b-4f1c-b1d1-2149ef286807",
-    "56a31ad7-f4a6-4aff-aff6-42c0e0d7ac71"
-  ],
-  "create_time": "2026-04-04 19:37:45",
-  "state": 0
-},
-{
-  "_id": {
-    "$oid": "69d0f8098256b55fc6f3a7e7"
-  },
-  "question": "What specific investment opportunities and risk factors were mentioned by different speakers in the discussion on new energy industry investment opportunities?",
-  "answer": "Investment opportunities include: 1) Industry prosperity continues to rise, with clear logic for leading companies' market share increase; 2) Performance growth meets expectations, gross margin improves quarter-over-quarter significantly, indicating enhanced bargaining power; 3) Current PE is below the historical median, providing certain safety margin; 4) R&D investment continues to increase, new product pipelines are expected to contribute incremental revenue in the next two years; 5) Overseas market expansion is progressing smoothly, with initial results in global layout. Risk factors include: Short-term volatility increases due to macro sentiment impact, but fundamental support remains solid.",
+  "question": "According to multiple meeting records, what is the current valuation status of the new energy industry? What are the different speakers' views on valuation safety margins?",
+  "answer": "Current valuation status: Current PE is at the lower end of historical median. Different speakers' views: 1. Researcher B (first meeting) believes there is a certain safety margin; 2. Host (third meeting) also believes there is a certain safety margin; 3. Researcher A (second meeting) mentions when discussing technical routes that from a valuation perspective, current PE is at the lower end of historical median with a certain safety margin; 4. Industry expert (second meeting) supplements that from a valuation perspective, current PE is at the lower end of historical median with a certain safety margin.",
   "language": "en",
-  "difficulty": "medium",
+  "difficulty": "easy",
   "intent": "analysis",
   "metadata": {
-    "file_name": "meeting_records_002.md",
-    "file_path": "/public/uploads/OE/meeting_records_002.md",
+    "file_name": "meeting_records_001.md",
+    "file_path": "/public/uploads/OE/meeting_records_001.md",
     "file_type": "md",
-    "file_size": 1639,
+    "file_size": 1554,
     "source": "md",
     "sheet_name": "",
     "section_title": "会议记录",
@@ -259,27 +156,27 @@
     "version": 1
   },
   "node_ids": [
-    "a1abd26d-90c9-4e0d-9983-9740616dc9e3",
-    "3468a2eb-0f9b-4f1c-b1d1-2149ef286807",
-    "56a31ad7-f4a6-4aff-aff6-42c0e0d7ac71"
+    "13ab0276-ba67-44f8-b001-209cfc33906a",
+    "d7d6c0fc-a942-4391-bfc7-6269e8e3d8b3",
+    "3f9ba4eb-2d2e-4e2f-a387-621bb821e9fd"
   ],
-  "create_time": "2026-04-04 19:37:45",
+  "create_time": "2026-04-05 19:57:01",
   "state": 0
 },
 {
   "_id": {
-    "$oid": "69d0f8098256b55fc6f3a7e8"
+    "$oid": "69d24e0dfb1feb2c91f1222b"
   },
-  "question": "Compare the views on new energy industry valuation and prosperity in different meeting records, what are the commonalities and differences?",
-  "answer": "Commonalities: 1) All meetings mention that industry prosperity continues to rise; 2) All believe current PE is below the historical median, providing certain safety margin; 3) All mention clear logic for leading companies' market share increase. Differences: 1) The first meeting emphasizes more on gross margin improvement quarter-over-quarter and enhanced bargaining power; 2) The second meeting content is basically consistent with the first; 3) The third meeting specifically emphasizes smooth overseas market expansion and initial results in global layout, which the first two meetings do not mention.",
+  "question": "In the new energy industry discussions, what are the risk warnings mentioned in different meetings? What challenges do these risk warnings reflect for the industry?",
+  "answer": "Risk warning content: 1. First meeting (Researcher A): Regarding risk warnings, overseas market expansion is smooth, and global layout has achieved initial success; 2. Third meeting (Industry expert): Regarding risk warnings, overseas market expansion is smooth, and global layout has achieved initial success; 3. Second meeting (Researcher B): Regarding risk warnings, short-term volatility increases due to macro sentiment, but fundamental support remains solid. Reflected challenges: 1. Challenges in overseas market expansion and global layout; 2. Impact of macro sentiment volatility on the industry; 3. Need for solid fundamental support to cope with short-term fluctuations.",
   "language": "en",
   "difficulty": "hard",
-  "intent": "comparison",
+  "intent": "analysis",
   "metadata": {
-    "file_name": "meeting_records_002.md",
-    "file_path": "/public/uploads/OE/meeting_records_002.md",
+    "file_name": "meeting_records_001.md",
+    "file_path": "/public/uploads/OE/meeting_records_001.md",
     "file_type": "md",
-    "file_size": 1639,
+    "file_size": 1554,
     "source": "md",
     "sheet_name": "",
     "section_title": "会议记录",
@@ -292,20 +189,20 @@
     "version": 1
   },
   "node_ids": [
-    "a1abd26d-90c9-4e0d-9983-9740616dc9e3",
-    "3468a2eb-0f9b-4f1c-b1d1-2149ef286807",
-    "56a31ad7-f4a6-4aff-aff6-42c0e0d7ac71"
+    "13ab0276-ba67-44f8-b001-209cfc33906a",
+    "d7d6c0fc-a942-4391-bfc7-6269e8e3d8b3",
+    "3f9ba4eb-2d2e-4e2f-a387-621bb821e9fd"
   ],
-  "create_time": "2026-04-04 19:37:45",
+  "create_time": "2026-04-05 19:57:01",
   "state": 0
 },
 {
   "_id": {
-    "$oid": "69d0f8098256b55fc6f3a7e9"
+    "$oid": "69d24e2efb1feb2c91f1222c"
   },
-  "question": "From which perspectives did different speakers analyze the development prospects of the new energy industry in the discussions?",
-  "answer": "Speakers analyzed industry development prospects from the following perspectives: 1) Industry prosperity perspective: Industry prosperity continues to rise; 2) Competitive landscape perspective: Clear logic for leading companies' market share increase; 3) Financial performance perspective: Performance growth meets expectations, gross margin improves quarter-over-quarter significantly; 4) Valuation perspective: Current PE is below the historical median, providing certain safety margin; 5) R&D innovation perspective: R&D investment continues to increase, new product pipelines expected to contribute incremental revenue in next two years; 6) Internationalization perspective: Overseas market expansion progressing smoothly, initial results in global layout; 7) Policy impact perspective: Positive policy impact on the industry.",
-  "language": "en",
+  "question": "根据会议记录，新能源行业在哪些方面显示出积极的发展态势？",
+  "answer": "根据会议记录，新能源行业在多个方面显示出积极发展态势：1) 行业景气度持续上行，龙头公司市占率提升逻辑清晰；2) 业绩增速符合预期，毛利率环比改善明显，显示议价能力增强；3) 海外市场拓展顺利，全球化布局初见成效；4) 研发投入持续增加，新产品管线有望在未来两年贡献增量收入；5) 从估值角度看，当前PE处于历史中枢偏下位置，具备一定安全边际。",
+  "language": "zh-cn",
   "difficulty": "medium",
   "intent": "analysis",
   "metadata": {
@@ -325,93 +222,27 @@
     "version": 1
   },
   "node_ids": [
-    "a1abd26d-90c9-4e0d-9983-9740616dc9e3",
-    "3468a2eb-0f9b-4f1c-b1d1-2149ef286807",
-    "56a31ad7-f4a6-4aff-aff6-42c0e0d7ac71"
+    "3f9ba4eb-2d2e-4e2f-a387-621bb821e9fd",
+    "13ab0276-ba67-44f8-b001-209cfc33906a",
+    "90f9ad58-d83b-4e0d-9fb2-650e98eab2ea"
   ],
-  "create_time": "2026-04-04 19:37:45",
+  "create_time": "2026-04-05 19:57:34",
   "state": 0
 },
 {
   "_id": {
-    "$oid": "69d0f82c8256b55fc6f3a7ea"
+    "$oid": "69d24e2efb1feb2c91f1222d"
   },
-  "question": "在新能源行业投资机会讨论中，哪些发言人提到了估值方面的观点？他们分别说了什么？",
-  "answer": "在会议记录中，有两位发言人提到了估值观点：1) 主持人（14:02:30）表示当前PE处于历史中枢偏下位置，具备一定安全边际；2) 研究员B（14:02:30和14:21:30）也补充了相同的观点，认为当前PE处于历史中枢偏下位置，具备一定安全边际。",
+  "question": "会议中提到了哪些关于新能源行业的风险因素？",
+  "answer": "会议中提到的风险因素包括：1) 短期受宏观情绪影响波动加大，但基本面支撑坚实；2) 虽然行业整体发展积极，但仍需关注宏观环境变化对市场情绪的影响。",
   "language": "zh-cn",
-  "difficulty": "medium",
-  "intent": "analysis",
-  "metadata": {
-    "file_name": "meeting_records_003.md",
-    "file_path": "/public/uploads/HR/meeting_records_003.md",
-    "file_type": "md",
-    "file_size": 1422,
-    "source": "md",
-    "sheet_name": "",
-    "section_title": "会议记录",
-    "page": 0,
-    "chunk_index": 2,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 3,
-    "department_name": "HR",
-    "version": 1
-  },
-  "node_ids": [
-    "719e9f0e-11bf-4d73-b7d0-f629367a89da",
-    "7d702d51-89a8-4332-975e-8dc5d7c1d90b",
-    "56a31ad7-f4a6-4aff-aff6-42c0e0d7ac71"
-  ],
-  "create_time": "2026-04-04 19:38:20",
-  "state": 0
-},
-{
-  "_id": {
-    "$oid": "69d0f82c8256b55fc6f3a7eb"
-  },
-  "question": "关于新能源行业的海外市场拓展情况，会议中有哪些不同的观点或表述？",
-  "answer": "会议中对海外市场拓展的表述存在差异：1) 基金经理（14:07:00）和研究员A（14:13:00）表示海外市场拓展顺利，全球化布局初见成效；2) 行业专家（14:24:00）在风险提示中也提到海外市场拓展顺利，全球化布局初见成效；3) 研究员B（14:14:00）同样提到海外市场拓展顺利，全球化布局初见成效。但研究员A在14:02:00的发言中，将海外市场拓展与行业景气度关联起来。",
-  "language": "zh-cn",
-  "difficulty": "hard",
-  "intent": "comparison",
-  "metadata": {
-    "file_name": "meeting_records_003.md",
-    "file_path": "/public/uploads/HR/meeting_records_003.md",
-    "file_type": "md",
-    "file_size": 1422,
-    "source": "md",
-    "sheet_name": "",
-    "section_title": "会议记录",
-    "page": 0,
-    "chunk_index": 2,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 3,
-    "department_name": "HR",
-    "version": 1
-  },
-  "node_ids": [
-    "719e9f0e-11bf-4d73-b7d0-f629367a89da",
-    "7d702d51-89a8-4332-975e-8dc5d7c1d90b",
-    "56a31ad7-f4a6-4aff-aff6-42c0e0d7ac71"
-  ],
-  "create_time": "2026-04-04 19:38:20",
-  "state": 0
-},
-{
-  "_id": {
-    "$oid": "69d0f82c8256b55fc6f3a7ec"
-  },
-  "question": "在新能源行业讨论中，关于业绩和毛利率的表现有哪些具体描述？",
-  "answer": "关于业绩和毛利率的表现：1) 研究员A（14:21:00）提到业绩增速符合预期，毛利率环比改善明显，显示议价能力增强；2) 基金经理（14:17:00）也提到业绩增速符合预期，毛利率环比改善明显，显示议价能力增强。这两处描述基本一致，都强调了业绩符合预期和毛利率的改善。",
-  "language": "zh-cn",
-  "difficulty": "medium",
+  "difficulty": "easy",
   "intent": "factoid",
   "metadata": {
-    "file_name": "meeting_records_003.md",
-    "file_path": "/public/uploads/HR/meeting_records_003.md",
+    "file_name": "meeting_records_002.md",
+    "file_path": "/public/uploads/OE/meeting_records_002.md",
     "file_type": "md",
-    "file_size": 1422,
+    "file_size": 1639,
     "source": "md",
     "sheet_name": "",
     "section_title": "会议记录",
@@ -419,32 +250,63 @@
     "chunk_index": 2,
     "user_id": 1,
     "user_name": "EdenXie",
-    "department_id": 3,
-    "department_name": "HR",
+    "department_id": 1,
+    "department_name": "OE",
     "version": 1
   },
   "node_ids": [
-    "719e9f0e-11bf-4d73-b7d0-f629367a89da",
-    "7d702d51-89a8-4332-975e-8dc5d7c1d90b",
-    "56a31ad7-f4a6-4aff-aff6-42c0e0d7ac71"
+    "3f9ba4eb-2d2e-4e2f-a387-621bb821e9fd",
+    "90f9ad58-d83b-4e0d-9fb2-650e98eab2ea"
   ],
-  "create_time": "2026-04-04 19:38:20",
+  "create_time": "2026-04-05 19:57:34",
   "state": 0
 },
 {
   "_id": {
-    "$oid": "69d0f82c8256b55fc6f3a7ed"
+    "$oid": "69d24e2efb1feb2c91f1222e"
   },
-  "question": "In the discussion on new energy industry investment opportunities, which speakers mentioned valuation perspectives and what did they say?",
-  "answer": "In the meeting records, two speakers mentioned valuation perspectives: 1) The host (14:02:30) stated that the current PE is at a position below the historical median, providing some safety margin; 2) Researcher B (14:02:30 and 14:21:30) also added the same perspective, mentioning that the current PE is at a position below the historical median, providing some safety margin.",
+  "question": "不同发言人对新能源行业估值水平的看法是什么？",
+  "answer": "多位发言人对新能源行业估值水平持相似看法：研究员A、研究员B和行业专家都认为，从估值角度看，当前PE处于历史中枢偏下位置，具备一定安全边际。这表明行业估值相对合理，存在投资价值。",
+  "language": "zh-cn",
+  "difficulty": "medium",
+  "intent": "comparison",
+  "metadata": {
+    "file_name": "meeting_records_002.md",
+    "file_path": "/public/uploads/OE/meeting_records_002.md",
+    "file_type": "md",
+    "file_size": 1639,
+    "source": "md",
+    "sheet_name": "",
+    "section_title": "会议记录",
+    "page": 0,
+    "chunk_index": 2,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 1,
+    "department_name": "OE",
+    "version": 1
+  },
+  "node_ids": [
+    "3f9ba4eb-2d2e-4e2f-a387-621bb821e9fd",
+    "13ab0276-ba67-44f8-b001-209cfc33906a"
+  ],
+  "create_time": "2026-04-05 19:57:34",
+  "state": 0
+},
+{
+  "_id": {
+    "$oid": "69d24e2efb1feb2c91f1222f"
+  },
+  "question": "According to the meeting records, in which aspects does the new energy industry show positive development trends?",
+  "answer": "According to the meeting records, the new energy industry shows positive development trends in several aspects: 1) Industry prosperity continues to rise, with clear logic for leading companies to increase market share; 2) Performance growth meets expectations, gross profit margin improves quarter-on-quarter significantly, indicating enhanced bargaining power; 3) Overseas market expansion is progressing smoothly, with initial results in global layout; 4) R&D investment continues to increase, and new product pipelines are expected to contribute incremental revenue in the next two years; 5) From a valuation perspective, current PE is below the historical median, providing certain safety margin.",
   "language": "en",
   "difficulty": "medium",
   "intent": "analysis",
   "metadata": {
-    "file_name": "meeting_records_003.md",
-    "file_path": "/public/uploads/HR/meeting_records_003.md",
+    "file_name": "meeting_records_002.md",
+    "file_path": "/public/uploads/OE/meeting_records_002.md",
     "file_type": "md",
-    "file_size": 1422,
+    "file_size": 1639,
     "source": "md",
     "sheet_name": "",
     "section_title": "会议记录",
@@ -452,63 +314,94 @@
     "chunk_index": 2,
     "user_id": 1,
     "user_name": "EdenXie",
-    "department_id": 3,
-    "department_name": "HR",
+    "department_id": 1,
+    "department_name": "OE",
     "version": 1
   },
   "node_ids": [
-    "719e9f0e-11bf-4d73-b7d0-f629367a89da",
-    "7d702d51-89a8-4332-975e-8dc5d7c1d90b",
-    "56a31ad7-f4a6-4aff-aff6-42c0e0d7ac71"
+    "3f9ba4eb-2d2e-4e2f-a387-621bb821e9fd",
+    "13ab0276-ba67-44f8-b001-209cfc33906a",
+    "90f9ad58-d83b-4e0d-9fb2-650e98eab2ea"
   ],
-  "create_time": "2026-04-04 19:38:20",
+  "create_time": "2026-04-05 19:57:34",
   "state": 0
 },
 {
   "_id": {
-    "$oid": "69d0f82c8256b55fc6f3a7ee"
+    "$oid": "69d24e2efb1feb2c91f12230"
   },
-  "question": "What are the different views or statements regarding overseas market expansion in the new energy industry during the meeting?",
-  "answer": "There are variations in statements about overseas market expansion: 1) The fund manager (14:07:00) and Researcher A (14:13:00) stated that overseas market expansion is progressing smoothly with initial success in global layout; 2) The industry expert (14:24:00) also mentioned in risk warnings that overseas market expansion is progressing smoothly with initial success in global layout; 3) Researcher B (14:14:00) similarly mentioned overseas market expansion progressing smoothly with initial success in global layout. However, Researcher A in the 14:02:00 statement linked overseas market expansion with industry prosperity.",
+  "question": "What risk factors were mentioned regarding the new energy industry in the meetings?",
+  "answer": "The risk factors mentioned in the meetings include: 1) Short-term volatility increases due to macro sentiment impact, but fundamental support remains solid; 2) Although the industry shows overall positive development, attention should be paid to changes in the macro environment affecting market sentiment.",
   "language": "en",
-  "difficulty": "hard",
-  "intent": "comparison",
-  "metadata": {
-    "file_name": "meeting_records_003.md",
-    "file_path": "/public/uploads/HR/meeting_records_003.md",
-    "file_type": "md",
-    "file_size": 1422,
-    "source": "md",
-    "sheet_name": "",
-    "section_title": "会议记录",
-    "page": 0,
-    "chunk_index": 2,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 3,
-    "department_name": "HR",
-    "version": 1
-  },
-  "node_ids": [
-    "719e9f0e-11bf-4d73-b7d0-f629367a89da",
-    "7d702d51-89a8-4332-975e-8dc5d7c1d90b",
-    "56a31ad7-f4a6-4aff-aff6-42c0e0d7ac71"
-  ],
-  "create_time": "2026-04-04 19:38:20",
-  "state": 0
-},
-{
-  "_id": {
-    "$oid": "69d0f82c8256b55fc6f3a7ef"
-  },
-  "question": "What specific descriptions were given about performance and gross margin in the new energy industry discussion?",
-  "answer": "Regarding performance and gross margin: 1) Researcher A (14:21:00) mentioned that performance growth meets expectations, with gross margin showing significant quarter-over-quarter improvement, indicating enhanced bargaining power; 2) The fund manager (14:17:00) also mentioned that performance growth meets expectations, with gross margin showing significant quarter-over-quarter improvement, indicating enhanced bargaining power. These two descriptions are essentially consistent, both emphasizing meeting performance expectations and gross margin improvement.",
-  "language": "en",
-  "difficulty": "medium",
+  "difficulty": "easy",
   "intent": "factoid",
   "metadata": {
+    "file_name": "meeting_records_002.md",
+    "file_path": "/public/uploads/OE/meeting_records_002.md",
+    "file_type": "md",
+    "file_size": 1639,
+    "source": "md",
+    "sheet_name": "",
+    "section_title": "会议记录",
+    "page": 0,
+    "chunk_index": 2,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 1,
+    "department_name": "OE",
+    "version": 1
+  },
+  "node_ids": [
+    "3f9ba4eb-2d2e-4e2f-a387-621bb821e9fd",
+    "90f9ad58-d83b-4e0d-9fb2-650e98eab2ea"
+  ],
+  "create_time": "2026-04-05 19:57:34",
+  "state": 0
+},
+{
+  "_id": {
+    "$oid": "69d24e2efb1feb2c91f12231"
+  },
+  "question": "What are the views of different speakers on the valuation level of the new energy industry?",
+  "answer": "Multiple speakers hold similar views on the valuation level of the new energy industry: Researcher A, Researcher B, and industry experts all believe that from a valuation perspective, current PE is below the historical median, providing certain safety margin. This indicates that industry valuation is relatively reasonable and has investment value.",
+  "language": "en",
+  "difficulty": "medium",
+  "intent": "comparison",
+  "metadata": {
+    "file_name": "meeting_records_002.md",
+    "file_path": "/public/uploads/OE/meeting_records_002.md",
+    "file_type": "md",
+    "file_size": 1639,
+    "source": "md",
+    "sheet_name": "",
+    "section_title": "会议记录",
+    "page": 0,
+    "chunk_index": 2,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 1,
+    "department_name": "OE",
+    "version": 1
+  },
+  "node_ids": [
+    "3f9ba4eb-2d2e-4e2f-a387-621bb821e9fd",
+    "13ab0276-ba67-44f8-b001-209cfc33906a"
+  ],
+  "create_time": "2026-04-05 19:57:34",
+  "state": 0
+},
+{
+  "_id": {
+    "$oid": "69d24e55fb1feb2c91f12232"
+  },
+  "question": "根据会议记录，不同发言人对新能源行业估值水平的看法是什么？",
+  "answer": "根据会议记录，多个发言人都提到新能源行业当前估值处于历史中枢偏下位置，具备一定安全边际。在第一个会议中，主持人在14:02:30提到这一点；在第二个会议中，研究员B在14:02:30和14:21:30两次提到；在第三个会议中，研究员A在14:11:00和行业专家在14:23:30都提到了相同的观点。",
+  "language": "zh-cn",
+  "difficulty": "medium",
+  "intent": "analysis",
+  "metadata": {
     "file_name": "meeting_records_003.md",
-    "file_path": "/public/uploads/HR/meeting_records_003.md",
+    "file_path": "/public/uploads/OE/meeting_records_003.md",
     "file_type": "md",
     "file_size": 1422,
     "source": "md",
@@ -518,32 +411,32 @@
     "chunk_index": 2,
     "user_id": 1,
     "user_name": "EdenXie",
-    "department_id": 3,
-    "department_name": "HR",
+    "department_id": 1,
+    "department_name": "OE",
     "version": 1
   },
   "node_ids": [
-    "719e9f0e-11bf-4d73-b7d0-f629367a89da",
-    "7d702d51-89a8-4332-975e-8dc5d7c1d90b",
-    "56a31ad7-f4a6-4aff-aff6-42c0e0d7ac71"
+    "d7d6c0fc-a942-4391-bfc7-6269e8e3d8b3",
+    "13ab0276-ba67-44f8-b001-209cfc33906a",
+    "3f9ba4eb-2d2e-4e2f-a387-621bb821e9fd"
   ],
-  "create_time": "2026-04-04 19:38:20",
+  "create_time": "2026-04-05 19:58:13",
   "state": 0
 },
 {
   "_id": {
-    "$oid": "69d0f8568256b55fc6f3a7f0"
+    "$oid": "69d24e55fb1feb2c91f12233"
   },
-  "question": "在新能源行业投资机会讨论中，不同发言人对行业景气度的看法有哪些共同点和差异？",
-  "answer": "根据会议记录，关于行业景气度的看法存在一些共同点和差异。共同点：多个发言人都提到基本面支撑坚实（基金经理在14:14:30提到，行业专家在14:02:00也提到）。差异点：1）行业专家（14:02:00）认为海外市场拓展顺利，全球化布局初见成效；2）研究员A（14:27:00）认为行业景气度持续上行，龙头公司市占率提升逻辑清晰；3）基金经理（14:02:00在另一个会议中）提到研发投入持续增加，新产品管线有望在未来两年贡献增量收入。",
+  "question": "会议中关于新能源行业海外市场拓展的情况有哪些不同的观点？",
+  "answer": "会议记录显示，多个发言人对新能源行业海外市场拓展持积极态度。在第一个会议中，基金经理在14:07:00、研究员A在14:13:00和行业专家在14:24:00都提到海外市场拓展顺利，全球化布局初见成效。在第二个会议中，研究员A在14:02:00、研究员B在14:14:00和研究员A在14:21:00也提到了类似观点。在第三个会议中，虽然没有直接提到海外市场拓展，但提到了行业景气度持续上行和龙头公司市占率提升。",
   "language": "zh-cn",
   "difficulty": "medium",
   "intent": "comparison",
   "metadata": {
-    "file_name": "meeting_records_004.md",
-    "file_path": "/public/uploads/TQ/meeting_records_004.md",
+    "file_name": "meeting_records_003.md",
+    "file_path": "/public/uploads/OE/meeting_records_003.md",
     "file_type": "md",
-    "file_size": 1436,
+    "file_size": 1422,
     "source": "md",
     "sheet_name": "",
     "section_title": "会议记录",
@@ -551,67 +444,32 @@
     "chunk_index": 2,
     "user_id": 1,
     "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
+    "department_id": 1,
+    "department_name": "OE",
     "version": 1
   },
   "node_ids": [
-    "2afbc6d0-20db-431d-a93d-c16cedd6b10c",
-    "a3bf6e67-6f48-4036-b660-97d8a12317df",
-    "7d702d51-89a8-4332-975e-8dc5d7c1d90b",
-    "0ca755bd-a30d-4b58-a7e7-c53e65369357"
+    "d7d6c0fc-a942-4391-bfc7-6269e8e3d8b3",
+    "13ab0276-ba67-44f8-b001-209cfc33906a",
+    "3f9ba4eb-2d2e-4e2f-a387-621bb821e9fd"
   ],
-  "create_time": "2026-04-04 19:39:02",
+  "create_time": "2026-04-05 19:58:13",
   "state": 0
 },
 {
   "_id": {
-    "$oid": "69d0f8568256b55fc6f3a7f1"
+    "$oid": "69d24e55fb1feb2c91f12234"
   },
-  "question": "在新能源行业讨论中，不同发言人对竞争格局的分析有哪些不同的侧重点？",
-  "answer": "不同发言人对竞争格局的分析侧重点不同：1）行业专家（14:08:00）强调研发投入持续增加，新产品管线有望在未来两年贡献增量收入；2）基金经理（14:07:00在另一个会议中）认为海外市场拓展顺利，全球化布局初见成效；3）研究员A（14:07:00在另一个会议中）提到业绩增速符合预期，毛利率环比改善明显，显示议价能力增强。",
-  "language": "zh-cn",
-  "difficulty": "medium",
-  "intent": "analysis",
-  "metadata": {
-    "file_name": "meeting_records_004.md",
-    "file_path": "/public/uploads/TQ/meeting_records_004.md",
-    "file_type": "md",
-    "file_size": 1436,
-    "source": "md",
-    "sheet_name": "",
-    "section_title": "会议记录",
-    "page": 0,
-    "chunk_index": 2,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
-    "version": 1
-  },
-  "node_ids": [
-    "2afbc6d0-20db-431d-a93d-c16cedd6b10c",
-    "a3bf6e67-6f48-4036-b660-97d8a12317df",
-    "7d702d51-89a8-4332-975e-8dc5d7c1d90b",
-    "0ca755bd-a30d-4b58-a7e7-c53e65369357"
-  ],
-  "create_time": "2026-04-04 19:39:02",
-  "state": 0
-},
-{
-  "_id": {
-    "$oid": "69d0f8568256b55fc6f3a7f2"
-  },
-  "question": "在新能源行业投资讨论中，不同会议对风险提示的内容有哪些异同？",
-  "answer": "不同会议对风险提示的内容存在异同：相同点：都提到了海外市场拓展顺利，全球化布局初见成效（研究员A在14:27:00提到，研究员A在14:22:00在另一个会议中也提到）。不同点：1）研究员A（14:27:00）还提到行业景气度持续上行，龙头公司市占率提升逻辑清晰；2）行业专家（14:24:00在另一个会议中）只提到海外市场拓展顺利，全球化布局初见成效。",
+  "question": "不同会议中提到的风险提示有哪些共同点和差异？",
+  "answer": "会议记录显示的风险提示有：在第一个会议中，行业专家在14:24:00提到海外市场拓展顺利（这可能不是风险而是机会）；在第二个会议中，研究员A在14:21:00提到海外市场拓展顺利；在第三个会议中，研究员B在14:23:00提到短期受宏观情绪影响波动加大，但基本面支撑坚实。共同点是都提到了海外市场拓展，差异在于第三个会议更具体地提到了宏观情绪波动和基本面支撑。",
   "language": "zh-cn",
   "difficulty": "hard",
   "intent": "comparison",
   "metadata": {
-    "file_name": "meeting_records_004.md",
-    "file_path": "/public/uploads/TQ/meeting_records_004.md",
+    "file_name": "meeting_records_003.md",
+    "file_path": "/public/uploads/OE/meeting_records_003.md",
     "file_type": "md",
-    "file_size": 1436,
+    "file_size": 1422,
     "source": "md",
     "sheet_name": "",
     "section_title": "会议记录",
@@ -619,33 +477,32 @@
     "chunk_index": 2,
     "user_id": 1,
     "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
+    "department_id": 1,
+    "department_name": "OE",
     "version": 1
   },
   "node_ids": [
-    "2afbc6d0-20db-431d-a93d-c16cedd6b10c",
-    "a3bf6e67-6f48-4036-b660-97d8a12317df",
-    "7d702d51-89a8-4332-975e-8dc5d7c1d90b",
-    "0ca755bd-a30d-4b58-a7e7-c53e65369357"
+    "d7d6c0fc-a942-4391-bfc7-6269e8e3d8b3",
+    "13ab0276-ba67-44f8-b001-209cfc33906a",
+    "3f9ba4eb-2d2e-4e2f-a387-621bb821e9fd"
   ],
-  "create_time": "2026-04-04 19:39:02",
+  "create_time": "2026-04-05 19:58:13",
   "state": 0
 },
 {
   "_id": {
-    "$oid": "69d0f8568256b55fc6f3a7f3"
+    "$oid": "69d24e55fb1feb2c91f12235"
   },
-  "question": "What are the similarities and differences in views on industry prosperity among different speakers in the discussion of new energy industry investment opportunities?",
-  "answer": "According to the meeting records, there are some similarities and differences in views on industry prosperity. Similarities: Multiple speakers mentioned that the fundamental support is solid (fund manager at 14:14:30, industry expert at 14:02:00 also mentioned). Differences: 1) Industry expert (14:02:00) believes overseas market expansion is going smoothly, and global layout is beginning to show results; 2) Researcher A (14:27:00) believes industry prosperity continues to rise, and the logic for leading companies' market share increase is clear; 3) Fund manager (14:02:00 in another meeting) mentioned that R&D investment continues to increase, and new product pipelines are expected to contribute incremental revenue in the next two years.",
+  "question": "What are the views of different speakers on the valuation level of the new energy industry according to the meeting records?",
+  "answer": "According to the meeting records, multiple speakers mentioned that the current valuation of the new energy industry is at a level below the historical median, providing a certain margin of safety. In the first meeting, the host mentioned this at 14:02:30; in the second meeting, Researcher B mentioned it twice at 14:02:30 and 14:21:30; in the third meeting, Researcher A at 14:11:00 and the industry expert at 14:23:30 both expressed the same view.",
   "language": "en",
   "difficulty": "medium",
-  "intent": "comparison",
+  "intent": "analysis",
   "metadata": {
-    "file_name": "meeting_records_004.md",
-    "file_path": "/public/uploads/TQ/meeting_records_004.md",
+    "file_name": "meeting_records_003.md",
+    "file_path": "/public/uploads/OE/meeting_records_003.md",
     "file_type": "md",
-    "file_size": 1436,
+    "file_size": 1422,
     "source": "md",
     "sheet_name": "",
     "section_title": "会议记录",
@@ -653,17 +510,143 @@
     "chunk_index": 2,
     "user_id": 1,
     "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
+    "department_id": 1,
+    "department_name": "OE",
     "version": 1
   },
   "node_ids": [
-    "2afbc6d0-20db-431d-a93d-c16cedd6b10c",
-    "a3bf6e67-6f48-4036-b660-97d8a12317df",
-    "7d702d51-89a8-4332-975e-8dc5d7c1d90b",
-    "0ca755bd-a30d-4b58-a7e7-c53e65369357"
+    "d7d6c0fc-a942-4391-bfc7-6269e8e3d8b3",
+    "13ab0276-ba67-44f8-b001-209cfc33906a",
+    "3f9ba4eb-2d2e-4e2f-a387-621bb821e9fd"
   ],
-  "create_time": "2026-04-04 19:39:02",
+  "create_time": "2026-04-05 19:58:13",
   "state": 0
-}
-]
+},
+{
+  "_id": {
+    "$oid": "69d24e55fb1feb2c91f12236"
+  },
+  "question": "What are the different perspectives on overseas market expansion in the new energy industry mentioned in the meetings?",
+  "answer": "The meeting records show that multiple speakers hold positive views on overseas market expansion in the new energy industry. In the first meeting, the fund manager at 14:07:00, Researcher A at 14:13:00, and the industry expert at 14:24:00 all mentioned that overseas market expansion is progressing smoothly and globalization layout is beginning to show results. In the second meeting, Researcher A at 14:02:00, Researcher B at 14:14:00, and Researcher A at 14:21:00 also mentioned similar views. In the third meeting, although overseas market expansion was not directly mentioned, it did mention that industry prosperity continues to rise and leading companies' market share is increasing.",
+  "language": "en",
+  "difficulty": "medium",
+  "intent": "comparison",
+  "metadata": {
+    "file_name": "meeting_records_003.md",
+    "file_path": "/public/uploads/OE/meeting_records_003.md",
+    "file_type": "md",
+    "file_size": 1422,
+    "source": "md",
+    "sheet_name": "",
+    "section_title": "会议记录",
+    "page": 0,
+    "chunk_index": 2,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 1,
+    "department_name": "OE",
+    "version": 1
+  },
+  "node_ids": [
+    "d7d6c0fc-a942-4391-bfc7-6269e8e3d8b3",
+    "13ab0276-ba67-44f8-b001-209cfc33906a",
+    "3f9ba4eb-2d2e-4e2f-a387-621bb821e9fd"
+  ],
+  "create_time": "2026-04-05 19:58:13",
+  "state": 0
+},
+{
+  "_id": {
+    "$oid": "69d24e55fb1feb2c91f12237"
+  },
+  "question": "What are the similarities and differences in risk warnings mentioned across different meetings?",
+  "answer": "The risk warnings mentioned in the meeting records include: In the first meeting, the industry expert at 14:24:00 mentioned that overseas market expansion is progressing smoothly (which may be an opportunity rather than a risk); in the second meeting, Researcher A at 14:21:00 mentioned overseas market expansion; in the third meeting, Researcher B at 14:23:00 mentioned that short-term fluctuations are increasing due to macro sentiment, but fundamental support remains solid. The common point is that they all mentioned overseas market expansion, while the difference is that the third meeting more specifically mentioned macro sentiment fluctuations and fundamental support.",
+  "language": "en",
+  "difficulty": "hard",
+  "intent": "comparison",
+  "metadata": {
+    "file_name": "meeting_records_003.md",
+    "file_path": "/public/uploads/OE/meeting_records_003.md",
+    "file_type": "md",
+    "file_size": 1422,
+    "source": "md",
+    "sheet_name": "",
+    "section_title": "会议记录",
+    "page": 0,
+    "chunk_index": 2,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 1,
+    "department_name": "OE",
+    "version": 1
+  },
+  "node_ids": [
+    "d7d6c0fc-a942-4391-bfc7-6269e8e3d8b3",
+    "13ab0276-ba67-44f8-b001-209cfc33906a",
+    "3f9ba4eb-2d2e-4e2f-a387-621bb821e9fd"
+  ],
+  "create_time": "2026-04-05 19:58:13",
+  "state": 0
+},
+{
+  "_id": {
+    "$oid": "69d24e77fb1feb2c91f12238"
+  },
+  "question": "根据会议记录，基金经理和研究员们讨论了哪些积极的市场表现和风险提示？",
+  "answer": "基金经理提到业绩增速符合预期，毛利率环比改善明显，显示议价能力增强。研究员A指出海外市场拓展顺利，全球化布局初见成效。研究员B补充从估值角度看，当前PE处于历史中枢偏下位置，具备一定安全边际。",
+  "language": "zh-cn",
+  "difficulty": "medium",
+  "intent": "analysis",
+  "metadata": {
+    "file_name": "meeting_records_001.json",
+    "file_path": "/public/uploads/OE/meeting_records_001.json",
+    "file_type": "json",
+    "file_size": 2504,
+    "source": "json",
+    "sheet_name": "",
+    "section_title": "",
+    "page": 0,
+    "chunk_index": 3,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 1,
+    "department_name": "OE",
+    "version": 1
+  },
+  "node_ids": [
+    "568b0456-d44e-4970-bf9d-483555a4aff3"
+  ],
+  "create_time": "2026-04-05 19:58:47",
+  "state": 0
+},
+{
+  "_id": {
+    "$oid": "69d24e77fb1feb2c91f12239"
+  },
+  "question": "What positive market performance and risk alerts were discussed by the fund manager and researchers in the meeting records?",
+  "answer": "The fund manager mentioned that performance growth met expectations, gross profit margin improved significantly quarter-over-quarter, indicating enhanced pricing power. Researcher A noted that overseas market expansion was progressing smoothly, with initial results from globalization layout. Researcher B added that from a valuation perspective, current PE is at a historically low-to-mid level, providing some safety margin.",
+  "language": "en",
+  "difficulty": "medium",
+  "intent": "analysis",
+  "metadata": {
+    "file_name": "meeting_records_001.json",
+    "file_path": "/public/uploads/OE/meeting_records_001.json",
+    "file_type": "json",
+    "file_size": 2504,
+    "source": "json",
+    "sheet_name": "",
+    "section_title": "",
+    "page": 0,
+    "chunk_index": 3,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 1,
+    "department_name": "OE",
+    "version": 1
+  },
+  "node_ids": [
+    "568b0456-d44e-4970-bf9d-483555a4aff3"
+  ],
+  "create_time": "2026-04-05 19:58:47",
+  "state": 0
+}]

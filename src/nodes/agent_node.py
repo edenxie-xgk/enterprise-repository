@@ -16,85 +16,157 @@ DISALLOWED_INPUT_REASONS = {
 }
 
 
-def agent_node(state: State):
-    """Agent决策主节点函数
+def _has_finalize_material(state: State) -> bool:
+    last_rag_result = state.last_rag_result
+    if last_rag_result:
+        if last_rag_result.documents:
+            return True
+        if last_rag_result.evidence_summary or last_rag_result.answer:
+            return True
+    return bool(state.sub_query_results)
 
-    根据当前状态决定下一步动作，处理各种边界条件和决策逻辑
+
+def _can_finalize(state: State, *, allow_partial: bool = False) -> bool:
+    """判断当前状态是否可以完成最终响应
+
+    根据最后一次RAG检索结果的质量指标，判断是否满足完成条件
 
     Args:
-        state: 当前Agent状态对象，包含查询、历史动作等信息
+        state: 包含当前agent状态的对象
+        allow_partial: 是否允许部分完成（当证据不足但上下文不完整时）
 
     Returns:
-        dict: 包含下一步动作和相关信息的字典，结构为:
-            - action: 下一步动作类型
-            - answer: 当前答案(如果有)
-            - reason: 决策原因
-            - status: 执行状态(success/failed)
-            - fail_reason: 失败原因(如果失败)
-            - diagnostics: 诊断信息列表
+        bool: 是否可以完成最终响应
     """
-    # 获取最近一次工具调用事件
+    # 获取最后一次RAG检索结果
+    last_rag_result = state.last_rag_result
+    if not last_rag_result:
+        return False
+
+    # 检查关键质量指标
+    has_summary = bool((last_rag_result.evidence_summary or last_rag_result.answer or "").strip())  # 是否有摘要或答案
+    has_citations = bool(last_rag_result.citations)  # 是否有引用
+    has_documents = bool(last_rag_result.documents)  # 是否有文档
+    is_sufficient = bool(last_rag_result.is_sufficient)  # 结果是否足够充分
+    fail_reason = getattr(last_rag_result, "fail_reason", None)  # 可能的失败原因
+
+    # 完全满足条件的情况：结果充分且有摘要、引用和文档
+    if is_sufficient and has_summary and has_citations and has_documents:
+        return True
+
+    # 如果不允许部分完成，则直接返回False
+    if not allow_partial:
+        return False
+
+    # 允许部分完成的条件：有摘要且(有引用或文档)且失败原因为上下文不足
+    return (
+        has_summary
+        and (has_citations or has_documents)
+        and fail_reason == "insufficient_context"
+    )
+
+
+def _build_finish_response(state: State, *, answer: str, reason: str = "", status: str = "success", fail_reason=None, diagnostics=None):
+    return {
+        "action": "finish",
+        "answer": answer,
+        "reason": reason,
+        "status": status,
+        "fail_reason": fail_reason,
+        "diagnostics": diagnostics or state.diagnostics,
+    }
+
+
+def agent_node(state: State):
+    """Agent 决策主节点，负责根据当前状态决定下一步动作
+
+    Args:
+        state: State - 包含当前 agent 状态的对象，包括查询、历史动作、诊断信息等
+
+    Returns:
+        dict: 包含以下键的字典：
+            - action: 下一步动作类型 (如 "finalize", "finish" 等)
+            - reason: 动作决策的原因说明
+            - diagnostics: 诊断信息列表
+            或包含更多信息的完成响应字典（当返回 _build_finish_response 时）
+    """
+    # 获取最近的工具调用事件和最后一个事件
     last_tool = next((event for event in reversed(state.action_history) if event.kind == "tool"), None)
+    last_event = state.action_history[-1] if state.action_history else None
 
     # 输入安全检查
     input_guard = guard_input(state.query or state.working_query or "")
     if not input_guard.is_valid:
-        return {
-            "action": "finish",
-            "answer": input_guard.response,
-            "reason": input_guard.reason,
-            "status": "failed",
-            "fail_reason": "disallowed_query" if input_guard.reason in DISALLOWED_INPUT_REASONS else "invalid_input",
-            "diagnostics": state.diagnostics + [f"agent:input_blocked:{input_guard.reason}"],
-        }
+        return _build_finish_response(
+            state,
+            answer=input_guard.response,
+            reason=input_guard.reason,
+            status="failed",
+            fail_reason="disallowed_query" if input_guard.reason in DISALLOWED_INPUT_REASONS else "invalid_input",
+            diagnostics=state.diagnostics + [f"agent:input_blocked:{input_guard.reason}"],
+        )
 
-    # 最大步数检查
+    # 检查是否超过最大步骤限制
     if state.current_step >= state.max_steps:
+        if _can_finalize(state, allow_partial=True):
+            return {
+                "action": "finalize",
+                "reason": f"Reached max steps: {state.max_steps}",
+                "diagnostics": state.diagnostics + ["agent:max_steps_finalize"],
+            }
+        return _build_finish_response(
+            state,
+            answer=get_last_answer(last_tool) or build_fallback_answer(state),
+            reason=f"Reached max steps: {state.max_steps}",
+            status="failed",
+            fail_reason="max_steps_exceeded",
+            diagnostics=state.diagnostics + ["agent:max_steps_exceeded"],
+        )
+
+    # 检查是否有足够的检索证据可以完成
+    if (
+        last_event
+        and last_event.kind == "tool"
+        and getattr(last_event.output, "is_sufficient", False)
+        and _can_finalize(state, allow_partial=False)
+    ):
         return {
-            "action": "finish",
-            "answer": get_last_answer(last_tool),
-            "reason": f"Reached max steps: {state.max_steps}",
-            "status": "failed",
-            "fail_reason": "max_steps_exceeded",
-            "diagnostics": state.diagnostics + ["agent:max_steps_exceeded"],
+            "action": "finalize",
+            "reason": "retrieval_evidence_is_sufficient",
+            "diagnostics": state.diagnostics + ["agent:finalize_after_sufficient_evidence"],
         }
 
-    # 检查最近工具调用是否已提供足够答案
-    last_event = state.action_history[-1] if state.action_history else None
-    if last_event and last_event.kind == "tool" and getattr(last_event.output, "is_sufficient", False):
-        answer = get_last_answer(last_tool)
-        if verify_task_complete(state, answer):
-            return {
-                "action": "finish",
-                "answer": answer,
-                "status": "success",
-                "diagnostics": state.diagnostics + ["agent:task_complete"],
-            }
-
+    # 检查是否需要强制结束
     force_finish, finish_reason = should_force_finish(state)
     if force_finish:
-        return {
-            "action": "finish",
-            "answer": get_last_answer(last_tool) or build_fallback_answer(state),
-            "reason": finish_reason,
-            "status": "failed",
-            "fail_reason": getattr(state.last_rag_result, "fail_reason", None) or "insufficient_context",
-            "diagnostics": state.diagnostics + [f"agent:force_finish:{finish_reason}"],
-        }
+        if _can_finalize(state, allow_partial=True):
+            return {
+                "action": "finalize",
+                "reason": finish_reason,
+                "diagnostics": state.diagnostics + [f"agent:force_finalize:{finish_reason}"],
+            }
+        return _build_finish_response(
+            state,
+            answer=get_last_answer(last_tool) or build_fallback_answer(state),
+            reason=finish_reason or "force_finish",
+            status="failed",
+            fail_reason=getattr(state.last_rag_result, "fail_reason", None) or "insufficient_context",
+            diagnostics=state.diagnostics + [f"agent:force_finish:{finish_reason}"],
+        )
 
-    # 初始决策逻辑(当没有推理历史时)
+    # 如果没有推理历史，进行初始决策
     reasoning_history = [event for event in state.action_history if event.kind == "reasoning"]
     if not reasoning_history:
         initial_decision = decide_initial_action(state)
         if initial_decision.next_action == "clarify_question":
-            return {
-                "action": "finish",
-                "answer": initial_decision.clarification_question or "请补充你的问题背景、对象或范围。",
-                "reason": initial_decision.reason,
-                "status": "success",
-                "fail_reason": "ambiguous_query",
-                "diagnostics": state.diagnostics + ["agent:clarify_question"],
-            }
+            return _build_finish_response(
+                state,
+                answer=initial_decision.clarification_question or "请补充你的问题背景、对象或范围。",
+                reason=initial_decision.reason or "clarify_question",
+                status="success",
+                fail_reason="ambiguous_query",
+                diagnostics=state.diagnostics + ["agent:clarify_question"],
+            )
 
         return {
             "action": initial_decision.next_action,
@@ -102,7 +174,7 @@ def agent_node(state: State):
             "diagnostics": state.diagnostics + [f"agent:initial={initial_decision.next_action}"],
         }
 
-    # 准备LLM决策所需的上下文和提示
+    # 构建 LLM 提示并调用决策
     allowed_actions = get_allowed_actions(state)
     prompt = AGENT_PROMPT.format(
         query=state.query,
@@ -111,40 +183,58 @@ def agent_node(state: State):
         allowed_actions=allowed_actions,
     )
 
-    # 调用LLM进行决策
     llm_result: BaseLLMDecideResult = LLMService.invoke(
         llm=deepseek_llm,
         messages=[HumanMessage(content=prompt)],
         schema=BaseLLMDecideResult,
     )
 
-    # 处理LLM返回的决策结果
+    # LLM 返回 None 时的后备处理
     if llm_result is None:
+        fallback_action = allowed_actions[0]
+        if fallback_action == "finish" and _can_finalize(state, allow_partial=True):
+            fallback_action = "finalize"
         return {
-            "action": allowed_actions[0],
+            "action": fallback_action,
             "reason": "agent_llm_returned_none_fallback",
             "diagnostics": state.diagnostics + ["agent:llm_none_fallback"],
         }
 
+    # 处理 LLM 返回的动作决策
     action = llm_result.next_action or allowed_actions[0]
-    # 确保动作在允许范围内
     if action not in allowed_actions:
         action = allowed_actions[0]
 
     # 检查动作尝试次数是否超过限制
     if any(item.name == action and item.attempt >= item.max_attempt for item in reversed(state.action_history)):
-        action = "finish"
+        action = "finalize" if _can_finalize(state, allow_partial=True) else "finish"
 
-    # 处理终止类动作(finish/abort)
-    if action in {"finish", "abort"}:
-        return {
-            "action": action,
-            "answer": get_last_answer(last_tool),
-            "reason": llm_result.reason,
-            "status": "success" if action == "finish" else "failed",
-            "fail_reason": None if action == "finish" else "tool_error",
-            "diagnostics": state.diagnostics + [f"agent:{action}"],
-        }
+    # 处理 finish 动作
+    if action == "finish":
+        if _can_finalize(state, allow_partial=True):
+            return {
+                "action": "finalize",
+                "reason": llm_result.reason or "llm_requested_finish_with_evidence",
+                "diagnostics": state.diagnostics + ["agent:finalize_before_finish"],
+            }
+        return _build_finish_response(
+            state,
+            answer=get_last_answer(last_tool) or build_fallback_answer(state),
+            reason=llm_result.reason or "finish",
+            status="success",
+            diagnostics=state.diagnostics + ["agent:finish"],
+        )
+
+    # 处理 abort 动作
+    if action == "abort":
+        return _build_finish_response(
+            state,
+            answer=get_last_answer(last_tool) or build_fallback_answer(state),
+            reason=llm_result.reason or "abort",
+            status="failed",
+            fail_reason="tool_error",
+            diagnostics=state.diagnostics + ["agent:abort"],
+        )
 
     # 返回常规动作决策
     return {
@@ -156,7 +246,7 @@ def agent_node(state: State):
 
 def get_last_answer(last_tool) -> str:
     if last_tool and last_tool.output:
-        return getattr(last_tool.output, "answer", "") or ""
+        return getattr(last_tool.output, "evidence_summary", None) or getattr(last_tool.output, "answer", "") or ""
     return ""
 
 
@@ -166,28 +256,6 @@ def build_fallback_answer(state: State) -> str:
     if state.last_rag_result and state.last_rag_result.fail_reason == "no_data":
         return "当前知识库中未检索到足够相关内容，暂时无法给出可靠答案。"
     return "当前信息不足，暂时无法稳定回答该问题。"
-
-
-def verify_task_complete(state: State, answer: str) -> bool:
-    prompt = f"""
-用户问题:
-{state.query}
-
-当前答案:
-{answer}
-
-请判断该答案是否已经完整回答用户问题。只返回 true 或 false。
-"""
-    llm_result = LLMService.invoke(
-        llm=deepseek_llm,
-        messages=[HumanMessage(content=prompt)],
-    )
-    content = getattr(llm_result, "content", llm_result)
-    if isinstance(content, str):
-        return content.strip().lower() == "true"
-    if isinstance(content, bool):
-        return content
-    return False
 
 
 def build_query_evolution(state: State) -> str:
@@ -215,8 +283,8 @@ def build_agent_context(state: State, last_tool_num: int = 3) -> str:
     for index, event in enumerate(event_list, start=1):
         if event.name == "rag":
             result: RAGResult = event.output
-            quality_hint = {"has_data": len(result.documents) > 0}
-            answer = result.answer
+            quality_hint = {"has_data": len(result.documents) > 0, "confidence": result.confidence}
+            answer = result.evidence_summary or result.answer
             fail_reason = result.fail_reason
             is_sufficient = result.is_sufficient
         else:
@@ -231,7 +299,7 @@ def build_agent_context(state: State, last_tool_num: int = 3) -> str:
                     f"[Recent tool {index}]",
                     f"Tool: {event.name}",
                     f"Input: {event.input}",
-                    f"Answer: {answer}",
+                    f"Evidence summary: {answer}",
                     f"Quality hint: {quality_hint}",
                     f"Is sufficient: {is_sufficient}",
                     f"Fail reason: {fail_reason}",

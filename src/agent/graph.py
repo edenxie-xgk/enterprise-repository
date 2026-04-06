@@ -4,6 +4,7 @@ from langgraph.graph import StateGraph
 from src.nodes.agent_node import agent_node
 from src.nodes.decompose_query_node import decompose_query_node
 from src.nodes.expand_query_node import expand_query_node
+from src.nodes.finalize_node import finalize_node
 from src.nodes.normalize_query_node import normalize_query_node
 from src.nodes.rag_node import rag_node
 from src.nodes.rewrite_query_node import rewrite_query_node
@@ -27,12 +28,14 @@ builder.add_node("rewrite_query", rewrite_query_node)
 builder.add_node("expand_query", expand_query_node)
 builder.add_node("decompose_query", decompose_query_node)
 builder.add_node("rag", rag_node)
+builder.add_node("finalize", finalize_node)
 
 
 builder.add_edge("rag", "agent")
 builder.add_edge("rewrite_query", "agent")
 builder.add_edge("expand_query", "agent")
 builder.add_edge("decompose_query", "agent")
+builder.add_edge("finalize", END)
 
 
 builder.add_conditional_edges(
