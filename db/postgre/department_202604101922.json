@@ -1,0 +1,15 @@
+{
+"department": [
+	{
+		"dept_id" : 1,
+		"dept_name" : "OE"
+	},
+	{
+		"dept_id" : 2,
+		"dept_name" : "TQ"
+	},
+	{
+		"dept_id" : 3,
+		"dept_name" : "HR"
+	}
+]}

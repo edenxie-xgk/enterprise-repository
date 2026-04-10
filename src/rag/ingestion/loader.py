@@ -1,5 +1,6 @@
 ﻿import json
 import re
+from collections import Counter
 from typing import Sequence
 
 import cv2
@@ -162,15 +163,45 @@ def extract_pdf_title(text: str) -> bool:
     return False
 
 
+def normalize_pdf_margin_text(text: str) -> str:
+    """Normalize header/footer candidates for repeated-text detection."""
+    normalized = re.sub(r"\s+", " ", text).strip()
+    normalized = re.sub(r"\d+", "<num>", normalized)
+    return normalized
+
+
+def is_pdf_margin_block(block: tuple, page_height: float) -> bool:
+    """Return True when a block sits in the top/bottom margin area."""
+    y0, y1 = block[1], block[3]
+    top_limit = page_height * 0.12
+    bottom_limit = page_height * 0.88
+    return y1 <= top_limit or y0 >= bottom_limit
+
+
+def should_skip_pdf_margin_text(text: str, repeated_margin_texts: set[str]) -> bool:
+    """Skip likely header/footer snippets and bare page-number text."""
+    normalized = normalize_pdf_margin_text(text)
+    if normalized in repeated_margin_texts:
+        return True
+    if re.fullmatch(r"(?:第\s*)?\d+\s*(?:页)?", text):
+        return True
+    if re.fullmatch(r"(?:page|p)\s*\d+(?:\s*(?:/|of)\s*\d+)?", text, re.IGNORECASE):
+        return True
+    return False
+
+
 def load_pdf(path: str, metadata: DocumentMetadata) -> Sequence[LlamaDocument]:
     """Load a PDF file page by page, falling back to OCR when text extraction is weak."""
     pdf = fitz.open(path)
     documents = []
     current_title = ""
+    pages_data = []
+    margin_counter: Counter[str] = Counter()
 
-    for page_num, page in tqdm(enumerate(pdf), desc="加载 PDF"):
+    for page in pdf:
         blocks = page.get_text("blocks")
         source = metadata.file_type
+        page_height = float(page.rect.height)
         if len(blocks) <= 1 or sum(len(block[4]) for block in blocks) < 50:
             pix = page.get_pixmap(matrix=fitz.Matrix(3, 3))
             img = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.height, pix.width, pix.n)
@@ -178,6 +209,32 @@ def load_pdf(path: str, metadata: DocumentMetadata) -> Sequence[LlamaDocument]:
             text = ocr_image(img)
             blocks = [(0, 0, 0, 0, text, 0, 0)]
             source = "ocr"
+            page_height = float(pix.height)
+
+        pages_data.append(
+            {
+                "blocks": blocks,
+                "source": source,
+                "page_height": page_height,
+            }
+        )
+
+        for block in blocks:
+            text = block[4].strip()
+            if not text:
+                continue
+            text = text.replace("\n", " ").strip()
+            if len(text) < 3 or len(text) > 120:
+                continue
+            if is_pdf_margin_block(block, page_height):
+                margin_counter[normalize_pdf_margin_text(text)] += 1
+
+    repeated_margin_texts = {text for text, count in margin_counter.items() if count >= 2}
+
+    for page_num, page_data in tqdm(enumerate(pages_data), desc="加载 PDF"):
+        blocks = page_data["blocks"]
+        source = page_data["source"]
+        page_height = page_data["page_height"]
 
         page_texts = []
         page_title = ""
@@ -187,6 +244,8 @@ def load_pdf(path: str, metadata: DocumentMetadata) -> Sequence[LlamaDocument]:
                 continue
             text = text.replace("\n", " ").strip()
             if len(text) < 5:
+                continue
+            if is_pdf_margin_block(block, page_height) and should_skip_pdf_margin_text(text, repeated_margin_texts):
                 continue
 
             if not page_title and extract_pdf_title(text):

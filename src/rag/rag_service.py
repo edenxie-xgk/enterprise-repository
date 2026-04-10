@@ -2,6 +2,8 @@
 
 import os
 
+from tqdm import tqdm
+
 from core.custom_types import DocumentMetadata
 from core.settings import settings
 from src.database.es import ElasticsearchClient
@@ -555,7 +557,7 @@ class RAGService:
             }
 
         error_nodes = []
-        for doc in docs:
+        for doc in tqdm(docs,desc=f"生成评估数据"):
             try:
                 dense_docs = self.dense_retriever.run([doc['content']], top_k=5,filters={
                     "department_id":doc['metadata']['department_id'],

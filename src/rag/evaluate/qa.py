@@ -1,3 +1,4 @@
+import random
 from typing import List
 
 from langchain_core.language_models import BaseChatModel
@@ -28,40 +29,40 @@ def generate_qa(llm:BaseChatModel, nodes, metadata=None):
     prompt = QA_GENERATION_PROMPT.format(nodes=nodes)
     node_ids = [node['node_id'] for node in nodes]
 
-    for i in range(settings.max_retries):
-        try:
-            llm = llm.with_structured_output(QAResult)
-            response = llm.invoke([HumanMessage(content=prompt)])
-            print(response)
-            qa_list = []
-            create_time = get_current_time()
-            for item in response.qa_list:
-                if not item.question or not item.answer or not isinstance(item.node_ids,list) or not item.node_ids:
-                    continue
-                step = False
-                for node_id in item.node_ids:
-                    if node_id not in node_ids:
-                        step = True
-                if step:
-                    continue
-                qa_list.append({
-                    "question": item.question,
-                    "answer": item.answer,
-                    "language": item.language,
-                    "difficulty": item.difficulty,
-                    "intent": item.intent,
-                    "metadata": metadata,
-                    "node_ids":item.node_ids,
-                    "create_time":create_time,
-                    "state":0  # 0代表未评估，1代表评估过
-                })
+    try:
+        response = LLMService.invoke(
+            schema=QAResult,
+            messages=[HumanMessage(content=prompt)],
+            llm=llm,
+        )
+        print(response)
+        qa_list = []
+        create_time = get_current_time()
+        for index, item in enumerate(response.qa_list):
+            if not item.question or not item.answer or not isinstance(item.node_ids, list) or not item.node_ids:
+                continue
+            step = False
+            for node_id in item.node_ids:
+                if node_id not in node_ids:
+                    step = True
+            if step:
+                continue
 
-            return qa_list
-        except Exception as e:
-            logger.warning(f"[LLM失败] 第{i + 1}次: {e}")
-            pass
-    logger.error(f"QA构建数据失败：f{nodes}")
-    return []
+            qa_list.append({
+                "question": item.question,
+                "answer": item.answer,
+                "language": item.language,
+                "difficulty": item.difficulty,
+                "intent": item.intent,
+                "metadata": metadata,
+                "node_ids": item.node_ids,
+                "create_time": create_time,
+                "state": 0 if index % random.randint(0, len(response.qa_list) - 1) != 0 else 2  # 0代表未评估，1代表评估过 2验证集
+            })
+        return qa_list
+    except Exception as e:
+        logger.error(f"[QA生成失败] {e}")
+        return []
 
 
 if __name__ == '__main__':

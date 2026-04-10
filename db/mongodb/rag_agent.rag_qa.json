@@ -1,0 +1,904 @@
+[{
+  "_id": {
+    "$oid": "69d8adae798ee4ca8cfe5755"
+  },
+  "question": "What is the difference in total other comprehensive income, net of tax between the two financial statements for the period ended 30 September 2025?",
+  "answer": "The first statement shows total other comprehensive income, net of tax of 411,730, while the second statement shows 397,364. The difference is 14,366.",
+  "language": "en",
+  "difficulty": "medium",
+  "intent": "comparison",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 620486,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "SEPTEMBER 2025",
+    "page": 7,
+    "chunk_index": 13,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 2,
+    "department_name": "TQ",
+    "version": 1
+  },
+  "node_ids": [
+    "2e608c4d-b564-4ed3-a159-74a26a6914f3",
+    "895e869b-64c0-4c45-9402-eea3c4ad22d6"
+  ],
+  "create_time": "2026-04-10 15:58:38",
+  "state": 2
+},
+{
+  "_id": {
+    "$oid": "69d8adae798ee4ca8cfe5756"
+  },
+  "question": "How do the debt investments at FVOCI - net change in fair value differ between the two financial statements, and what is the impact on total other comprehensive income?",
+  "answer": "In the first statement, debt investments at FVOCI - net change in fair value is (214,711), while in the second statement it is (229,077). This difference of 14,366 contributes to the lower total other comprehensive income of 397,364 in the second statement compared to 411,730 in the first statement.",
+  "language": "en",
+  "difficulty": "hard",
+  "intent": "analysis",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 620486,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "SEPTEMBER 2025",
+    "page": 7,
+    "chunk_index": 13,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 2,
+    "department_name": "TQ",
+    "version": 1
+  },
+  "node_ids": [
+    "2e608c4d-b564-4ed3-a159-74a26a6914f3",
+    "895e869b-64c0-4c45-9402-eea3c4ad22d6"
+  ],
+  "create_time": "2026-04-10 15:58:38",
+  "state": 0
+},
+{
+  "_id": {
+    "$oid": "69d8adae798ee4ca8cfe5757"
+  },
+  "question": "两份财务报表中，截至2025年9月30日的税后其他综合收入总额有何差异？",
+  "answer": "第一份报表显示税后其他综合收入总额为411,730，而第二份报表显示为397,364。差异为14,366。",
+  "language": "zh-cn",
+  "difficulty": "medium",
+  "intent": "comparison",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 620486,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "SEPTEMBER 2025",
+    "page": 7,
+    "chunk_index": 13,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 2,
+    "department_name": "TQ",
+    "version": 1
+  },
+  "node_ids": [
+    "2e608c4d-b564-4ed3-a159-74a26a6914f3",
+    "895e869b-64c0-4c45-9402-eea3c4ad22d6"
+  ],
+  "create_time": "2026-04-10 15:58:38",
+  "state": 0
+},
+{
+  "_id": {
+    "$oid": "69d8adae798ee4ca8cfe5758"
+  },
+  "question": "两份财务报表中，按公允价值计量且其变动计入其他综合收益的债务投资公允价值净变动有何不同，这对总其他综合收入有何影响？",
+  "answer": "在第一份报表中，按公允价值计量且其变动计入其他综合收益的债务投资公允价值净变动为(214,711)，而在第二份报表中为(229,077)。这一14,366的差异导致第二份报表的总其他综合收入为397,364，低于第一份报表的411,730。",
+  "language": "zh-cn",
+  "difficulty": "hard",
+  "intent": "analysis",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 620486,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "SEPTEMBER 2025",
+    "page": 7,
+    "chunk_index": 13,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 2,
+    "department_name": "TQ",
+    "version": 1
+  },
+  "node_ids": [
+    "2e608c4d-b564-4ed3-a159-74a26a6914f3",
+    "895e869b-64c0-4c45-9402-eea3c4ad22d6"
+  ],
+  "create_time": "2026-04-10 15:58:38",
+  "state": 2
+},
+{
+  "_id": {
+    "$oid": "69d8b13b798ee4ca8cfe5759"
+  },
+  "question": "What was the trend in total assets for Softlogic Life Insurance PLC's Life Insurance Fund from 31.12.2022 to 30.09.2025?",
+  "answer": "The total assets for Softlogic Life Insurance PLC's Life Insurance Fund showed an increasing trend from 31.12.2022 to 30.09.2025. Specifically: 31.12.2022: Rs. 35,399,068,000; 31.03.2023: Rs. 35,958,503,000; 30.06.2024: Rs. 37,728,652,000; 30.09.2025: Rs. 44,394,574,000. This represents growth over the period.",
+  "language": "en",
+  "difficulty": "medium",
+  "intent": "analysis",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 620486,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "SEPTEMBER 2025",
+    "page": 10,
+    "chunk_index": 23,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 2,
+    "department_name": "TQ",
+    "version": 1
+  },
+  "node_ids": [
+    "92440ce4-5399-4b41-8fe3-adc5e2beec31",
+    "15a62aaf-5b7d-43cd-8848-233c24a45c95",
+    "fa34259c-6151-4264-a213-cac513bf258b"
+  ],
+  "create_time": "2026-04-10 16:13:47",
+  "state": 2
+},
+{
+  "_id": {
+    "$oid": "69d8b13b798ee4ca8cfe575a"
+  },
+  "question": "How did the equity position of Softlogic Life Insurance PLC's Life Insurance Fund change between 31.12.2022 and 30.09.2025?",
+  "answer": "The equity position of Softlogic Life Insurance PLC's Life Insurance Fund improved significantly between 31.12.2022 and 30.09.2025. On 31.12.2022, total equity was negative at Rs. (1,141,990,000). By 30.06.2024, it improved to Rs. (856,820,000). By 30.09.2025, it further improved to Rs. (47,764,000) as of 31.12.2024 (audited) and Rs. (12,412,000) as of 30.09.2025 (unaudited), showing a substantial reduction in negative equity.",
+  "language": "en",
+  "difficulty": "hard",
+  "intent": "analysis",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 620486,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "SEPTEMBER 2025",
+    "page": 10,
+    "chunk_index": 23,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 2,
+    "department_name": "TQ",
+    "version": 1
+  },
+  "node_ids": [
+    "92440ce4-5399-4b41-8fe3-adc5e2beec31",
+    "15a62aaf-5b7d-43cd-8848-233c24a45c95",
+    "fa34259c-6151-4264-a213-cac513bf258b"
+  ],
+  "create_time": "2026-04-10 16:13:47",
+  "state": 0
+},
+{
+  "_id": {
+    "$oid": "69d8b13b798ee4ca8cfe575b"
+  },
+  "question": "Softlogic Life Insurance PLC人寿保险基金的总资产从2022年12月31日到2025年9月30日呈现什么趋势？",
+  "answer": "Softlogic Life Insurance PLC人寿保险基金的总资产从2022年12月31日到2025年9月30日呈现增长趋势。具体数据为：2022年12月31日：35,399,068,000卢比；2023年3月31日：35,958,503,000卢比；2024年6月30日：37,728,652,000卢比；2025年9月30日：44,394,574,000卢比。这表明在此期间总资产持续增长。",
+  "language": "zh-cn",
+  "difficulty": "medium",
+  "intent": "analysis",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 620486,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "SEPTEMBER 2025",
+    "page": 10,
+    "chunk_index": 23,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 2,
+    "department_name": "TQ",
+    "version": 1
+  },
+  "node_ids": [
+    "92440ce4-5399-4b41-8fe3-adc5e2beec31",
+    "15a62aaf-5b7d-43cd-8848-233c24a45c95",
+    "fa34259c-6151-4264-a213-cac513bf258b"
+  ],
+  "create_time": "2026-04-10 16:13:47",
+  "state": 2
+},
+{
+  "_id": {
+    "$oid": "69d8b13b798ee4ca8cfe575c"
+  },
+  "question": "Softlogic Life Insurance PLC人寿保险基金的权益状况在2022年12月31日至2025年9月30日期间发生了怎样的变化？",
+  "answer": "Softlogic Life Insurance PLC人寿保险基金的权益状况在2022年12月31日至2025年9月30日期间显著改善。2022年12月31日，总权益为负值，为(1,141,990,000)卢比。到2024年6月30日，改善至(856,820,000)卢比。到2025年9月30日，进一步改善至2024年12月31日（经审计）的(47,764,000)卢比和2025年9月30日（未经审计）的(12,412,000)卢比，显示负权益大幅减少。",
+  "language": "zh-cn",
+  "difficulty": "hard",
+  "intent": "analysis",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 620486,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "SEPTEMBER 2025",
+    "page": 10,
+    "chunk_index": 23,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 2,
+    "department_name": "TQ",
+    "version": 1
+  },
+  "node_ids": [
+    "92440ce4-5399-4b41-8fe3-adc5e2beec31",
+    "15a62aaf-5b7d-43cd-8848-233c24a45c95",
+    "fa34259c-6151-4264-a213-cac513bf258b"
+  ],
+  "create_time": "2026-04-10 16:13:47",
+  "state": 2
+},
+{
+  "_id": {
+    "$oid": "69d8b1b6798ee4ca8cfe575d"
+  },
+  "question": "What was the total value of financial investments for Softlogic Life Insurance PLC as at 30 September 2025, and how does this compare to the total assets value at the same date?",
+  "answer": "As at 30 September 2025, the total value of financial investments was Rs. 57,714,422,000, while the total assets value at the same date was Rs. 69,094,597,000. This shows that financial investments constituted approximately 83.5% of total assets.",
+  "language": "en",
+  "difficulty": "medium",
+  "intent": "comparison",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 620486,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "8 FINANCE COST",
+    "page": 13,
+    "chunk_index": 29,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 2,
+    "department_name": "TQ",
+    "version": 1
+  },
+  "node_ids": [
+    "2a5c7e9a-83ef-4c52-8345-2ab451cf3e30",
+    "d5013b25-f2db-4e29-946d-4205085666c1"
+  ],
+  "create_time": "2026-04-10 16:15:50",
+  "state": 2
+},
+{
+  "_id": {
+    "$oid": "69d8b1b6798ee4ca8cfe575e"
+  },
+  "question": "How did Softlogic Life Insurance PLC's financial investments composition change between 31 December 2024 and 30 September 2025, and what was the percentage increase in total financial investments during this period?",
+  "answer": "Between 31 December 2024 and 30 September 2025, Softlogic Life Insurance PLC's total financial investments increased from Rs. 43,938,018,000 to Rs. 57,714,422,000, representing a 31.4% increase. The composition shows significant growth in Treasury bonds (from Rs. 20,673,471,000 to Rs. 29,571,029,000) and Repo investments (from Rs. 1,140,922,000 to Rs. 9,658,986,000), while Equity Securities & Unit linked investments decreased from Rs. 4,214,895,000 to Rs. 1,940,355,000.",
+  "language": "en",
+  "difficulty": "hard",
+  "intent": "analysis",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 620486,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "8 FINANCE COST",
+    "page": 13,
+    "chunk_index": 29,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 2,
+    "department_name": "TQ",
+    "version": 1
+  },
+  "node_ids": [
+    "2a5c7e9a-83ef-4c52-8345-2ab451cf3e30",
+    "d5013b25-f2db-4e29-946d-4205085666c1"
+  ],
+  "create_time": "2026-04-10 16:15:50",
+  "state": 0
+},
+{
+  "_id": {
+    "$oid": "69d8b1b6798ee4ca8cfe575f"
+  },
+  "question": "Softlogic Life Insurance PLC在2025年9月30日的金融投资总额是多少？与同期总资产价值相比如何？",
+  "answer": "截至2025年9月30日，Softlogic Life Insurance PLC的金融投资总额为57,714,422,000卢比，而同期总资产价值为69,094,597,000卢比。这表明金融投资约占公司总资产的83.5%。",
+  "language": "zh-cn",
+  "difficulty": "medium",
+  "intent": "comparison",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 620486,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "8 FINANCE COST",
+    "page": 13,
+    "chunk_index": 29,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 2,
+    "department_name": "TQ",
+    "version": 1
+  },
+  "node_ids": [
+    "2a5c7e9a-83ef-4c52-8345-2ab451cf3e30",
+    "d5013b25-f2db-4e29-946d-4205085666c1"
+  ],
+  "create_time": "2026-04-10 16:15:50",
+  "state": 2
+},
+{
+  "_id": {
+    "$oid": "69d8b1b6798ee4ca8cfe5760"
+  },
+  "question": "Softlogic Life Insurance PLC的金融投资组合在2024年12月31日至2025年9月30日期间发生了哪些变化？总金融投资在此期间的增长百分比是多少？",
+  "answer": "在2024年12月31日至2025年9月30日期间，Softlogic Life Insurance PLC的总金融投资从43,938,018,000卢比增加到57,714,422,000卢比，增长了31.4%。投资组合变化包括：国债从20,673,471,000卢比增至29,571,029,000卢比；回购投资从1,140,922,000卢比大幅增至9,658,986,000卢比；而股权证券和单位挂钩投资则从4,214,895,000卢比减少至1,940,355,000卢比。",
+  "language": "zh-cn",
+  "difficulty": "hard",
+  "intent": "analysis",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 620486,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "8 FINANCE COST",
+    "page": 13,
+    "chunk_index": 29,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 2,
+    "department_name": "TQ",
+    "version": 1
+  },
+  "node_ids": [
+    "2a5c7e9a-83ef-4c52-8345-2ab451cf3e30",
+    "d5013b25-f2db-4e29-946d-4205085666c1"
+  ],
+  "create_time": "2026-04-10 16:15:50",
+  "state": 2
+},
+{
+  "_id": {
+    "$oid": "69d8b1d6798ee4ca8cfe5761"
+  },
+  "question": "根据斯里兰卡保险监管委员会第16号指令，一次性盈余从保单持有人基金转移到股东基金后，这些资金的投资限制是什么？",
+  "answer": "根据IRCSL第16号指令，转移到股东基金的一次性盈余必须投资于政府债务证券和存款，并且作为限制性监管准备金的一部分，只有在满足IRCSL规定的治理要求并获得IRCSL批准后才能作为股息分配。",
+  "language": "zh-cn",
+  "difficulty": "medium",
+  "intent": "analysis",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 620486,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "8 FINANCE COST",
+    "page": 14,
+    "chunk_index": 31,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 2,
+    "department_name": "TQ",
+    "version": 1
+  },
+  "node_ids": [
+    "1179db20-0a86-4e79-b5bd-ae367d027210",
+    "c4b83029-4c62-4941-a433-d180a8eb65f8",
+    "09b5ac40-444f-4ebb-a1c1-6499f138c235"
+  ],
+  "create_time": "2026-04-10 16:16:22",
+  "state": 2
+},
+{
+  "_id": {
+    "$oid": "69d8b1d6798ee4ca8cfe5762"
+  },
+  "question": "What are the investment restrictions for One-off Surplus transferred from policyholder fund to shareholder fund according to IRCSL Direction No. 16?",
+  "answer": "According to IRCSL Direction No. 16, the One-off Surplus transferred to the shareholder fund must remain invested in government debt securities and deposits, and as part of the Restricted Regulatory Reserve, can only be released as dividends upon meeting governance requirements stipulated by the IRCSL and receiving approval from the IRCSL.",
+  "language": "en",
+  "difficulty": "medium",
+  "intent": "analysis",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 620486,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "8 FINANCE COST",
+    "page": 14,
+    "chunk_index": 31,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 2,
+    "department_name": "TQ",
+    "version": 1
+  },
+  "node_ids": [
+    "1179db20-0a86-4e79-b5bd-ae367d027210",
+    "c4b83029-4c62-4941-a433-d180a8eb65f8",
+    "09b5ac40-444f-4ebb-a1c1-6499f138c235"
+  ],
+  "create_time": "2026-04-10 16:16:22",
+  "state": 0
+},
+{
+  "_id": {
+    "$oid": "69d8b1d6798ee4ca8cfe5763"
+  },
+  "question": "一次性盈余转移的会计处理在财务报表中如何体现？",
+  "answer": "一次性盈余转移在损益表中作为单独项目列示为\"因一次性盈余转移导致的合同负债变动\"，在财务状况表中作为权益下的单独准备金列示为\"限制性监管准备金\"。",
+  "language": "zh-cn",
+  "difficulty": "medium",
+  "intent": "factoid",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 620486,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "8 FINANCE COST",
+    "page": 14,
+    "chunk_index": 31,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 2,
+    "department_name": "TQ",
+    "version": 1
+  },
+  "node_ids": [
+    "1179db20-0a86-4e79-b5bd-ae367d027210",
+    "c4b83029-4c62-4941-a433-d180a8eb65f8",
+    "09b5ac40-444f-4ebb-a1c1-6499f138c235"
+  ],
+  "create_time": "2026-04-10 16:16:22",
+  "state": 0
+},
+{
+  "_id": {
+    "$oid": "69d8b1d6798ee4ca8cfe5764"
+  },
+  "question": "How is the accounting treatment of One-off Surplus transfer presented in the financial statements?",
+  "answer": "The transfer of One-off Surplus is presented as a separate line item in the Income Statement as \"Change in contract liability due to transfer of One-off surplus\" and as a separate reserve in the Statement of Financial Position as \"Restricted Regulatory Reserve\" under Equity.",
+  "language": "en",
+  "difficulty": "medium",
+  "intent": "factoid",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 620486,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "8 FINANCE COST",
+    "page": 14,
+    "chunk_index": 31,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 2,
+    "department_name": "TQ",
+    "version": 1
+  },
+  "node_ids": [
+    "1179db20-0a86-4e79-b5bd-ae367d027210",
+    "c4b83029-4c62-4941-a433-d180a8eb65f8",
+    "09b5ac40-444f-4ebb-a1c1-6499f138c235"
+  ],
+  "create_time": "2026-04-10 16:16:22",
+  "state": 2
+},
+{
+  "_id": {
+    "$oid": "69d8b26a798ee4ca8cfe5765"
+  },
+  "question": "Compare the basic/diluted EPS (Earnings Per Share) performance of Softlogic Life Insurance PLC across the three reporting periods: September 2025, June 2024, and December 2020.",
+  "answer": "The basic/diluted EPS for Softlogic Life Insurance PLC shows varying performance across the three periods: For September 2025, EPS was Rs. 7.24 (Group and Company). For June 2024, EPS was Rs. 5.48. For December 2020, EPS was Rs. 4.06. This indicates an overall improvement in EPS from December 2020 (Rs. 4.06) to September 2025 (Rs. 7.24), with June 2024 showing intermediate performance at Rs. 5.48.",
+  "language": "en",
+  "difficulty": "medium",
+  "intent": "comparison",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 620486,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "13.2 Contingencies",
+    "page": 18,
+    "chunk_index": 38,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 2,
+    "department_name": "TQ",
+    "version": 1
+  },
+  "node_ids": [
+    "9b596a1a-a55a-494a-b0ef-88c602d18a12",
+    "b78df78c-16bf-4798-a08e-71b0fe291f7a",
+    "6f28c648-40de-4e6f-9dde-5b3ff8490e48"
+  ],
+  "create_time": "2026-04-10 16:18:50",
+  "state": 2
+},
+{
+  "_id": {
+    "$oid": "69d8b26a798ee4ca8cfe5766"
+  },
+  "question": "Analyze the trend in net assets per share (excluding one-off surplus) for Softlogic Life Insurance PLC from December 2020 to September 2025 across the three reporting periods.",
+  "answer": "The net assets per share (excluding one-off surplus) for Softlogic Life Insurance PLC shows a consistent upward trend: December 2020: Rs. 24.37, June 2024: Rs. 33.43, September 2025: Rs. 34.25 (Company). This represents an increase of approximately 40% from December 2020 to September 2025, indicating steady growth in the company's net asset value per share over this period.",
+  "language": "en",
+  "difficulty": "medium",
+  "intent": "analysis",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 620486,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "13.2 Contingencies",
+    "page": 18,
+    "chunk_index": 38,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 2,
+    "department_name": "TQ",
+    "version": 1
+  },
+  "node_ids": [
+    "9b596a1a-a55a-494a-b0ef-88c602d18a12",
+    "b78df78c-16bf-4798-a08e-71b0fe291f7a",
+    "6f28c648-40de-4e6f-9dde-5b3ff8490e48"
+  ],
+  "create_time": "2026-04-10 16:18:50",
+  "state": 0
+},
+{
+  "_id": {
+    "$oid": "69d8b26a798ee4ca8cfe5767"
+  },
+  "question": "比较Softlogic Life Insurance PLC在三个报告期间（2025年9月、2024年6月和2020年12月）的基本/稀释每股收益（EPS）表现。",
+  "answer": "Softlogic Life Insurance PLC在三个报告期间的每股收益表现如下：2025年9月：每股收益为7.24卢比（集团和公司）。2024年6月：每股收益为5.48卢比。2020年12月：每股收益为4.06卢比。这表明从2020年12月（4.06卢比）到2025年9月（7.24卢比），每股收益整体呈上升趋势，2024年6月（5.48卢比）处于中间水平。",
+  "language": "zh-cn",
+  "difficulty": "medium",
+  "intent": "comparison",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 620486,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "13.2 Contingencies",
+    "page": 18,
+    "chunk_index": 38,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 2,
+    "department_name": "TQ",
+    "version": 1
+  },
+  "node_ids": [
+    "9b596a1a-a55a-494a-b0ef-88c602d18a12",
+    "b78df78c-16bf-4798-a08e-71b0fe291f7a",
+    "6f28c648-40de-4e6f-9dde-5b3ff8490e48"
+  ],
+  "create_time": "2026-04-10 16:18:50",
+  "state": 2
+},
+{
+  "_id": {
+    "$oid": "69d8b26a798ee4ca8cfe5768"
+  },
+  "question": "分析Softlogic Life Insurance PLC从2020年12月到2025年9月三个报告期间每股净资产（扣除一次性盈余）的变化趋势。",
+  "answer": "Softlogic Life Insurance PLC的每股净资产（扣除一次性盈余）呈现持续上升趋势：2020年12月：24.37卢比，2024年6月：33.43卢比，2025年9月：34.25卢比（公司）。从2020年12月到2025年9月，每股净资产增长了约40%，表明在此期间公司每股净资产价值稳步增长。",
+  "language": "zh-cn",
+  "difficulty": "medium",
+  "intent": "analysis",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 620486,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "13.2 Contingencies",
+    "page": 18,
+    "chunk_index": 38,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 2,
+    "department_name": "TQ",
+    "version": 1
+  },
+  "node_ids": [
+    "9b596a1a-a55a-494a-b0ef-88c602d18a12",
+    "b78df78c-16bf-4798-a08e-71b0fe291f7a",
+    "6f28c648-40de-4e6f-9dde-5b3ff8490e48"
+  ],
+  "create_time": "2026-04-10 16:18:50",
+  "state": 2
+},
+{
+  "_id": {
+    "$oid": "69d8b2b6798ee4ca8cfe5769"
+  },
+  "question": "What was the percentage change in profit before tax for Softlogic Life Insurance PLC between the period ended 31 March 2024 and 31 March 2025?",
+  "answer": "The profit before tax decreased by 44% from Rs. 1,196,172,000 in the period ended 31 March 2024 to Rs. 668,140,000 in the period ended 31 March 2025.",
+  "language": "en",
+  "difficulty": "medium",
+  "intent": "comparison",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the period ended 31st March 2025.pdf",
+    "file_path": "/public/uploads/OE/Interim Financial Statements for the period ended 31st March 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 525707,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "",
+    "page": 2,
+    "chunk_index": 2,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 1,
+    "department_name": "OE",
+    "version": 1
+  },
+  "node_ids": [
+    "1430d624-2080-4a0a-9047-2fd7408a6415"
+  ],
+  "create_time": "2026-04-10 16:20:06",
+  "state": 2
+},
+{
+  "_id": {
+    "$oid": "69d8b2b6798ee4ca8cfe576a"
+  },
+  "question": "How did Softlogic Life Insurance PLC's total net revenue change between the period ended 30 September 2023 and 30 September 2024?",
+  "answer": "Total net revenue increased by 21% from Rs. 22,707,909,000 in the period ended 30 September 2023 to Rs. 27,481,554,000 in the period ended 30 September 2024.",
+  "language": "en",
+  "difficulty": "medium",
+  "intent": "comparison",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the period ended 31st March 2025.pdf",
+    "file_path": "/public/uploads/OE/Interim Financial Statements for the period ended 31st March 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 525707,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "",
+    "page": 2,
+    "chunk_index": 2,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 1,
+    "department_name": "OE",
+    "version": 1
+  },
+  "node_ids": [
+    "114320c1-0734-41be-b18d-3f4aff45f22f"
+  ],
+  "create_time": "2026-04-10 16:20:06",
+  "state": 0
+},
+{
+  "_id": {
+    "$oid": "69d8b2b6798ee4ca8cfe576b"
+  },
+  "question": "Softlogic Life Insurance PLC在截至2024年3月31日和2025年3月31日的期间，税前利润的百分比变化是多少？",
+  "answer": "税前利润从2024年3月31日期间的1,196,172,000卢比下降到2025年3月31日期间的668,140,000卢比，下降了44%。",
+  "language": "zh-cn",
+  "difficulty": "medium",
+  "intent": "comparison",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the period ended 31st March 2025.pdf",
+    "file_path": "/public/uploads/OE/Interim Financial Statements for the period ended 31st March 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 525707,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "",
+    "page": 2,
+    "chunk_index": 2,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 1,
+    "department_name": "OE",
+    "version": 1
+  },
+  "node_ids": [
+    "1430d624-2080-4a0a-9047-2fd7408a6415"
+  ],
+  "create_time": "2026-04-10 16:20:06",
+  "state": 0
+},
+{
+  "_id": {
+    "$oid": "69d8b2b6798ee4ca8cfe576c"
+  },
+  "question": "Softlogic Life Insurance PLC在截至2023年9月30日和2024年9月30日的期间，总净收入的百分比变化是多少？",
+  "answer": "总净收入从2023年9月30日期间的22,707,909,000卢比增加到2024年9月30日期间的27,481,554,000卢比，增长了21%。",
+  "language": "zh-cn",
+  "difficulty": "medium",
+  "intent": "comparison",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the period ended 31st March 2025.pdf",
+    "file_path": "/public/uploads/OE/Interim Financial Statements for the period ended 31st March 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 525707,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "",
+    "page": 2,
+    "chunk_index": 2,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 1,
+    "department_name": "OE",
+    "version": 1
+  },
+  "node_ids": [
+    "114320c1-0734-41be-b18d-3f4aff45f22f"
+  ],
+  "create_time": "2026-04-10 16:20:06",
+  "state": 2
+},
+{
+  "_id": {
+    "$oid": "69d8b2e7798ee4ca8cfe576d"
+  },
+  "question": "What was the percentage change in total assets for Softlogic Life Insurance PLC from 31 December 2023 to 31 March 2025?",
+  "answer": "Total assets increased from Rs. 51,339,422,000 as at 31 December 2023 to Rs. 54,748,685,000 as at 31 March 2025, representing an increase of approximately 6.64%.",
+  "language": "en",
+  "difficulty": "medium",
+  "intent": "analysis",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the period ended 31st March 2025.pdf",
+    "file_path": "/public/uploads/OE/Interim Financial Statements for the period ended 31st March 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 525707,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "",
+    "page": 4,
+    "chunk_index": 5,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 1,
+    "department_name": "OE",
+    "version": 1
+  },
+  "node_ids": [
+    "1bcc0379-0ce5-49fc-85a2-11fd60a4da1f",
+    "909a71e4-f555-4a23-acd2-a1f89ee79ae0"
+  ],
+  "create_time": "2026-04-10 16:20:55",
+  "state": 2
+},
+{
+  "_id": {
+    "$oid": "69d8b2e7798ee4ca8cfe576e"
+  },
+  "question": "How did the composition of liabilities change between 30 September 2024 and 31 March 2025 for Softlogic Life Insurance PLC?",
+  "answer": "Between 30 September 2024 and 31 March 2025, total liabilities increased from Rs. 40,893,682,000 to Rs. 44,471,489,000. Insurance contract liabilities increased from Rs. 31,203,237,000 to Rs. 34,701,861,000, loans and borrowings decreased from Rs. 4,760,153,000 to Rs. 3,143,348,000, and bank overdraft increased from Rs. 282,746,000 to Rs. 387,212,000.",
+  "language": "en",
+  "difficulty": "hard",
+  "intent": "comparison",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the period ended 31st March 2025.pdf",
+    "file_path": "/public/uploads/OE/Interim Financial Statements for the period ended 31st March 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 525707,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "",
+    "page": 4,
+    "chunk_index": 5,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 1,
+    "department_name": "OE",
+    "version": 1
+  },
+  "node_ids": [
+    "1bcc0379-0ce5-49fc-85a2-11fd60a4da1f",
+    "909a71e4-f555-4a23-acd2-a1f89ee79ae0"
+  ],
+  "create_time": "2026-04-10 16:20:55",
+  "state": 0
+},
+{
+  "_id": {
+    "$oid": "69d8b2e7798ee4ca8cfe576f"
+  },
+  "question": "Softlogic Life Insurance PLC的总资产从2023年12月31日到2025年3月31日的变化百分比是多少？",
+  "answer": "总资产从2023年12月31日的51,339,422,000卢比增加到2025年3月31日的54,748,685,000卢比，增长了约6.64%。",
+  "language": "zh-cn",
+  "difficulty": "medium",
+  "intent": "analysis",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the period ended 31st March 2025.pdf",
+    "file_path": "/public/uploads/OE/Interim Financial Statements for the period ended 31st March 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 525707,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "",
+    "page": 4,
+    "chunk_index": 5,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 1,
+    "department_name": "OE",
+    "version": 1
+  },
+  "node_ids": [
+    "1bcc0379-0ce5-49fc-85a2-11fd60a4da1f",
+    "909a71e4-f555-4a23-acd2-a1f89ee79ae0"
+  ],
+  "create_time": "2026-04-10 16:20:55",
+  "state": 2
+},
+{
+  "_id": {
+    "$oid": "69d8b2e7798ee4ca8cfe5770"
+  },
+  "question": "Softlogic Life Insurance PLC的负债构成在2024年9月30日至2025年3月31日期间发生了哪些变化？",
+  "answer": "在2024年9月30日至2025年3月31日期间，总负债从40,893,682,000卢比增加到44,471,489,000卢比。保险合同负债从31,203,237,000卢比增加到34,701,861,000卢比，贷款和借款从4,760,153,000卢比减少到3,143,348,000卢比，银行透支从282,746,000卢比增加到387,212,000卢比。",
+  "language": "zh-cn",
+  "difficulty": "hard",
+  "intent": "comparison",
+  "metadata": {
+    "file_name": "Interim Financial Statements for the period ended 31st March 2025.pdf",
+    "file_path": "/public/uploads/OE/Interim Financial Statements for the period ended 31st March 2025.pdf",
+    "file_type": "pdf",
+    "file_size": 525707,
+    "source": "pdf",
+    "sheet_name": "",
+    "section_title": "",
+    "page": 4,
+    "chunk_index": 5,
+    "user_id": 1,
+    "user_name": "EdenXie",
+    "department_id": 1,
+    "department_name": "OE",
+    "version": 1
+  },
+  "node_ids": [
+    "1bcc0379-0ce5-49fc-85a2-11fd60a4da1f",
+    "909a71e4-f555-4a23-acd2-a1f89ee79ae0"
+  ],
+  "create_time": "2026-04-10 16:20:55",
+  "state": 2
+}]

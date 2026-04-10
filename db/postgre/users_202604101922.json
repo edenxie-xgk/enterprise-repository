@@ -1,0 +1,11 @@
+{
+"users": [
+	{
+		"id" : 1,
+		"username" : "EdenXie",
+		"password" : "e10adc3949ba59abbe56e057f20f883e",
+		"dept_id" : 1,
+		"role_id" : 1,
+		"create_time" : "2026-03-12 22:27:36"
+	}
+]}

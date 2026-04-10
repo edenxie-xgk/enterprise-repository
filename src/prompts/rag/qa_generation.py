@@ -14,12 +14,11 @@ QA_GENERATION_PROMPT = """
 4.  不要生成单node即可回答的问题
 5.  每个问题独立成立
 6.  识别文本的语言（简体中文->language: zh-cn, 英文->language: en）
-7.  同种语言最多生成3个QA
+7.  同种语言最多生成2个QA
 8.  至少必须同时生成英文版本和中文版本
 9.  对问题进行分级（easy/medium/hard）
 10. 对问题进行意图分类（factoid/analysis/comparison）
 11. 参考文档质量差可以不生成数据，直接返回JSON空数组
-12. 输出格式必须是JSON格式
 
 ---
 
@@ -58,16 +57,17 @@ QA_GENERATION_PROMPT = """
 ---
 
 【输出格式（JSON）】
-[
-  {{
-    "question": "...",
-    "answer": "...",
-    "language": "...",
-    "difficulty": "...",
-    "intent": "...",
-    "node_ids": ["node1", "node2"]
-  }}
-]
-
+{{
+    "qa_list":[
+        {{
+            "question": "...",
+            "answer": "...",
+            "language": "...",
+            "difficulty": "...",
+            "intent": "...",
+            "node_ids": ["node1", "node2"]
+        }}
+    ]
+}}
 只输出JSON，不要解释。
 """
