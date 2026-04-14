@@ -7,8 +7,10 @@ from typing import Any
 from uuid import uuid4
 
 from core.settings import settings
+from src.memory.writeback import write_long_term_memory
 from src.config.llm_config import LLMService
 from src.types.agent_state import State
+from src.types.memory_type import MemoryWriteRequest
 
 
 def _build_citation_label(document: Any) -> str:
@@ -145,6 +147,31 @@ def run_agent(
         state = State(**result)
     state.duration_ms = duration_ms
     state.llm_usage = LLMService.summarize_usage(llm_records)
+    try:
+        memory_write_result = write_long_term_memory(
+            MemoryWriteRequest(
+                user_id=state.user_id or "",
+                session_id=state.session_id or None,
+                query=state.query or "",
+                answer=state.answer or "",
+                chat_history=state.chat_history or [],
+                user_profile=state.user_profile or {},
+                existing_memories=state.long_term_memory_hits,
+            )
+        )
+        state.memory_write_summary = {
+            "written_count": memory_write_result.written_count,
+            "skipped_count": memory_write_result.skipped_count,
+            "memory_ids": memory_write_result.memory_ids,
+            "diagnostics": memory_write_result.diagnostics,
+        }
+    except Exception as exc:
+        state.memory_write_summary = {
+            "written_count": 0,
+            "skipped_count": 0,
+            "memory_ids": [],
+            "diagnostics": [f"memory_write_exception={exc}"],
+        }
     return state
 
 
@@ -320,6 +347,13 @@ def build_run_report(state: State) -> dict[str, Any]:
         "llm_usage": state.llm_usage,
         "working_memory": state.working_memory,
         "short_term_memory": state.short_term_memory,
+        "long_term_memory_used": state.long_term_memory_used,
+        "long_term_memory_context": state.long_term_memory_context,
+        "long_term_memory_hits": [
+            item.model_dump() if hasattr(item, "model_dump") else item
+            for item in (state.long_term_memory_hits or [])
+        ],
+        "memory_write_summary": state.memory_write_summary,
         "user_profile": _summarize_user_profile(state.user_profile),
         "preferred_topics_usage": _extract_preferred_topics_usage(state),
         "diagnostics": state.diagnostics,

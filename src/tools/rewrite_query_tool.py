@@ -21,6 +21,7 @@ def rewrite_query_tool(
     query: str,
     chat_history=None,
     user_profile=None,
+    long_term_memory_context: str | None = None,
 ) -> RewriteResult:
     prompt = REWRITE_PROMPT.format(
         query=query,
@@ -29,6 +30,16 @@ def rewrite_query_tool(
     preferred_topics_note = build_preferred_topics_note(user_profile)
     if preferred_topics_note:
         prompt = f"{prompt}\n\n{preferred_topics_note}"
+    if long_term_memory_context and long_term_memory_context.strip():
+        prompt = (
+            f"{prompt}\n\n"
+            "[长期记忆]\n"
+            f"{long_term_memory_context.strip()}\n\n"
+            "使用规则:\n"
+            "- 只把这些长期记忆当作弱上下文。\n"
+            "- 仅在它们能帮助补全指代、省略或稳定背景时使用。\n"
+            "- 不要让长期记忆覆盖用户当前问题的真实意图。"
+        )
 
     try:
         response: RewriteResult = LLMService.invoke(
@@ -43,6 +54,8 @@ def rewrite_query_tool(
         response.diagnostics = list(response.diagnostics or []) + ["rewrite_query_completed"]
         if preferred_topics_note:
             response.diagnostics.append("preferred_topics_hint_applied:rewrite_query")
+        if long_term_memory_context and long_term_memory_context.strip():
+            response.diagnostics.append("long_term_memory_hint_applied:rewrite_query")
         return response
     except Exception as exc:
         return RewriteResult(

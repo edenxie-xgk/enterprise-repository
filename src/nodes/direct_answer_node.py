@@ -35,7 +35,7 @@ def _preferred_topics(state: State) -> list[str]:
 def _build_direct_answer_prompt(state: State) -> str:
     chat_history = "\n".join(state.chat_history[-8:]) if state.chat_history else "None"
     effective_query = state.working_query or state.resolved_query or state.query or ""
-    return DIRECT_ANSWER_PROMPT.format(
+    prompt = DIRECT_ANSWER_PROMPT.format(
         raw_query=state.query or "",
         query=effective_query,
         chat_history=chat_history,
@@ -43,6 +43,17 @@ def _build_direct_answer_prompt(state: State) -> str:
         preferred_language=_preferred_language(state),
         preferred_topics=", ".join(_preferred_topics(state)) or "None",
     ).strip()
+    if state.long_term_memory_context and state.long_term_memory_context.strip():
+        prompt = (
+            f"{prompt}\n\n"
+            "[长期记忆]\n"
+            f"{state.long_term_memory_context.strip()}\n\n"
+            "使用规则:\n"
+            "- 这些长期记忆只用于帮助理解用户背景、偏好和长期任务。\n"
+            "- 不要把它们当作实时事实来源。\n"
+            "- 如果与用户当前问题冲突，以当前问题为准。"
+        )
+    return prompt
 
 
 def _looks_like_unreliable_direct_answer(result: FinalAnswerResult) -> bool:
@@ -154,6 +165,8 @@ def direct_answer_node(state: State):
         if not result.diagnostics:
             result.diagnostics = ["direct_answer_llm_completed"]
         result.diagnostics.append("direct_answer:standalone_node")
+        if state.long_term_memory_used:
+            result.diagnostics.append("long_term_memory_hint_applied:direct_answer")
         result.success = not _looks_like_unreliable_direct_answer(result)
         if not result.success and not result.fail_reason:
             result.fail_reason = "direct_answer_unavailable"

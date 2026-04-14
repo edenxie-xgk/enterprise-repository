@@ -21,6 +21,7 @@ def rewrite_query_node(state:State):
             state.working_query,
             state.chat_history,
             state.user_profile,
+            long_term_memory_context=state.long_term_memory_context,
         )
     else:
         rewritten = RewriteResult(

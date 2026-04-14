@@ -162,6 +162,10 @@
                 <span class="detail-label">Action history</span>
                 <span>{{ message.report_summary.action_history?.length || 0 }}</span>
               </div>
+              <div class="detail-row">
+                <span class="detail-label">Long-term memory used</span>
+                <span>{{ message.report_summary.long_term_memory_used ? "Yes" : "No" }}</span>
+              </div>
               <div v-if="message.report_summary.user_profile?.preferred_topics?.length" class="detail-column">
                 <span class="detail-label">Preferred topics</span>
                 <div class="flex flex-wrap gap-2 mt-2">
@@ -199,6 +203,34 @@
                     >
                       {{ step }}
                     </span>
+                  </div>
+                </div>
+              </div>
+              <div v-if="message.report_summary.long_term_memory_context" class="detail-column">
+                <span class="detail-label">Long-term memory context</span>
+                <div class="detail-card mt-2 whitespace-pre-wrap text-sm text-gray-600">
+                  {{ message.report_summary.long_term_memory_context }}
+                </div>
+              </div>
+              <div
+                v-if="message.report_summary.memory_write_summary && (message.report_summary.memory_write_summary.written_count || message.report_summary.memory_write_summary.diagnostics?.length)"
+                class="detail-column"
+              >
+                <span class="detail-label">Memory writeback</span>
+                <div class="space-y-2 mt-2">
+                  <div class="detail-row">
+                    <span>Written</span>
+                    <span>{{ message.report_summary.memory_write_summary.written_count || 0 }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span>Skipped</span>
+                    <span>{{ message.report_summary.memory_write_summary.skipped_count || 0 }}</span>
+                  </div>
+                  <div
+                    v-if="message.report_summary.memory_write_summary.diagnostics?.length"
+                    class="detail-card text-xs text-gray-500 whitespace-pre-wrap"
+                  >
+                    {{ message.report_summary.memory_write_summary.diagnostics.join("\n") }}
                   </div>
                 </div>
               </div>

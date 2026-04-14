@@ -135,6 +135,16 @@ def finalize_node(state: State):
         prefers_citations="yes" if _prefers_citations(state) else "no",
         preferred_topics=", ".join(_preferred_topics(state)) or "None",
     )
+    if state.long_term_memory_context and state.long_term_memory_context.strip():
+        prompt = (
+            f"{prompt}\n\n"
+            "[长期记忆]\n"
+            f"{state.long_term_memory_context.strip()}\n\n"
+            "使用规则:\n"
+            "- 长期记忆只用于帮助保持跨会话的一致语气、背景和偏好。\n"
+            "- 不要让长期记忆覆盖证据摘要里的事实。\n"
+            "- 如果长期记忆与证据冲突，以证据为准。"
+        )
 
     try:
         result: FinalAnswerResult = LLMService.invoke(
@@ -152,6 +162,8 @@ def finalize_node(state: State):
             result.reason = "finalize_completed" if result.success else "finalize_constrained"
         if not result.diagnostics:
             result.diagnostics = ["finalize_llm_completed"]
+        if state.long_term_memory_used:
+            result.diagnostics.append("long_term_memory_hint_applied:finalize")
     except Exception:
         result = _build_fallback_final_answer(state)
 

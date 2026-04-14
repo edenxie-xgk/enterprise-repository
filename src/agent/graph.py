@@ -7,6 +7,7 @@ from src.nodes.db_search_node import db_search_node
 from src.nodes.direct_answer_node import direct_answer_node
 from src.nodes.expand_query_node import expand_query_node
 from src.nodes.finalize_node import finalize_node
+from src.nodes.memory_recall_node import memory_recall_node
 from src.nodes.rag_node import rag_node
 from src.nodes.resolved_query_node import resolved_query_node
 from src.nodes.rewrite_query_node import rewrite_query_node
@@ -23,6 +24,7 @@ def route(state:State):
 
 builder.add_node("resolved_query", resolved_query_node)
 builder.set_entry_point("resolved_query")
+builder.add_node("memory_recall", memory_recall_node)
 
 builder.add_node("agent", agent_node)
 
@@ -35,7 +37,8 @@ builder.add_node("web_search", web_search_node)
 builder.add_node("db_search", db_search_node)
 builder.add_node("finalize", finalize_node)
 
-builder.add_edge("resolved_query", "agent")
+builder.add_edge("resolved_query", "memory_recall")
+builder.add_edge("memory_recall", "agent")
 
 builder.add_edge("rag", "agent")
 builder.add_edge("web_search", "agent")
