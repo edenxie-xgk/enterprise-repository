@@ -3,7 +3,9 @@ import { ElLoading, ElMessage } from "element-plus";
 
 import router from "../router";
 
-export const baseURL = "http://" + window.location.hostname + ":1016";
+const configuredBaseURL = (import.meta.env.VITE_API_BASE_URL || "").trim();
+
+export const baseURL = configuredBaseURL || "http://" + window.location.hostname + ":1016";
 
 let loadingInstance;
 const request = axios.create({

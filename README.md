@@ -1,442 +1,214 @@
-# rag-agent
+<div align="center">
 
-一个面向企业内部知识问答场景的 Agentic RAG 项目。系统围绕“文档检索 + 智能路由 + 权限控制 + 会话追踪”展开，既能回答知识库问题，也能处理部分结构化业务查询，并在允许时补充 Web 搜索结果。
+# 🧠 Enterprise RAG Agent
 
-当前仓库的实际形态是：
+**面向企业内部知识库、权限问答、会话追踪与长期记忆场景的 Agentic RAG 全栈项目**
 
-- Python 后端：`FastAPI + LangGraph + LangChain + LlamaIndex`
-- RAG 检索：`PostgreSQL/PGVector + MongoDB/Elasticsearch + Reranker`
-- 前端界面：`Vue 3 + Vite + Element Plus + ECharts`
-- 运行模式：支持普通查询、流式聊天、文件上传入库、管理端监控
+[![Backend Smoke Tests](https://github.com/edenxie-xgk/enterprise-repository/actions/workflows/preferred-topics-tests.yml/badge.svg)](https://github.com/edenxie-xgk/enterprise-repository/actions/workflows/preferred-topics-tests.yml)
+![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.135-009688?logo=fastapi&logoColor=white)
+![Vue](https://img.shields.io/badge/Vue-3-42B883?logo=vuedotjs&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-PGVector-4169E1?logo=postgresql&logoColor=white)
+![Milvus](https://img.shields.io/badge/Memory-Milvus-00B5AD)
 
-## 1. 项目定位
+</div>
 
-这个项目不是单纯的“聊天机器人”，而是一个带有明确业务边界的企业知识问答系统，主要面向以下场景：
+> 这是一个把“文档知识库 + Agent 路由 + 权限控制 + 长期记忆 + 监控面板”串起来的完整项目，适合作为企业内部智能问答系统的原型、教学项目或最小可用版本。
 
-- 对企业内部上传文档做检索问答
-- 根据用户角色和部门限制知识访问范围
-- 对简单问题直接回答，减少不必要的检索成本
-- 对复杂问题自动改写、扩展或拆解后再检索
-- 对结构化问题直接查业务库，例如“我能访问哪些部门/文件”
-- 在用户画像允许的前提下，补充外部 Web 搜索结果
-- 记录每次 Agent 运行的 trace、tokens、成本、失败原因和会话信息
+## ✨ 项目简介
 
-## 2. 核心能力
+这个仓库的目标，不是做一个只会聊天的 Demo，而是做一套更贴近企业内部实际场景的 Agentic RAG 系统：
 
-- 多路由回答：支持 `direct_answer`、`rag`、`db_search`、`web_search`
-- 多格式文档入库：支持 `txt/docx/md/pdf/xlsx/csv/pptx/json/图片`
-- 混合检索：向量检索 + BM25 检索 + RRF 融合
-- 重排序：支持 LLM rerank 或 CrossEncoder rerank
-- 证据护栏：对检索结果进行引用、来源数、摘要充分性校验
-- 权限过滤：可按 `department_id`、`user_id` 等元数据做检索过滤
-- 用户画像：支持回答风格、语言、偏好主题、是否显示引用、是否允许联网
-- 流式输出：聊天接口通过 SSE 逐段回传答案
-- 会话持久化：聊天消息、运行报告、监控数据写入 MongoDB
-- 管理端监控：查看请求量、活跃用户、模型分布、失败率、运行详情
+- 用户可以上传企业文档，系统自动切块、向量化并入库。
+- Agent 会根据问题类型自动决定是直接回答、做知识库检索、做结构化查询，还是补充 Web 搜索。
+- 检索链路会结合权限范围，避免把用户无权访问的内容带进答案。
+- 系统会记录会话、运行报告、引用信息和追踪数据，方便后续排查与监控。
+- 文档向量保留在 `PGVector`，长期记忆单独接入 `Milvus`，两条链路职责分离。
 
-## 3. 系统架构
+一句话概括：
+
+**文档知识库走 PGVector，长期记忆走 Milvus，业务权限和账号体系走 PostgreSQL，会话与运行记录走 MongoDB。**
+
+## 🎯 适用场景
+
+- 企业内部制度、流程、规范、操作手册问答
+- 按部门或角色控制访问范围的知识检索
+- 文件上传后自动入库、自动检索、自动生成带引用回答
+- 带长期记忆能力的企业助手，例如记住用户语言偏好、回答风格、常用上下文
+- 对会话、运行轨迹、失败原因和使用情况有可观测需求的 Agent 系统
+
+## 🚀 核心能力
+
+| 能力 | 说明 |
+| --- | --- |
+| 📄 多格式文档入库 | 支持 `txt / docx / md / pdf / xlsx / csv / pptx / json / 图片` |
+| 🔍 混合检索 | 支持向量检索 + BM25 检索 + RRF 融合 |
+| 🧭 Agent 路由 | 支持 `direct_answer`、`rag`、`db_search`、`web_search` 等动作 |
+| 🔐 权限过滤 | 检索时可按 `department_id`、`user_id` 等元数据限制访问范围 |
+| 🧠 长期记忆 | 支持记住用户偏好、任务上下文，并在后续会话中召回 |
+| 📡 流式输出 | 聊天接口通过 SSE 返回增量内容与运行摘要 |
+| 📊 运行监控 | 管理端可查看请求量、失败率、模型分布、运行明细 |
+| 🐳 Docker 部署 | 已整理为单一 `docker-compose.yml`，更适合新手与云部署 |
+
+## 🏗️ 架构概览
 
 ```mermaid
-flowchart TD
-    A["Vue 前端<br/>聊天页 / 管理页"] --> B["FastAPI 服务层"]
-    B --> C["鉴权与用户画像<br/>JWT / User Profile"]
-    B --> D["LangGraph Agent"]
-    D --> E["Direct Answer"]
-    D --> F["RAG"]
-    D --> G["DB Search"]
-    D --> H["Web Search"]
-    F --> I["Dense Retrieval<br/>PGVector"]
-    F --> J["BM25 Retrieval<br/>MongoDB 或 Elasticsearch"]
-    F --> K["Reranker"]
-    B --> L["PostgreSQL<br/>业务表 + 向量表"]
-    B --> M["MongoDB<br/>聊天记录 / 文档块 / 评估数据"]
-    J --> N["Elasticsearch<br/>可选 BM25 引擎"]
+flowchart LR
+    UI["🖥️ Vue 3 前端<br/>聊天页 / 管理页"] --> API["⚙️ FastAPI API 层"]
+    API --> AUTH["🔐 JWT 鉴权 / 用户画像"]
+    API --> AGENT["🧭 LangGraph Agent"]
+
+    AGENT --> MEM["🧠 长期记忆召回<br/>Milvus"]
+    AGENT --> RAG["📚 RAG 检索"]
+    AGENT --> DB["🗂️ 结构化查询"]
+    AGENT --> WEB["🌐 Web Search"]
+    AGENT --> FINAL["🧾 Finalize"]
+
+    RAG --> PG["🐘 PostgreSQL + PGVector<br/>文档向量"]
+    RAG --> BM25["🔎 BM25 Lite / Elasticsearch"]
+
+    API --> MONGO["🍃 MongoDB<br/>会话 / 消息 / 运行报告"]
+    API --> BIZ["🏢 PostgreSQL<br/>用户 / 角色 / 部门 / 文件"]
 ```
 
-### 查询执行主链路
+## 🧭 Agent 主链路
 
-1. 用户在前端发起聊天请求
-2. FastAPI 根据 JWT 识别当前用户
-3. 系统装配用户画像和可访问部门列表
-4. LangGraph 先做 `resolved_query`
-5. `agent_node` 根据策略决定下一步动作
-6. 动作可能是：
-   - `direct_answer`：简单问题直接回答
-   - `rag`：企业知识库检索增强回答
-   - `db_search`：结构化业务查询
-   - `web_search`：外部搜索增强
-   - `rewrite_query / expand_query / decompose_query`：中间推理步骤
-7. 检索结果进入 `finalize_node` 统一整理为最终回答
-8. 运行报告、trace、action_history、消息内容写入 MongoDB
-9. 前端通过 SSE 接收流式输出与运行摘要
+当前主流程可以简化理解成下面这条线：
 
-## 4. 目录结构
+1. `resolved_query` 先把用户问题和上下文整理成可执行查询。
+2. `memory_recall` 先尝试从长期记忆里召回和当前问题相关的偏好或历史事实。
+3. `agent` 根据当前状态决定下一步动作。
+4. 动作可能进入 `direct_answer`、`rag`、`db_search`、`web_search`、`rewrite_query`、`expand_query`、`decompose_query`。
+5. `finalize` 汇总答案、引用、运行摘要和中间轨迹，输出最终结果。
+
+这意味着它不是“固定一次检索再回答”，而是一个带策略判断、带中间步骤、带长期记忆的 Agent 工作流。
+
+## 🧩 技术栈
+
+| 层次 | 技术 |
+| --- | --- |
+| 后端 API | FastAPI、Uvicorn |
+| Agent 编排 | LangGraph、LangChain |
+| RAG 框架 | LlamaIndex |
+| 向量知识库 | PostgreSQL、PGVector |
+| 长期记忆 | Milvus |
+| 会话与运行记录 | MongoDB |
+| 稀疏检索 | BM25 Lite 或 Elasticsearch |
+| ORM / 数据层 | SQLModel、SQLAlchemy、asyncpg、Alembic |
+| 模型接入 | OpenAI、DeepSeek、Hugging Face、智谱 |
+| 文档解析 | PyMuPDF、PaddleOCR、python-docx、pandas、python-pptx |
+| 前端 | Vue 3、Vite、Element Plus、Tailwind CSS、ECharts |
+| 测试 / CI | unittest、GitHub Actions |
+
+## 📂 目录结构
 
 ```text
 rag-agent/
-├─ app.py                     # 服务启动入口
-├─ core/                      # 全局配置、基础类型
-├─ service/                   # FastAPI 路由、SQLModel 模型、鉴权与业务接口
-├─ src/                       # Agent、RAG、工具、提示词、状态模型
-├─ web_service/               # Vue 3 前端
-├─ tests/                     # 单元测试
-├─ scripts/                   # 辅助脚本与实验性工具
-├─ data/                      # 样例数据、评估数据
-├─ db/                        # 本地数据库目录或数据挂载目录
-├─ logs/                      # 运行日志
-├─ requirements.txt          # Python 依赖
-└─ langgraph.json            # LangGraph 图配置
+├─ app.py                   # 启动入口
+├─ core/                    # 全局配置、基础类型
+├─ service/                 # FastAPI、鉴权、SQLModel、业务路由
+├─ src/
+│  ├─ agent/                # LangGraph 图、路由、策略、运行器
+│  ├─ nodes/                # Agent 节点实现
+│  ├─ rag/                  # 文档入库、检索、重排、上下文构造
+│  ├─ memory/               # 长期记忆服务、写回、Milvus 存储
+│  ├─ models/               # LLM / Embedding / Reranker 封装
+│  ├─ prompts/              # 提示词模板
+│  └─ types/                # 状态对象、返回对象、记忆对象
+├─ web_service/             # Vue 3 前端
+├─ tests/                   # 单元测试和冒烟测试
+├─ alembic/                 # 数据库迁移
+├─ docker/                  # 容器启动脚本
+├─ deploy/                  # 中文部署说明
+├─ Dockerfile               # 后端镜像
+├─ docker-compose.yml       # 单文件部署编排
+└─ .env.example             # 环境变量模板
 ```
 
-### 重点目录说明
+## 🧱 核心模块职责
 
-#### `core/`
-
-- `settings.py`：项目总配置入口，几乎所有环境变量都从这里读取
-- `custom_types.py`：文档元数据模型 `DocumentMetadata`
-
-#### `service/`
-
-- `server.py`：创建 FastAPI 应用、挂载路由、初始化表结构
-- `database/`：异步 PostgreSQL 连接、Session 管理、并发控制信号量
-- `dependencies/`：鉴权依赖，例如当前登录用户解析
-- `models/`：SQLModel 表模型，如用户、文件、角色、部门、用户画像
-- `router/`：API 路由
-- `utils/chat_store.py`：会话、消息、运行记录持久化
-- `utils/user_profile.py`：用户画像读写与序列化
-
-#### `src/`
-
-- `agent/`：LangGraph 图、策略、路由、运行器
-- `nodes/`：图节点实现
-- `tools/`：对节点调用逻辑的进一步封装
-- `rag/`：入库、检索、重排、上下文构造、评估
-- `models/`：LLM、Embedding、Reranker 实例化
-- `prompts/`：Agent/RAG 提示词模板
-- `types/`：状态、事件、结果对象定义
-- `database/`：MongoDB、PostgreSQL、Elasticsearch 访问适配
-
-#### `web_service/`
-
-- `src/view/chat/`：聊天主页面
-- `src/view/admin/`：管理端监控页面
-- `src/components/`：聊天窗、侧栏、用户画像面板等
-- `src/api/`：前端请求封装和 SSE 聊天客户端
-
-## 5. 技术栈
-
-| 层次 | 主要技术 |
+| 模块 | 职责 |
 | --- | --- |
-| Web 后端 | FastAPI, Uvicorn |
-| Agent 编排 | LangGraph, LangChain |
-| RAG 框架 | LlamaIndex |
-| LLM 接入 | OpenAI, DeepSeek |
-| Web 搜索 | 智谱 `zhipuai` |
-| 关系型数据库 | PostgreSQL, SQLModel, SQLAlchemy |
-| 向量存储 | PGVector |
-| 文档与会话存储 | MongoDB |
-| 稀疏检索 | MongoDB BM25 Lite 或 Elasticsearch |
-| 重排序 | LLM Reranker / SentenceTransformer CrossEncoder |
-| 文档解析 | PyMuPDF, PaddleOCR, python-docx, pandas, python-pptx |
-| 前端 | Vue 3, Vite, Element Plus, Tailwind CSS, ECharts |
+| `core/` | 统一读取环境变量、定义项目级基础类型 |
+| `service/` | FastAPI 应用、鉴权依赖、数据库连接、业务路由和工具函数 |
+| `src/agent/` | 组织整个 Agent 状态图和动作路由 |
+| `src/nodes/` | 实现每一个节点的实际逻辑，例如检索、改写、总结、长期记忆召回 |
+| `src/rag/` | 管理文档解析、切块、向量化、检索、融合、重排和上下文构造 |
+| `src/memory/` | 管理长期记忆召回、写回、去重和 Milvus 存储适配 |
+| `web_service/` | 提供聊天界面、管理后台和接口调用封装 |
+| `tests/` | 覆盖偏好主题、密码、文件、长期记忆、API 冒烟等关键逻辑 |
 
-## 6. 核心模块说明
+## ⚡ 最快启动方式
 
-### 6.1 Agent 编排层
+推荐优先使用 Docker，这也是当前最容易跑起来的方式。
 
-- `src/agent/graph.py`
-  - 定义整个 LangGraph 状态图
-  - 入口节点是 `resolved_query`
-  - 最终通过 `finish` 或 `abort` 结束
+### 1. 复制环境变量模板
 
-- `src/agent/policy.py`
-  - 决定输入是否合法
-  - 决定初始动作和后续重试动作
-  - 根据上一步结果动态调大或调小检索参数
-  - 判断何时提前结束或进入 `finalize`
+Linux / macOS:
 
-- `src/agent/runner.py`
-  - `run_agent()` 是统一调用入口
-  - 负责构建初始状态、收集 LLM 使用情况、生成运行报告
-
-### 6.2 节点层
-
-- `resolved_query_node`
-  - 结合聊天历史把当前问题归一化成可执行查询
-
-- `agent_node`
-  - 图里的决策中枢
-  - 根据状态决定继续改写、检索、直答还是结束
-
-- `direct_answer_node`
-  - 对简单问题直接回答
-
-- `rewrite_query_node`
-  - 对表达含糊、依赖上下文的问题做改写
-
-- `expand_query_node`
-  - 生成更多检索变体，提升召回率
-
-- `decompose_query_node`
-  - 把复杂问题拆成多个子问题
-
-- `rag_node`
-  - 执行企业知识库检索
-  - 附带权限过滤、用户偏好主题引导、检索策略调整
-
-- `db_search_node`
-  - 执行结构化查询
-  - 当前主要支持“权限范围”“可访问文件”“最近文件”等问题
-
-- `web_search_node`
-  - 执行外部 Web 搜索
-  - 默认需用户画像显式允许
-
-- `finalize_node`
-  - 将证据摘要、子问题结果、引用整合成最终回答
-
-### 6.3 RAG 层
-
-- `src/rag/rag_service.py`
-  - 核心 RAG 服务
-  - 同时负责文档入库 `ingestion()` 和查询 `query()`
-
-- `src/rag/ingestion/loader.py`
-  - 多格式文件加载器
-  - PDF 场景支持文本提取不足时回退到 OCR
-
-- `src/rag/ingestion/chunker.py`
-  - 按文件类型采用不同切块策略
-
-- `src/rag/retrieval/dense.py`
-  - 向量检索
-  - 支持元数据过滤
-
-- `src/rag/retrieval/bm25.py`
-  - 两种 BM25 实现：
-    - `lite`：基于 MongoDB 已存文档内容做内存 BM25
-    - `es`：基于 Elasticsearch
-
-- `src/rag/retrieval/hybrid.py`
-  - 将向量检索与 BM25 检索做 RRF 融合
-
-- `src/rag/rerank/reranker.py`
-  - 统一封装 Rerank
-  - 可配置为 LLM 或 CrossEncoder
-
-- `src/rag/context/builder.py`
-  - 将候选文档去重、截断并拼成上下文字符串
-
-- `src/tools/rag_tool.py`
-  - 对复杂拆解问题支持 multi-pass RAG
-  - 对多个子问题结果再做聚合
-
-### 6.4 服务接口层
-
-- `service/router/agent/chat.py`
-  - SSE 流式聊天接口
-  - 同步写入聊天消息与 run 报告
-
-- `service/router/agent/query.py`
-  - 非流式 Agent 查询接口
-
-- `service/router/agent/admin_monitor.py`
-  - 管理端运行监控接口
-
-- `service/router/file/upload.py`
-  - 文件上传与异步入库入口
-
-- `service/router/users/login.py`
-  - 登录接口，返回 JWT
-
-- `service/router/users/profile.py`
-  - 查询/更新用户画像
-
-### 6.5 前端层
-
-- `web_service/src/view/chat/Chat.vue`
-  - 聊天主页面
-  - 会管理当前会话、消息流、用户画像加载
-
-- `web_service/src/components/ChatWindow.vue`
-  - 展示消息、引用、trace、action_history
-
-- `web_service/src/view/admin/*`
-  - 管理端监控页
-  - 包括概览、运行明细和可视化图表
-
-## 7. 数据存储设计
-
-### PostgreSQL
-
-用于两类数据：
-
-- SQLModel 业务表
-  - `users`
-  - `file`
-  - `department`
-  - `role`
-  - `role_department`
-  - `user_profile`
-- PGVector 向量表
-  - 存储文档切块后的 embedding
-
-### MongoDB
-
-主要用于：
-
-- 文档切块原文存储
-- 聊天会话 `chat_sessions`
-- 聊天消息 `chat_messages`
-- 运行记录 `chat_message_runs`
-- QA/评估数据
-
-### Elasticsearch
-
-可选。
-
-当 `BM25_RETRIEVAL_MODE=es` 时启用 Elasticsearch 作为 BM25 检索后端。注意当前代码的索引映射使用了：
-
-- `ik_max_word`
-- `ik_smart`
-
-因此 Elasticsearch 需要提前安装 IK 分词器，否则索引创建会失败。
-
-## 8. 运行前准备
-
-### 基础环境
-
-建议准备以下环境：
-
-- Python `3.11`
-- Node.js `18+`
-- PostgreSQL，且已安装 `pgvector` 扩展
-- MongoDB
-- 可选：Elasticsearch + IK 分词器
-
-### 关于旧文档说明
-
-仓库早期 README 中出现过 Milvus 相关命令，但当前代码里的实际向量存储实现已经是：
-
-- `PostgreSQL + PGVector`
-
-因此现在以 PGVector 方案为准，Milvus 不是当前主链路的一部分。
-
-## 9. 环境变量
-
-项目通过根目录 `.env` 提供配置，具体字段以 `core/settings.py` 为准。下面给出最关键的一组配置示例：
-
-```env
-# PostgreSQL / PGVector
-DATABASE_NAME=rag_agent
-DATABASE_STRING=postgresql://user:password@127.0.0.1:5432/rag_agent
-DATABASE_ASYNC_STRING=postgresql+asyncpg://user:password@127.0.0.1:5432/rag_agent
-VECTOR_TABLE_NAME=rag_vector_store
-EMBEDDING_DIM=1024
-
-# MongoDB
-MONGODB_URL=mongodb://127.0.0.1:27017
-MONGODB_DB_NAME=rag_agent
-DOC_COLLECTION_NAME=documents
-QA_COLLECTION_NAME=qa_benchmark
-
-# Elasticsearch（可选）
-ELASTICSEARCH_URL=http://127.0.0.1:9200
-BM25_RETRIEVAL_MODE=lite
-
-# 模型
-EMBEDDING_MODEL=BAAI/bge-m3
-RERANKER_MODEL=BAAI/bge-reranker-v2-m3
-RERANKER_TYPE=cross-encoder
-OPENAI_API_KEY=your-openai-key
-OPENAI_MODEL=gpt-4o-mini
-OPENAI_BASE_URL=https://api.openai.com/v1
-DEEPSEEK_API_KEY=your-deepseek-key
-DEEPSEEK_MODEL=deepseek-chat
-DEEPSEEK_URL=https://api.deepseek.com
-ZHIPUAI_API_KEY=your-zhipu-key
-
-# Agent / Retrieval
-RETRIEVER_TOP_K=5
-RERANKER_TOP_K=5
-RETRIEVAL_MIN_SCORE=0.1
-RERANKER_MIN_SCORE=0.1
-AGENT_MAX_STEPS=10
-AGENT_CHAT_HISTORY_LIMIT=8
-AGENT_OUTPUT_LEVEL=standard
-
-# 文档处理
-OCR_LANG=ch
-OCR_MIN_SCORE=0.5
-TXT_CHUNK_SIZE=500
-TXT_CHUNK_OVERLAP=50
-PDF_CHUNK_SIZE=500
-PDF_CHUNK_OVERLAP=50
-EXCEL_CHUNK_SIZE=500
-EXCEL_CHUNK_OVERLAP=50
-
-# 运行控制
-MAX_RETRIES=3
-MAX_TIMEOUT=60
-DELETE_FILE=false
+```bash
+cp .env.example .env
 ```
 
-### 关键配置说明
+Windows PowerShell:
 
-- `BM25_RETRIEVAL_MODE`
-  - `lite`：无需 Elasticsearch，直接使用 MongoDB 中的文档内容构建 BM25
-  - `es`：使用 Elasticsearch 做 BM25
+```powershell
+Copy-Item .env.example .env
+```
 
-- `RERANKER_TYPE`
-  - `llm`
-  - `cross-encoder`
+### 2. 第一次只改最关键的配置
 
-- `AGENT_OUTPUT_LEVEL`
-  - `concise`
-  - `standard`
-  - `detailed`
+建议至少检查这些字段：
 
-## 10. 安装与启动
+- `JWT_SECRET_KEY`
+- `OPENAI_API_KEY` 或 `DEEPSEEK_API_KEY`
+- `DOCKER_MILVUS_URI`
+- `POSTGRES_PASSWORD`
+- `FRONTEND_PORT`
+- `CORS_ALLOW_ORIGINS`
 
-### 10.1 安装 Python 依赖
+如果你只是本地 Docker 试跑，通常只需要先重点看这几项。
 
-Windows PowerShell 示例：
+### 3. 一键启动
+
+```bash
+docker compose up -d --build
+```
+
+### 4. 查看状态
+
+```bash
+docker compose ps
+docker compose logs -f backend
+```
+
+### 5. 访问地址
+
+- 前端首页：`http://127.0.0.1:8080`
+- 接口文档：`http://127.0.0.1:8080/api/docs`
+
+说明：
+
+- 当前默认只对外暴露前端端口。
+- 后端、PostgreSQL、MongoDB 默认不直接暴露到公网。
+- 前端通过 Nginx 反向代理访问后端接口。
+
+## 🛠️ 源码开发方式
+
+如果你想本地调试源码，而不是直接跑 Docker 镜像，可以按下面的方式启动。
+
+### 后端
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-```
-
-### 10.2 准备数据库
-
-至少需要：
-
-- PostgreSQL + pgvector
-- MongoDB
-
-如果你暂时不需要 Elasticsearch，请设置：
-
-```env
-BM25_RETRIEVAL_MODE=lite
-```
-
-### 10.3 启动后端
-
-```powershell
+alembic upgrade head
 python app.py
 ```
 
-默认监听：
-
-- `http://127.0.0.1:1016`
-
-后端启动后会做两件事：
-
-- 初始化 SQLModel 表结构
-- 挂载静态资源目录 `service/public`
-
-### 10.4 启动前端
+### 前端
 
 ```powershell
 cd web_service
@@ -444,245 +216,170 @@ npm install
 npm run dev
 ```
 
-前端默认是 Vite 开发服务器，通常访问：
+开发模式下你需要自己准备好这些依赖服务：
 
-- `http://127.0.0.1:5173/#/chat`
+- PostgreSQL + PGVector
+- MongoDB
+- Milvus
 
-前端请求会自动指向：
+推荐版本：
 
-- `http://<当前主机>:1016`
+- Python `3.11`
+- Node.js `18+`
 
-## 11. 文档入库流程
+## 🔑 关键环境变量
+
+| 变量 | 作用 |
+| --- | --- |
+| `JWT_SECRET_KEY` | JWT 签名密钥，必须改成随机长字符串 |
+| `OPENAI_API_KEY` / `DEEPSEEK_API_KEY` | 至少配置一个模型提供方 |
+| `POSTGRES_PASSWORD` | PostgreSQL 密码 |
+| `CORS_ALLOW_ORIGINS` | 前端可访问的来源地址 |
+| `DOCKER_MILVUS_URI` | Docker 环境里连接 Milvus 的地址 |
+| `MEMORY_ENABLED` | 是否启用长期记忆 |
+| `MEMORY_WRITE_ENABLED` | 是否允许把对话写入长期记忆 |
+| `BM25_RETRIEVAL_MODE` | 稀疏检索模式，默认 `lite`，可选 `es` |
+
+`.env.example` 顶部已经按“第一次部署先看哪些字段”的思路整理过，新手可以直接从顶部开始改。
+
+## 📥 文档入库流程
 
 上传文档后的主流程如下：
 
-1. 文件通过 `/file/upload` 上传
-2. 原文件写入 `service/public/uploads/`
-3. 生成 `DocumentMetadata`
-4. 调用 `rag_service.ingestion()`
-5. 文件被 `loader.py` 解析
-6. 内容被 `chunker.py` 切块
-7. 切块 embedding 写入 PGVector
-8. 原始块内容写入 MongoDB 或 Elasticsearch
-9. 文件状态更新为已完成或失败
+1. 前端调用 `/file/upload` 上传文件。
+2. 后端校验用户权限、文件类型和大小。
+3. 原文件写入 `service/public/uploads/`。
+4. RAG 服务解析文档并按类型切块。
+5. 文档块向量写入 `PGVector`。
+6. 原始块内容和相关元数据写入 `MongoDB` 或 Elasticsearch。
+7. 文件状态从“处理中”更新为“成功”或“失败”。
 
-### 支持的文件类型
+## 💬 查询流程
 
-- `txt`
-- `doc/docx`
-- `md/markdown`
-- `pdf`
-- `xls/xlsx`
-- `csv`
-- `pptx`
-- `json`
-- `jpeg/png/jpg/bmp/webp/tiff/tif`
+用户问一个问题时，系统会经历下面几个关键步骤：
 
-## 12. 查询流程
+1. 识别用户身份并加载用户画像。
+2. 读取最近会话历史，做上下文归一化。
+3. 先召回长期记忆，看有没有和当前问题相关的偏好或历史事实。
+4. Agent 决定当前问题走哪条路径。
+5. 如果走 `rag`，就执行向量检索、BM25 检索、融合、重排和上下文构建。
+6. 如果走 `db_search`，就查询结构化业务信息。
+7. 如果走 `web_search`，就补充外部信息。
+8. 最终统一进入 `finalize` 输出答案、引用、轨迹和摘要。
 
-### 12.1 直答流程
+## 🧠 长期记忆设计
 
-适合：
+这个项目当前的长期记忆路线是：
 
-- 概念解释
-- 语言润色
-- 翻译
-- 不依赖企业知识库的简单问题
+- **文档知识库**：继续使用 `PostgreSQL + PGVector`
+- **长期记忆**：单独使用 `Milvus`
+- **会话记录 / 运行报告**：使用 `MongoDB`
+- **用户 / 角色 / 权限 / 文件业务表**：使用 `PostgreSQL`
 
-### 12.2 RAG 流程
+这样做的好处是职责更清晰：
 
-典型步骤：
+- 文档检索链路不需要迁移，继续保持 PGVector 即可。
+- 长期记忆单独存储，便于后续扩展召回策略、去重逻辑和记忆类型。
+- 记忆与文档知识库不混在一起，后期维护更清楚。
 
-1. 构建查询上下文
-2. 按用户权限加入过滤条件
-3. Dense 检索
-4. BM25 检索
-5. RRF 融合
-6. Rerank
-7. 构建上下文
-8. 让 LLM 评估证据是否充分
-9. 如果足够，则进入 `finalize`
+当前仓库里已经包含：
 
-### 12.3 DB Search 流程
+- 长期记忆召回节点：`src/nodes/memory_recall_node.py`
+- 长期记忆服务：`src/memory/service.py`
+- Milvus 存储适配：`src/memory/store/milvus_store.py`
+- 长期记忆测试：`tests/test_long_term_memory.py`
 
-适合结构化业务问题，例如：
+## 🔌 API 概览
 
-- 我能访问哪些部门
-- 我最近可访问的文件有哪些
-- 我上传过哪些文件
-- 当前角色可访问哪些部门
+| 分类 | 接口 |
+| --- | --- |
+| 登录 | `POST /user/login` |
+| 用户画像 | `GET /user/profile`、`PUT /user/profile` |
+| 文件上传 | `POST /file/upload` |
+| 文件查询 | `GET /file/query_file` |
+| Agent 查询 | `POST /agent/query` |
+| 流式聊天 | `POST /agent/chat/stream` |
+| 会话列表 | `GET /agent/sessions` |
+| 会话消息 | `GET /agent/sessions/{session_id}/messages` |
+| 删除会话 | `DELETE /agent/sessions/{session_id}` |
+| 管理监控 | `GET /agent/admin/monitor/overview`、`GET /agent/admin/monitor/runs` |
 
-### 12.4 Web Search 流程
+## 🧪 测试与 CI
 
-适合：
+当前仓库已经有一套基础后端冒烟测试，覆盖这些方向：
 
-- 时效性问题
-- 外部新闻/市场/政策类问题
+- `tests.test_preferred_topics`
+- `tests.test_password_utils`
+- `tests.test_file_utils`
+- `tests.test_long_term_memory`
+- `tests.test_api_smoke`
 
-注意：
+GitHub Actions 工作流会在相关后端文件变更时自动执行这些测试。
 
-- 默认只有当用户画像 `allow_web_search=true` 时才会走外部搜索
-
-## 13. 用户画像
-
-用户画像存储在 `user_profile` 表中，主要字段包括：
-
-- `answer_style`：回答详细程度
-- `preferred_language`：偏好语言
-- `preferred_topics`：偏好主题
-- `prefers_citations`：是否偏好显示引用
-- `allow_web_search`：是否允许联网搜索
-- `profile_notes`：附加说明
-
-它会影响：
-
-- 最终回答长度
-- 查询改写和扩展策略
-- 是否注入偏好主题作为弱提示
-- 是否允许外部搜索
-- 是否在最终回答中带引用
-
-## 14. API 概览
-
-### 用户与画像
-
-- `POST /user/login`
-- `GET /user/profile`
-- `PUT /user/profile`
-
-### 文件
-
-- `POST /file/upload`
-- `GET /file/query_file`
-
-### Agent
-
-- `POST /agent/query`
-- `POST /agent/chat/stream`
-- `GET /agent/sessions`
-- `GET /agent/sessions/{session_id}/messages`
-- `DELETE /agent/sessions/{session_id}`
-
-### 管理监控
-
-- `GET /agent/admin/monitor/overview`
-- `GET /agent/admin/monitor/runs`
-
-## 15. 前端页面
-
-### 聊天页
-
-功能包括：
-
-- 登录
-- 会话列表
-- 新建会话
-- 删除会话
-- 流式接收回答
-- 查看引用
-- 查看 trace / action history
-- 编辑用户画像
-
-### 管理页
-
-功能包括：
-
-- 今日请求量
-- 活跃用户数
-- 活跃会话数
-- tokens 与估算成本
-- 失败率
-- Action 分布
-- 模型分布
-- 最近运行记录
-
-## 16. 测试
-
-当前仓库中较完整的自动化测试集中在 `preferred_topics` 相关逻辑，示例命令：
+本地运行：
 
 ```bash
-python -m unittest tests.test_preferred_topics
+python -m unittest \
+  tests.test_preferred_topics \
+  tests.test_password_utils \
+  tests.test_file_utils \
+  tests.test_long_term_memory \
+  tests.test_api_smoke
 ```
 
-测试覆盖内容主要包括：
+## 🐳 Docker 部署说明
 
-- 用户偏好主题提取
-- 查询扩展与主题引导
-- 运行报告中的主题使用摘要
+当前仓库已经把部署入口收口成更简单的形式：
 
-## 17. 常见问题
+- 一份编排文件：`docker-compose.yml`
+- 一份环境变量模板：`.env.example`
 
-### 17.1 为什么上传后检索不到内容？
+如果你要部署到云服务器，优先看这份文档：
 
-优先检查：
+- [deploy/README.zh-CN.md](deploy/README.zh-CN.md)
 
-- 文件状态是否已完成
-- PostgreSQL 向量表是否成功写入
-- MongoDB 文档块是否已写入
-- 检索过滤条件是否把文档挡掉了
-- `retrieval_min_score` / `reranker_min_score` 是否过高
+这份部署说明会带你一步一步完成：
 
-### 17.2 为什么 Elasticsearch 启动了但入库报错？
+- 服务器准备
+- Docker 安装
+- 复制 `.env`
+- 修改关键配置
+- 启动容器
+- 查看日志
+- 通过公网访问项目
 
-当前索引映射使用 IK 分词器。如果你的 ES 没有安装 IK 插件，索引创建会失败。
+## ⚠️ 当前边界与注意事项
 
-### 17.3 为什么 Web Search 没生效？
+- 登录接口依赖数据库中已存在的用户数据，不是自动注册模式。
+- 默认 BM25 使用 `lite` 模式，不强依赖 Elasticsearch。
+- 当前 CI 主要还是后端 smoke tests，还不是完整的端到端测试体系。
+- 如果要正式上生产，建议补齐 HTTPS、备份、监控告警、资源限额和更严格的权限审计。
 
-先检查：
+## 🗺️ 后续可继续增强的方向
 
-- 用户画像里的 `allow_web_search` 是否开启
-- `ZHIPUAI_API_KEY` 是否可用
-- 查询是否真的被策略识别为时效性外部问题
+- 更完整的 API 冒烟测试和前后端联调测试
+- 更细粒度的长期记忆分类、过期策略和冲突消解
+- 更完善的管理后台指标和告警能力
+- 更标准的初始化脚本、种子数据和一键部署脚本
+- 更完整的企业级安全策略，例如限流、审计和对象存储
 
-### 17.4 为什么登录后没有数据？
+## 📚 建议阅读顺序
 
-后端不会自动创建业务用户数据，`/user/login` 依赖数据库中已有用户记录。
-
-## 18. 开发建议
-
-如果你准备继续扩展这个项目，建议优先从以下位置入手：
-
-- 改路由策略：`src/agent/policy.py`
-- 改节点流程：`src/agent/graph.py`、`src/nodes/`
-- 改提示词：`src/prompts/`
-- 改检索策略：`src/rag/retrieval/`、`src/rag/rerank/`
-- 改 API：`service/router/`
-- 改前端交互：`web_service/src/`
-
-## 19. 当前实现特点与限制
-
-### 特点
-
-- 项目主链路完整，已经具备“上传文档 -> 检索问答 -> 会话留痕 -> 监控分析”的闭环
-- 权限过滤和用户画像已经接入 Agent 决策
-- 管理端能查看运行明细，而不仅是聊天结果
-
-### 限制
-
-- README 之外的注释中存在少量中文编码乱码
-- 自动化测试覆盖面还不够宽，RAG 主链路测试偏少
-- 部分结构化查询能力仍是规则驱动，适用范围有限
-- 当前登录逻辑依赖已有用户数据初始化
-
-## 20. 入口文件速查
-
-- 服务启动：`app.py`
-- FastAPI 应用：`service/server.py`
-- Agent 图入口：`src/agent/graph.py`
-- Agent 运行入口：`src/agent/runner.py`
-- RAG 主服务：`src/rag/rag_service.py`
-- 前端主页面：`web_service/src/view/chat/Chat.vue`
-
----
-
-如果你是第一次接手这个仓库，建议按下面顺序阅读源码：
+如果你是第一次接手这个仓库，建议按下面顺序看代码：
 
 1. `service/server.py`
 2. `src/agent/graph.py`
-3. `src/agent/policy.py`
+3. `src/agent/runner.py`
 4. `src/nodes/`
 5. `src/rag/rag_service.py`
-6. `service/router/agent/chat.py`
-7. `web_service/src/view/chat/Chat.vue`
+6. `src/memory/`
+7. `web_service/src/view/chat/`
 
-这样最容易把“接口层 -> Agent 编排层 -> RAG 执行层 -> 前端交互层”串起来。
+这样最容易把“接口层 -> Agent 编排层 -> RAG 层 -> 长期记忆层 -> 前端交互层”串起来。
+
+---
+
+如果你希望，我下一步还可以继续帮你做两件事中的任意一件：
+
+1. 把这个 README 再升级成更偏“开源展示风格”的版本，例如增加封面图、功能截图和更漂亮的模块图。
+2. 再补一份更偏“新人入门教程风格”的 `README.quickstart.md`，专门写给第一次部署这个项目的人。
