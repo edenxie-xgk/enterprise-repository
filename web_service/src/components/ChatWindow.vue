@@ -78,7 +78,7 @@
         </div>
         <div class="bg-white p-4 rounded-lg rounded-tl-none shadow-sm max-w-3xl">
           <p class="text-gray-700">
-            请围绕你有权限访问的文档提问。智能体会在直接回答、RAG、结构化数据查询，以及允许时的联网搜索之间自动选择合适路径。
+            请围绕你有权限访问的文档提问。系统会在直接回答、RAG、结构化数据查询，以及允许时的联网搜索之间自动选择合适路径。
           </p>
         </div>
       </div>
@@ -128,9 +128,7 @@
                 v-if="message.report_summary.output_level"
                 class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full"
               >
-                输出：{{
-                  outputLevelLabelMap[message.report_summary.output_level] || message.report_summary.output_level
-                }}
+                输出：{{ outputLevelLabelMap[message.report_summary.output_level] || message.report_summary.output_level }}
               </span>
               <span
                 v-if="message.report_summary.fail_reason"
@@ -177,6 +175,35 @@
                 <span class="detail-label">是否使用长期记忆</span>
                 <span>{{ message.report_summary.long_term_memory_used ? "是" : "否" }}</span>
               </div>
+
+              <div v-if="message.report_summary.user_profile" class="detail-column">
+                <span class="detail-label">当前用户画像</span>
+                <div class="space-y-2 mt-2">
+                  <div class="detail-row">
+                    <span>默认回答风格</span>
+                    <span>
+                      {{
+                        answerStyleDebugLabelMap[message.report_summary.user_profile.answer_style] ||
+                        message.report_summary.user_profile.answer_style ||
+                        "-"
+                      }}
+                    </span>
+                  </div>
+                  <div class="detail-row">
+                    <span>默认语言</span>
+                    <span>{{ message.report_summary.user_profile.preferred_language || "-" }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span>显示引用</span>
+                    <span>{{ message.report_summary.user_profile.prefers_citations ? "开启" : "关闭" }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span>联网搜索</span>
+                    <span>{{ message.report_summary.user_profile.allow_web_search ? "开启" : "关闭" }}</span>
+                  </div>
+                </div>
+              </div>
+
               <div v-if="message.report_summary.user_profile?.preferred_topics?.length" class="detail-column">
                 <span class="detail-label">关注主题</span>
                 <div class="flex flex-wrap gap-2 mt-2">
@@ -189,6 +216,7 @@
                   </span>
                 </div>
               </div>
+
               <div
                 v-if="message.report_summary.preferred_topics_usage?.available_topics?.length"
                 class="detail-column"
@@ -217,12 +245,14 @@
                   </div>
                 </div>
               </div>
+
               <div v-if="message.report_summary.long_term_memory_context" class="detail-column">
                 <span class="detail-label">长期记忆上下文</span>
                 <div class="detail-card mt-2 whitespace-pre-wrap text-sm text-gray-600">
                   {{ message.report_summary.long_term_memory_context }}
                 </div>
               </div>
+
               <div
                 v-if="message.report_summary.memory_write_summary && (message.report_summary.memory_write_summary.written_count || message.report_summary.memory_write_summary.diagnostics?.length)"
                 class="detail-column"
@@ -245,6 +275,70 @@
                   </div>
                 </div>
               </div>
+
+              <div v-if="getProfileSyncSummary(message)" class="detail-column">
+                <span class="detail-label">画像同步</span>
+                <div class="space-y-2 mt-2">
+                  <div class="detail-row">
+                    <span>识别到可同步偏好</span>
+                    <span>{{ getProfileSyncSummary(message).recognized ? "是" : "否" }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span>本次已更新画像</span>
+                    <span>{{ getProfileSyncSummary(message).updated ? "是" : "否" }}</span>
+                  </div>
+                  <div
+                    v-if="getProfileSyncSummary(message).recognized_fields?.length"
+                    class="flex flex-wrap gap-2 pt-1"
+                  >
+                    <span
+                      v-for="field in getProfileSyncSummary(message).recognized_fields"
+                      :key="field"
+                      class="px-2 py-1 bg-cyan-50 text-cyan-700 rounded-full text-xs"
+                    >
+                      {{ profileSyncFieldLabelMap[field] || field }}
+                    </span>
+                  </div>
+                  <div
+                    v-if="getProfileSyncSummary(message).applied_fields?.length"
+                    class="flex flex-wrap gap-2 pt-1"
+                  >
+                    <span
+                      v-for="field in getProfileSyncSummary(message).applied_fields"
+                      :key="field"
+                      class="px-2 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs"
+                    >
+                      已应用：{{ profileSyncFieldLabelMap[field] || field }}
+                    </span>
+                  </div>
+                  <div
+                    v-if="getProfileSyncValueEntries(message).length"
+                    class="detail-card text-xs text-gray-600 space-y-2"
+                  >
+                    <div
+                      v-for="[field, value] in getProfileSyncValueEntries(message)"
+                      :key="field"
+                      class="detail-row"
+                    >
+                      <span>{{ profileSyncFieldLabelMap[field] || field }}</span>
+                      <span>{{ formatProfileSyncValue(field, value) }}</span>
+                    </div>
+                  </div>
+                  <div
+                    v-if="getProfileSyncSummary(message).candidate_summaries?.length"
+                    class="detail-card text-xs text-gray-500 whitespace-pre-wrap"
+                  >
+                    {{ getProfileSyncSummary(message).candidate_summaries.join("\n") }}
+                  </div>
+                  <div
+                    v-if="getProfileSyncSummary(message).diagnostics?.length"
+                    class="detail-card text-xs text-gray-500 whitespace-pre-wrap"
+                  >
+                    {{ getProfileSyncSummary(message).diagnostics.join("\n") }}
+                  </div>
+                </div>
+              </div>
+
               <div
                 v-if="message.report_summary.citation_details && message.report_summary.citation_details.length"
                 class="detail-column"
@@ -433,23 +527,39 @@ const loginForm = ref({
   username: "EdenXie",
   password: "123456",
 });
+
 const outputLevelOptions = [
   { label: "精简", value: "concise" },
   { label: "标准", value: "standard" },
   { label: "详细", value: "detailed" },
 ];
+
 const outputLevelLabelMap = {
   concise: "精简",
   standard: "标准",
   detailed: "详细",
 };
 
+const answerStyleDebugLabelMap = {
+  concise: "精简",
+  standard: "标准",
+  detailed: "详细",
+};
+
+const profileSyncFieldLabelMap = {
+  answer_style: "默认回答风格",
+  preferred_language: "默认语言",
+  allow_web_search: "联网搜索",
+};
+
 const outputLevelLabel = computed(
   () => outputLevelLabelMap[props.outputLevel] || props.outputLevel || "标准"
 );
+
 const profileAnswerStyleLabel = computed(
   () => outputLevelLabelMap[props.userProfile?.answer_style] || props.userProfile?.answer_style || "标准"
 );
+
 const canAccessAdmin = computed(
   () => props.userInfo?.user_type === "admin" || props.userInfo?.is_admin === true
 );
@@ -462,6 +572,26 @@ const scrollToBottom = async () => {
 };
 
 const isUserMessage = (message) => message.role === "user";
+
+const getProfileSyncSummary = (message) =>
+  message?.report_summary?.profile_sync_summary ||
+  message?.report_summary?.memory_write_summary?.profile_sync ||
+  null;
+
+const getProfileSyncValueEntries = (message) => {
+  const summary = getProfileSyncSummary(message);
+  return Object.entries(summary?.values || {});
+};
+
+const formatProfileSyncValue = (field, value) => {
+  if (field === "answer_style") {
+    return answerStyleDebugLabelMap[value] || value || "-";
+  }
+  if (field === "allow_web_search") {
+    return value ? "开启" : "关闭";
+  }
+  return value || "-";
+};
 
 const handleOutputLevelChange = (event) => {
   emit("update:output-level", event.target.value);

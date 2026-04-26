@@ -3,6 +3,7 @@ from typing import Any, Dict, List, Literal, Optional
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.types.event_type import BaseEvent
+from src.types.graph_type import GraphQueryContext
 from src.types.memory_type import MemoryRecallResult, MemoryRecord
 from src.types.rag_type import RAGResult, RagContext, SubQueryResult
 from src.types.trace_type import TraceRecord
@@ -44,6 +45,8 @@ class State(BaseModel):
 
     last_rag_context: Optional[RagContext] = Field(default=None, description="最近的 RAG 上下文")
     last_rag_result: Optional[RAGResult] = Field(default=None, description="最近的 RAG 结果")
+    last_graph_context: Optional[GraphQueryContext] = Field(default=None, description="最近的图谱检索上下文")
+    last_graph_result: Optional[RAGResult] = Field(default=None, description="最近的图谱检索结果")
     sub_query_results: List[SubQueryResult] = Field(default_factory=list, description="子查询结果")
 
     action_history: List[BaseEvent] = Field(default_factory=list, description="动作历史")

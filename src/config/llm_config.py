@@ -1,6 +1,6 @@
 import time
 from contextvars import ContextVar, Token
-from typing import Any, Optional, Type
+from typing import Any, Callable, Optional, Type
 
 from langchain_core.language_models import BaseChatModel
 from pydantic import BaseModel
@@ -131,6 +131,40 @@ class LLMService:
         return response
 
     @staticmethod
+    def _extract_stream_text(chunk: Any) -> str:
+        content = getattr(chunk, "content", "")
+        if isinstance(content, str):
+            return content
+        if isinstance(content, list):
+            parts: list[str] = []
+            for item in content:
+                if isinstance(item, str):
+                    parts.append(item)
+                    continue
+                if isinstance(item, dict):
+                    if item.get("type") == "text":
+                        parts.append(str(item.get("text") or ""))
+                    elif "text" in item:
+                        parts.append(str(item.get("text") or ""))
+                    continue
+                text = getattr(item, "text", None) or getattr(item, "content", None)
+                if text:
+                    parts.append(str(text))
+            return "".join(parts)
+        return str(content or "")
+
+    @staticmethod
+    def _extract_stream_usage(chunk: Any) -> dict:
+        usage = getattr(chunk, "usage_metadata", None)
+        if isinstance(usage, dict):
+            return usage
+
+        metadata = getattr(chunk, "response_metadata", {}) or {}
+        if isinstance(metadata, dict):
+            return metadata.get("token_usage", {}) or {}
+        return {}
+
+    @staticmethod
     def _invoke_once(
         llm: BaseChatModel,
         messages,
@@ -149,6 +183,39 @@ class LLMService:
         logger.info(f"[tokens]: {usage}")
         LLMService._record_usage(model_name=model_name, usage=usage, duration=duration)
         return LLMService._extract_payload(response, schema=schema)
+
+    @staticmethod
+    def _stream_once(
+        llm: BaseChatModel,
+        messages,
+        *,
+        on_token: Callable[[str], None] | None = None,
+        model_name: str = "",
+    ) -> str:
+        start = time.time()
+        text_parts: list[str] = []
+        usage: dict[str, Any] = {}
+
+        for chunk in llm.stream(messages):
+            token_text = LLMService._extract_stream_text(chunk)
+            if token_text:
+                text_parts.append(token_text)
+                if on_token:
+                    on_token(token_text)
+
+            chunk_usage = LLMService._extract_stream_usage(chunk)
+            if chunk_usage:
+                usage = chunk_usage
+
+        duration = time.time() - start
+        if duration > settings.max_timeout:
+            logger.warning(f"[LLM streaming timeout] duration: {duration:.2f}s")
+        else:
+            logger.info(f"[LLM streaming success] duration: {duration:.2f}s")
+
+        logger.info(f"[stream tokens]: {usage}")
+        LLMService._record_usage(model_name=model_name, usage=usage, duration=duration)
+        return "".join(text_parts)
 
     @staticmethod
     def invoke(
@@ -186,6 +253,66 @@ class LLMService:
             )
         except Exception as e:
             last_exception = e
+            raise last_exception
+
+    @staticmethod
+    def stream_text(
+        llm: BaseChatModel,
+        messages,
+        *,
+        on_token: Callable[[str], None] | None = None,
+        fallback_llm: BaseChatModel = None,
+    ) -> str:
+        last_exception = None
+        model_name = LLMService._resolve_model_name(llm)
+
+        for i in range(settings.max_retries):
+            emitted = False
+
+            def emit(token: str) -> None:
+                nonlocal emitted
+                emitted = True
+                if on_token:
+                    on_token(token)
+
+            try:
+                return LLMService._stream_once(
+                    llm,
+                    messages,
+                    on_token=emit,
+                    model_name=model_name,
+                )
+            except Exception as e:
+                last_exception = e
+                if emitted:
+                    logger.warning(f"[LLM streaming failed after emission] {e}")
+                    raise
+                logger.warning(f"[LLM streaming failed] retry={i + 1}: {e}")
+                time.sleep(2 ** i)
+
+        if not fallback_llm:
+            fallback_llm = LLMService._load_fallback_llm()
+
+        fallback_model_name = LLMService._resolve_model_name(fallback_llm)
+        emitted = False
+
+        def emit(token: str) -> None:
+            nonlocal emitted
+            emitted = True
+            if on_token:
+                on_token(token)
+
+        try:
+            return LLMService._stream_once(
+                fallback_llm,
+                messages,
+                on_token=emit,
+                model_name=fallback_model_name,
+            )
+        except Exception as e:
+            last_exception = e
+            if emitted:
+                logger.warning(f"[LLM fallback streaming failed after emission] {e}")
             raise last_exception
 
 

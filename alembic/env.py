@@ -14,9 +14,12 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-database_url = settings.database_string
+database_url = settings.resolved_database_string
 if not database_url:
-    raise RuntimeError("DATABASE_STRING must be set before running Alembic migrations.")
+    raise RuntimeError(
+        "DATABASE_STRING must be set before running Alembic migrations, "
+        "or DATABASE_ASYNC_STRING must be convertible to a sync URL."
+    )
 
 config.set_main_option("sqlalchemy.url", database_url)
 target_metadata = SQLModel.metadata

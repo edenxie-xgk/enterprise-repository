@@ -1,0 +1,29 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <list>
+          <option value="datasets" />
+          <option value="dill" />
+          <option value="greennode" />
+          <option value="grpcio" />
+          <option value="iniconfig" />
+          <option value="langchain-greennode" />
+          <option value="markdown-it-py" />
+          <option value="mdurl" />
+          <option value="multiprocess" />
+          <option value="pluggy" />
+          <option value="pyarrow" />
+          <option value="Pygments" />
+          <option value="pymilvus" />
+          <option value="pytest" />
+          <option value="rich" />
+          <option value="shellingham" />
+          <option value="tabulate" />
+          <option value="typer" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>

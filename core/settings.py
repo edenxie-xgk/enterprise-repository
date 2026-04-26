@@ -54,6 +54,20 @@ def _env_csv(name: str, default: list[str]) -> list[str]:
     return items or list(default)
 
 
+def _derive_sync_database_url(url: str | None) -> str | None:
+    if not url:
+        return None
+
+    replacements = {
+        "postgresql+asyncpg://": "postgresql+psycopg2://",
+        "sqlite+aiosqlite://": "sqlite://",
+    }
+    for async_prefix, sync_prefix in replacements.items():
+        if url.startswith(async_prefix):
+            return sync_prefix + url[len(async_prefix):]
+    return url
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(extra="ignore", arbitrary_types_allowed=True)
 
@@ -63,7 +77,11 @@ class Settings(BaseSettings):
     debug: bool = Field(default=_env_bool("DEBUG", False))
     server_host: str = Field(default=os.getenv("SERVER_HOST", "127.0.0.1"))
     server_port: int = Field(default=_env_int("SERVER_PORT", 1016))
+    database_auto_migrate: bool = Field(default=_env_bool("DATABASE_AUTO_MIGRATE", False))
     database_auto_create: bool = Field(default=_env_bool("DATABASE_AUTO_CREATE", False))
+    database_auto_init_on_startup: bool = Field(
+        default=_env_bool("DATABASE_AUTO_INIT_ON_STARTUP", os.getenv("APP_ENV", "development") != "production")
+    )
     serve_public_files: bool = Field(default=_env_bool("SERVE_PUBLIC_FILES", False))
     public_dir: str | None = Field(default=os.getenv("PUBLIC_DIR"))
     public_url_path: str = Field(default=os.getenv("PUBLIC_URL_PATH", "/public"))
@@ -90,6 +108,12 @@ class Settings(BaseSettings):
     )
 
     delete_file: bool = Field(default=_env_bool("DELETE_FILE", False))
+    bootstrap_seed_enabled: bool = Field(
+        default=_env_bool(
+            "BOOTSTRAP_SEED_ENABLED",
+            _env_bool("BOOTSTRAP_ADMIN_ENABLED", os.getenv("APP_ENV", "development") != "production"),
+        )
+    )
     bootstrap_admin_enabled: bool = Field(
         default=_env_bool("BOOTSTRAP_ADMIN_ENABLED", os.getenv("APP_ENV", "development") != "production")
     )
@@ -99,6 +123,11 @@ class Settings(BaseSettings):
     bootstrap_admin_dept_name: str = Field(default=os.getenv("BOOTSTRAP_ADMIN_DEPT_NAME", "默认部门"))
     bootstrap_admin_role_id: int = Field(default=_env_int("BOOTSTRAP_ADMIN_ROLE_ID", 1))
     bootstrap_admin_role_name: str = Field(default=os.getenv("BOOTSTRAP_ADMIN_ROLE_NAME", "默认权限角色"))
+
+    bootstrap_seed_departments_json: str | None = Field(default=os.getenv("BOOTSTRAP_SEED_DEPARTMENTS_JSON"))
+    bootstrap_seed_roles_json: str | None = Field(default=os.getenv("BOOTSTRAP_SEED_ROLES_JSON"))
+    bootstrap_seed_users_json: str | None = Field(default=os.getenv("BOOTSTRAP_SEED_USERS_JSON"))
+    bootstrap_seed_file: str | None = Field(default=os.getenv("BOOTSTRAP_SEED_FILE"))
 
     database_name: str | None = Field(default=os.getenv("DATABASE_NAME"))
     database_string: str | None = Field(default=os.getenv("DATABASE_STRING"))
@@ -126,6 +155,12 @@ class Settings(BaseSettings):
     mongodb_db_name: str | None = Field(default=os.getenv("MONGODB_DB_NAME"))
     doc_collection_name: str | None = Field(default=os.getenv("DOC_COLLECTION_NAME"))
     qa_collection_name: str | None = Field(default=os.getenv("QA_COLLECTION_NAME"))
+    graph_enabled: bool = Field(default=_env_bool("GRAPH_ENABLED", False))
+    graph_entity_collection_name: str = Field(default=os.getenv("GRAPH_ENTITY_COLLECTION_NAME", "graph_entities"))
+    graph_fact_collection_name: str = Field(default=os.getenv("GRAPH_FACT_COLLECTION_NAME", "graph_facts"))
+    graph_max_facts_per_chunk: int = Field(default=_env_int("GRAPH_MAX_FACTS_PER_CHUNK", 12))
+    graph_query_top_k: int = Field(default=_env_int("GRAPH_QUERY_TOP_K", 6))
+    graph_query_max_candidates: int = Field(default=_env_int("GRAPH_QUERY_MAX_CANDIDATES", 60))
     elasticsearch_url: str | None = Field(default=os.getenv("ELASTICSEARCH_URL"))
 
     metadata_version: int | None = Field(default=_env_int("METADATA_VERSION", 0) if os.getenv("METADATA_VERSION") else None)
@@ -155,7 +190,10 @@ class Settings(BaseSettings):
         default=_env_int("PDF_CHUNK_OVERLAP", 0) if os.getenv("PDF_CHUNK_OVERLAP") else None
     )
     ocr_service_url: str | None = Field(default=os.getenv("OCR_SERVICE_URL"))
-    ocr_service_timeout_seconds: float = Field(default=_env_float("OCR_SERVICE_TIMEOUT_SECONDS", 30.0))
+    ocr_service_timeout_seconds: float = Field(default=_env_float("OCR_SERVICE_TIMEOUT_SECONDS", 120.0))
+    ocr_client_max_concurrency: int = Field(default=_env_int("OCR_CLIENT_MAX_CONCURRENCY", 1))
+    ocr_inference_recovery_retries: int = Field(default=_env_int("OCR_INFERENCE_RECOVERY_RETRIES", 1))
+    ocr_max_image_side: int = Field(default=_env_int("OCR_MAX_IMAGE_SIDE", 1600))
     orc_lang: str | None = Field(default=os.getenv("OCR_LANG"))
     orc_min_score: float | None = Field(
         default=_env_float("OCR_MIN_SCORE", 0.0) if os.getenv("OCR_MIN_SCORE") else None
@@ -243,6 +281,10 @@ class Settings(BaseSettings):
         if self.jwt_secret_key:
             return self.jwt_secret_key
         return _DEV_ONLY_JWT_SECRET
+
+    @property
+    def resolved_database_string(self) -> str | None:
+        return self.database_string or _derive_sync_database_url(self.database_async_string)
 
     @property
     def uses_dev_jwt_secret(self) -> bool:

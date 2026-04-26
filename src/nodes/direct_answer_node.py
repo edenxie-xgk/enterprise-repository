@@ -2,17 +2,21 @@ import time
 
 from langchain_core.messages import HumanMessage
 
-from src.agent.profile_utils import extract_preferred_topics
+from src.agent.answer_stream import get_answer_token_handler
 from src.agent.policy import (
     _looks_like_external_query,
     _looks_like_structured_db_query,
     is_complex_query,
     needs_rewrite_first,
 )
+from src.agent.profile_utils import extract_preferred_topics
 from src.config.llm_config import LLMService
 from src.models.llm import chatgpt_llm
 from src.nodes.helpers import build_state_patch, create_event, finalize_event
-from src.prompts.agent.direct_answer_prompt import DIRECT_ANSWER_PROMPT
+from src.prompts.agent.direct_answer_prompt import (
+    DIRECT_ANSWER_PROMPT,
+    DIRECT_ANSWER_STREAM_PROMPT,
+)
 from src.types.agent_state import State
 from src.types.event_type import ReasoningEvent
 from src.types.final_answer_type import FinalAnswerResult
@@ -32,6 +36,22 @@ def _preferred_topics(state: State) -> list[str]:
     return extract_preferred_topics(state.user_profile or {})
 
 
+def _append_long_term_memory_hint(state: State, prompt: str, *, stream_mode: bool) -> str:
+    context = (state.long_term_memory_context or "").strip()
+    if not context:
+        return prompt
+
+    instructions = (
+        "Long-term memory can be used as authoritative context for user-provided profile facts, preferences, identity, and other saved personal facts.\n"
+        "If the user asks about their own previously stated information, answer directly from long-term memory when it is relevant.\n"
+        "Do not use long-term memory as documentary evidence for enterprise facts, uploaded files, external facts, or real-time information.\n"
+        "If it conflicts with the current chat context, trust the current chat context.\n"
+        "Do not mention hidden memory systems.\n"
+    )
+    section_title = "[Long-term Memory Hint]" if stream_mode else "[Long-term Memory Context]"
+    return f"{prompt}\n\n{section_title}\n{context}\n\n{instructions}"
+
+
 def _build_direct_answer_prompt(state: State) -> str:
     chat_history = "\n".join(state.chat_history[-8:]) if state.chat_history else "None"
     effective_query = state.working_query or state.resolved_query or state.query or ""
@@ -43,46 +63,27 @@ def _build_direct_answer_prompt(state: State) -> str:
         preferred_language=_preferred_language(state),
         preferred_topics=", ".join(_preferred_topics(state)) or "None",
     ).strip()
-    if state.long_term_memory_context and state.long_term_memory_context.strip():
-        prompt = (
-            f"{prompt}\n\n"
-            "[长期记忆]\n"
-            f"{state.long_term_memory_context.strip()}\n\n"
-            "使用规则:\n"
-            "- 这些长期记忆只用于帮助理解用户背景、偏好和长期任务。\n"
-            "- 不要把它们当作实时事实来源。\n"
-            "- 如果与用户当前问题冲突，以当前问题为准。"
-        )
-    return prompt
+    return _append_long_term_memory_hint(state, prompt, stream_mode=False)
+
+
+def _build_direct_answer_stream_prompt(state: State) -> str:
+    chat_history = "\n".join(state.chat_history[-8:]) if state.chat_history else "None"
+    effective_query = state.working_query or state.resolved_query or state.query or ""
+    prompt = DIRECT_ANSWER_STREAM_PROMPT.format(
+        raw_query=state.query or "",
+        query=effective_query,
+        chat_history=chat_history,
+        output_level=state.output_level,
+        preferred_language=_preferred_language(state),
+        preferred_topics=", ".join(_preferred_topics(state)) or "None",
+    ).strip()
+    return _append_long_term_memory_hint(state, prompt, stream_mode=True)
 
 
 def _looks_like_unreliable_direct_answer(result: FinalAnswerResult) -> bool:
     answer = (result.answer or "").strip()
     lowered = answer.lower()
     uncertainty_markers = [
-        "无法回答",
-        "不能回答",
-        "信息不足",
-        "缺少信息",
-        "不确定",
-        "不清楚",
-        "无法确定",
-        "需要更多信息",
-        "无法直接回答",
-        "无法获取",
-        "无法访问",
-        "无法查询",
-        "无法提供实时",
-        "无法获取实时",
-        "我无法获取",
-        "请查看",
-        "请查看您的设备",
-        "请查看你的设备",
-        "请以本地时间为准",
-        "实时日期",
-        "实时信息",
-        "当前日期",
-        "当前时间",
         "i cannot answer",
         "i can't answer",
         "i cannot access",
@@ -94,9 +95,16 @@ def _looks_like_unreliable_direct_answer(result: FinalAnswerResult) -> bool:
         "insufficient information",
         "unclear",
         "not sure",
-        "check your device",
-        "check your local time",
         "real-time",
+        "\u65e0\u6cd5\u76f4\u63a5\u56de\u7b54",
+        "\u65e0\u6cd5\u76f4\u63a5\u5b8c\u6210",
+        "\u9700\u8981\u66f4\u591a\u4fe1\u606f",
+        "\u4fe1\u606f\u4e0d\u8db3",
+        "\u4e0a\u4e0b\u6587\u4e0d\u8db3",
+        "\u65e0\u6cd5\u786e\u8ba4",
+        "\u4e0d\u786e\u5b9a",
+        "\u5b9e\u65f6",
+        "\u5b9e\u65f6\u4fe1\u606f",
     ]
 
     if not answer:
@@ -106,8 +114,6 @@ def _looks_like_unreliable_direct_answer(result: FinalAnswerResult) -> bool:
     if len(answer) <= 12:
         return True
     if any(marker in lowered or marker in answer for marker in uncertainty_markers):
-        return True
-    if "抱歉" in answer and ("无法" in answer or "不能" in answer):
         return True
     return False
 
@@ -136,6 +142,56 @@ def _build_failed_result() -> FinalAnswerResult:
     )
 
 
+def _invoke_direct_answer_result(state: State) -> FinalAnswerResult:
+    result: FinalAnswerResult = LLMService.invoke(
+        llm=chatgpt_llm,
+        messages=[HumanMessage(content=_build_direct_answer_prompt(state))],
+        schema=FinalAnswerResult,
+    )
+    result.citations = []
+    if not result.reason:
+        result.reason = "direct_answer_completed"
+    if not result.diagnostics:
+        result.diagnostics = ["direct_answer_llm_completed"]
+    result.diagnostics.append("direct_answer:standalone_node")
+    if state.long_term_memory_used:
+        result.diagnostics.append("long_term_memory_hint_applied:direct_answer")
+    result.success = not _looks_like_unreliable_direct_answer(result)
+    if not result.success and not result.fail_reason:
+        result.fail_reason = "direct_answer_unavailable"
+    return result
+
+
+def _stream_direct_answer_result(state: State) -> FinalAnswerResult:
+    handler = get_answer_token_handler()
+    if handler is None:
+        raise RuntimeError("answer token handler is not bound")
+
+    def on_token(token: str) -> None:
+        handler(token)
+
+    answer = LLMService.stream_text(
+        llm=chatgpt_llm,
+        messages=[HumanMessage(content=_build_direct_answer_stream_prompt(state))],
+        on_token=on_token,
+    ).strip()
+
+    result = FinalAnswerResult(
+        success=True,
+        answer=answer,
+        citations=[],
+        reason="direct_answer_completed",
+        fail_reason=None,
+        diagnostics=["direct_answer_llm_stream_completed", "direct_answer:standalone_node"],
+    )
+    if state.long_term_memory_used:
+        result.diagnostics.append("long_term_memory_hint_applied:direct_answer")
+    result.success = not _looks_like_unreliable_direct_answer(result)
+    if not result.success and not result.fail_reason:
+        result.fail_reason = "direct_answer_unavailable"
+    return result
+
+
 def direct_answer_node(state: State):
     effective_query = state.working_query or state.resolved_query or state.query or ""
     start_time = time.time()
@@ -151,25 +207,18 @@ def direct_answer_node(state: State):
     )
     event.attempt = 1
 
-    prompt = _build_direct_answer_prompt(state)
-
     try:
-        result: FinalAnswerResult = LLMService.invoke(
-            llm=chatgpt_llm,
-            messages=[HumanMessage(content=prompt)],
-            schema=FinalAnswerResult,
-        )
-        result.citations = []
-        if not result.reason:
-            result.reason = "direct_answer_completed"
-        if not result.diagnostics:
-            result.diagnostics = ["direct_answer_llm_completed"]
-        result.diagnostics.append("direct_answer:standalone_node")
-        if state.long_term_memory_used:
-            result.diagnostics.append("long_term_memory_hint_applied:direct_answer")
-        result.success = not _looks_like_unreliable_direct_answer(result)
-        if not result.success and not result.fail_reason:
-            result.fail_reason = "direct_answer_unavailable"
+        result = _invoke_direct_answer_result(state)
+
+        if result.success and get_answer_token_handler() is not None:
+            try:
+                streamed_result = _stream_direct_answer_result(state)
+                if streamed_result.success:
+                    result = streamed_result
+                else:
+                    result.diagnostics.append("direct_answer_stream_output_rejected_keep_structured")
+            except Exception:
+                result.diagnostics.append("direct_answer_stream_fallback_to_structured")
     except Exception:
         result = _build_failed_result()
 

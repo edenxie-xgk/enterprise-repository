@@ -1,5 +1,6 @@
 import os
 import unittest
+from types import SimpleNamespace
 from unittest.mock import patch
 
 _TEST_ENV = {
@@ -84,6 +85,7 @@ for _key, _value in _TEST_ENV.items():
 from core.settings import settings
 from src.memory.service import DisabledMemoryStore, MemoryService
 from src.memory.store.base import BaseMemoryStore
+from src.memory.store.milvus_store import MilvusMemoryStore
 from src.memory.writeback import write_long_term_memory
 from src.types.memory_type import MemoryRecallQuery, MemoryRecord, MemoryWriteRequest
 
@@ -174,6 +176,31 @@ class LongTermMemoryTests(unittest.TestCase):
         self.assertFalse(result.used)
         self.assertIn("memory_store_unavailable", result.diagnostics)
 
+    def test_memory_service_recall_skips_when_milvus_connection_fails(self):
+        class FailingMilvusClient:
+            def __init__(self, *args, **kwargs):
+                raise RuntimeError("milvus unavailable")
+
+        service = MemoryService(store=MilvusMemoryStore())
+
+        with (
+            patch.dict("sys.modules", {"pymilvus": SimpleNamespace(MilvusClient=FailingMilvusClient)}),
+            patch.object(settings, "memory_enabled", True),
+            patch.object(settings, "memory_backend", "milvus"),
+            patch.object(settings, "milvus_uri", "http://127.0.0.1:19530"),
+        ):
+            result = service.recall(
+                MemoryRecallQuery(
+                    user_id="42",
+                    query="please remember my preference",
+                )
+            )
+
+        self.assertTrue(result.success)
+        self.assertFalse(result.used)
+        self.assertIn("memory_store_unavailable", result.diagnostics)
+        self.assertIn("memory_store_import_error=milvus unavailable", result.diagnostics)
+
     def test_writeback_persists_explicit_memory_request(self):
         fake_store = FakeMemoryStore()
         fake_service = MemoryService(store=fake_store)
@@ -206,6 +233,62 @@ class LongTermMemoryTests(unittest.TestCase):
         self.assertEqual(saved_record.summary, "\u6211\u53eb\u5c0f\u738b")
         self.assertEqual(fake_store.upsert_many_calls, 1)
         self.assertEqual(fake_store.upsert_calls, 0)
+
+    def test_writeback_persists_explicit_memory_when_marker_appears_after_content(self):
+        fake_store = FakeMemoryStore()
+        fake_service = MemoryService(store=fake_store)
+
+        with (
+            patch.object(settings, "memory_enabled", True),
+            patch.object(settings, "memory_write_enabled", True),
+            patch.object(settings, "memory_backend", "disabled"),
+            patch("src.memory.writeback.memory_service", fake_service),
+            patch.object(fake_service, "embed_text", return_value=[0.1, 0.2, 0.3]),
+        ):
+            result = write_long_term_memory(
+                MemoryWriteRequest(
+                    user_id="10",
+                    session_id="session-4",
+                    query="\u6211\u662f\u4e00\u540d\u7a0b\u5e8f\u5458\uff0c\u8bf7\u8bb0\u4f4f\u8fd9\u4e2a\u4fe1\u606f",
+                    answer="\u597d\u7684\uff0c\u6211\u4f1a\u8bb0\u4f4f\u3002",
+                    chat_history=[],
+                    user_profile={},
+                    existing_memories=[],
+                )
+            )
+
+        self.assertTrue(result.success)
+        self.assertEqual(result.written_count, 1)
+        saved_record = next(iter(fake_store.records.values()))
+        self.assertEqual(saved_record.summary, "\u6211\u662f\u4e00\u540d\u7a0b\u5e8f\u5458")
+
+    def test_writeback_persists_explicit_memory_when_marker_appears_before_content(self):
+        fake_store = FakeMemoryStore()
+        fake_service = MemoryService(store=fake_store)
+
+        with (
+            patch.object(settings, "memory_enabled", True),
+            patch.object(settings, "memory_write_enabled", True),
+            patch.object(settings, "memory_backend", "disabled"),
+            patch("src.memory.writeback.memory_service", fake_service),
+            patch.object(fake_service, "embed_text", return_value=[0.1, 0.2, 0.3]),
+        ):
+            result = write_long_term_memory(
+                MemoryWriteRequest(
+                    user_id="11",
+                    session_id="session-5",
+                    query="\u8bf7\u8bb0\u4f4f\u8fd9\u4e2a\u4fe1\u606f\uff1a\u6211\u662f\u4e00\u540d\u7a0b\u5e8f\u5458",
+                    answer="\u597d\u7684\uff0c\u6211\u4f1a\u8bb0\u4f4f\u3002",
+                    chat_history=[],
+                    user_profile={},
+                    existing_memories=[],
+                )
+            )
+
+        self.assertTrue(result.success)
+        self.assertEqual(result.written_count, 1)
+        saved_record = next(iter(fake_store.records.values()))
+        self.assertEqual(saved_record.summary, "\u6211\u662f\u4e00\u540d\u7a0b\u5e8f\u5458")
 
     def test_writeback_upserts_preference_rules_without_duplicates(self):
         fake_store = FakeMemoryStore()

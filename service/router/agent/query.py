@@ -13,7 +13,11 @@ from service.models.role_department import RoleDepartmentModel
 from service.models.users import UserModel
 from service.router.agent.index import agent_router
 from service.utils.chat_store import chat_store
-from service.utils.user_profile import build_user_profile_payload, get_or_create_user_profile
+from service.utils.user_profile import (
+    build_user_profile_payload,
+    get_or_create_user_profile,
+    sync_user_profile_from_query,
+)
 from src.agent.runner import build_run_report, run_agent
 
 
@@ -76,6 +80,17 @@ async def query_agent(
         max_steps=settings.agent_max_steps,
         output_level=payload.output_level or user_profile.get("answer_style"),
     )
+    _, synced_user_profile, profile_sync_summary = await sync_user_profile_from_query(
+        session=session,
+        current_user=current_user,
+        allowed_department_ids=allowed_department_ids,
+        profile=profile,
+        query=payload.query,
+    )
+    final_state.user_profile = synced_user_profile
+    if profile_sync_summary is not None:
+        final_state.memory_write_summary = dict(final_state.memory_write_summary or {})
+        final_state.memory_write_summary["profile_sync"] = profile_sync_summary
 
     # 返回处理结果
     return {

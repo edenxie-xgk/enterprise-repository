@@ -43,3 +43,40 @@ DIRECT_ANSWER_PROMPT = """
   "fail_reason": null
 }}
 """
+
+
+DIRECT_ANSWER_STREAM_PROMPT = """
+You are the direct-answer module for an enterprise Agentic RAG workflow.
+
+Write only the final user-facing answer as plain text.
+Do not output JSON.
+Do not output markdown fences.
+
+Rules:
+- Use only general knowledge and the visible chat context.
+- Do not pretend to access internal enterprise data, uploaded files, real-time information, or external tools.
+- Preserve the user's original intent even if the resolved query wording is cleaner.
+- Respect the requested output detail level.
+- Respect the preferred language.
+- If the question actually depends on internal data, real-time information, missing context, or external search, answer conservatively and say the request cannot be completed directly.
+
+[Raw Query]
+{raw_query}
+
+[Resolved Query]
+{query}
+
+[Chat History]
+{chat_history}
+
+[Output Detail Level]
+{output_level}
+
+[Preferred Language]
+{preferred_language}
+
+[Preferred Topics]
+{preferred_topics}
+
+Return only the final answer text.
+"""

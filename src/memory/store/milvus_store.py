@@ -14,6 +14,7 @@ class MilvusMemoryStore(BaseMemoryStore):
     def __init__(self) -> None:
         self._client = None
         self._import_error: str | None = None
+        self._last_error: str | None = None
 
     def is_available(self) -> bool:
         if not settings.memory_enabled or settings.memory_backend != "milvus":
@@ -34,14 +35,20 @@ class MilvusMemoryStore(BaseMemoryStore):
             self._import_error = str(exc)
             return None
 
-        token = settings.milvus_token or None
-        self._client = MilvusClient(
-            uri=self._normalized_uri(settings.milvus_uri),
-            token=token,
-            db_name=settings.milvus_db_name,
-        )
-        self._ensure_collection()
-        return self._client
+        try:
+            token = settings.milvus_token or None
+            self._client = MilvusClient(
+                uri=self._normalized_uri(settings.milvus_uri),
+                token=token,
+                db_name=settings.milvus_db_name,
+            )
+            self._ensure_collection()
+            self._last_error = None
+            return self._client
+        except Exception as exc:
+            self._client = None
+            self._last_error = str(exc)
+            return None
 
     @staticmethod
     def _normalized_uri(uri: str) -> str:
@@ -221,15 +228,20 @@ class MilvusMemoryStore(BaseMemoryStore):
         if client is None:
             return []
 
-        results = client.search(
-            collection_name=settings.milvus_collection_name,
-            data=[query_vector],
-            anns_field="vector",
-            filter=self._build_filter(query),
-            limit=query.top_k,
-            consistency_level=settings.milvus_consistency_level,
-            output_fields=self._output_fields(),
-        )
+        try:
+            results = client.search(
+                collection_name=settings.milvus_collection_name,
+                data=[query_vector],
+                anns_field="vector",
+                filter=self._build_filter(query),
+                limit=query.top_k,
+                consistency_level=settings.milvus_consistency_level,
+                output_fields=self._output_fields(),
+            )
+        except Exception as exc:
+            self._client = None
+            self._last_error = str(exc)
+            return []
 
         hits = results[0] if results and isinstance(results[0], list) else results
         memories = []
@@ -259,12 +271,17 @@ class MilvusMemoryStore(BaseMemoryStore):
             return None
 
         expr = f"user_id == {self._quote(user_id)} and dedupe_key == {self._quote(dedupe_key)}"
-        results = client.query(
-            collection_name=settings.milvus_collection_name,
-            filter=expr,
-            consistency_level=settings.milvus_consistency_level,
-            output_fields=self._output_fields(),
-        )
+        try:
+            results = client.query(
+                collection_name=settings.milvus_collection_name,
+                filter=expr,
+                consistency_level=settings.milvus_consistency_level,
+                output_fields=self._output_fields(),
+            )
+        except Exception as exc:
+            self._client = None
+            self._last_error = str(exc)
+            return None
         if not results:
             return None
         return self._record_from_hit(results[0])
@@ -274,12 +291,17 @@ class MilvusMemoryStore(BaseMemoryStore):
         if client is None or not memory_ids:
             return 0
 
-        rows = client.query(
-            collection_name=settings.milvus_collection_name,
-            ids=memory_ids,
-            consistency_level=settings.milvus_consistency_level,
-            output_fields=self._output_fields(include_vector=True),
-        )
+        try:
+            rows = client.query(
+                collection_name=settings.milvus_collection_name,
+                ids=memory_ids,
+                consistency_level=settings.milvus_consistency_level,
+                output_fields=self._output_fields(include_vector=True),
+            )
+        except Exception as exc:
+            self._client = None
+            self._last_error = str(exc)
+            return 0
         if not rows:
             return 0
 
@@ -306,4 +328,4 @@ class MilvusMemoryStore(BaseMemoryStore):
 
     @property
     def import_error(self) -> str | None:
-        return self._import_error
+        return self._import_error or self._last_error

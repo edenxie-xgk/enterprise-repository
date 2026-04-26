@@ -21,6 +21,7 @@ chatgpt_llm = ChatOpenAI(
     base_url=settings.openai_base_url,
 )
 
+
 class ChatGPTResult(BaseModel):
     answer: str
 

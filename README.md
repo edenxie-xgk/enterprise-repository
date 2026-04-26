@@ -204,9 +204,58 @@ docker compose logs -f backend
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
+<<<<<<< HEAD
 alembic upgrade head
+=======
+<<<<<<< HEAD
+```
+
+#### 3. 准备环境变量
+
+```bash
+cp .env.example .env
+```
+
+如果你在 Windows PowerShell 下：
+
+```powershell
+Copy-Item .env.example .env
+```
+
+#### 4. 准备依赖服务
+
+- PostgreSQL
+- MongoDB
+- Milvus
+
+如果只想先启动数据库，可以直接使用仓库中的 `docker-compose.yml`，或者自行准备外部服务实例。
+
+#### 5. 初始化数据库
+
+项目默认不会在新环境自动 `create_all`，推荐执行：
+
+```bash
+alembic upgrade head
+```
+
+#### 6. 启动后端
+
+```bash
+=======
+python scripts/init_project.py --mode auto
+>>>>>>> a57dc99842b0a0eefb88d795a17907adf3afd3d9
+>>>>>>> dda7c6f (长期记忆和用户画像完成)
 python app.py
 ```
+`python scripts/init_project.py --mode auto` will create the core tables for an empty database and seed the initial department, role, and admin user from the current `BOOTSTRAP_*` settings in `.env`.
+
+If you want to import a predefined bootstrap plan, run:
+
+```powershell
+python scripts/init_project.py --mode auto --seed-file db/seed/bootstrap_seed.example.json
+```
+
+Keep `DATABASE_AUTO_INIT_ON_STARTUP=true` if you want the app to auto-create the schema on first start when those tables are still missing.
 
 Windows 说明：
 

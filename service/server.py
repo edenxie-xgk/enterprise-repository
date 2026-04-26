@@ -2,12 +2,11 @@ from contextlib import asynccontextmanager
 
 import uvicorn
 from fastapi import FastAPI
-from sqlmodel import SQLModel
 from starlette.middleware.cors import CORSMiddleware
 from starlette.staticfiles import StaticFiles
 
 from core.settings import settings
-from service.bootstrap_admin import ensure_bootstrap_admin
+from service.database_initializer import initialize_project_database
 from service.database.connect import async_engine
 from service.router.agent.index import agent_router
 from service.router.file.index import file_router, legacy_public_file_router
@@ -21,14 +20,24 @@ def create_server() -> FastAPI:
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         print("Application startup...")
-        if settings.database_auto_create:
-            print("DATABASE_AUTO_CREATE is enabled. Using legacy create_all bootstrap.")
-            async with async_engine.begin() as conn:
-                await conn.run_sync(SQLModel.metadata.create_all)
+        schema_mode = None
+        if settings.database_auto_migrate:
+            schema_mode = "migrate"
+            print("DATABASE_AUTO_MIGRATE is enabled. Applying Alembic migrations on startup.")
+        elif settings.database_auto_create:
+            schema_mode = "create_all"
+            print("DATABASE_AUTO_CREATE is enabled. Using metadata.create_all() on startup.")
         else:
-            print("Database auto-create is disabled. Run `alembic upgrade head` before starting in a fresh environment.")
+            print(
+                "Schema auto-init flags are disabled. Startup will verify schema and, when configured, "
+                "auto-bootstrap missing tables on first start."
+            )
 
-        await ensure_bootstrap_admin()
+        await initialize_project_database(
+            schema_mode=schema_mode,
+            ensure_seed=True,
+            fail_if_schema_missing=False,
+        )
 
         yield
 

@@ -1,0 +1,52 @@
+{
+  "departments": [
+    {
+      "dept_id": 1,
+      "dept_name": ""
+    },
+    {
+      "dept_id": 2,
+      "dept_name": "Finance"
+    }
+  ],
+  "roles": [
+    {
+      "role_id": 1,
+      "role_name": "Administrator",
+      "dept_ids": [1, 2]
+    },
+    {
+      "role_id": 2,
+      "role_name": "Finance Analyst",
+      "dept_ids": [2]
+    }
+  ],
+  "users": [
+    {
+      "username": "admin",
+      "password": "Admin@123456",
+      "dept_id": 1,
+      "role_id": 1,
+      "user_type": "admin",
+      "answer_style": "standard",
+      "preferred_language": "zh-CN",
+      "preferred_topics": ["enterprise knowledge base"],
+      "prefers_citations": true,
+      "allow_web_search": false,
+      "profile_notes": "Bootstrap administrator account"
+    },
+    {
+      "username": "finance.demo",
+      "password": "Finance@123456",
+      "dept_id": 2,
+      "role_id": 2,
+      "user_type": "user",
+      "answer_style": "standard",
+      "preferred_language": "zh-CN",
+      "preferred_topics": ["finance", "budget"],
+      "prefers_citations": true,
+      "allow_web_search": false,
+      "profile_notes": "Example finance user"
+    }
+  ]
+}

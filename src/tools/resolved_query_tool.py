@@ -2,7 +2,7 @@ from typing import Optional
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import HumanMessage
-from pydantic import Field
+from pydantic import BaseModel, Field
 
 from src.agent.profile_utils import build_preferred_topics_note
 from src.config.llm_config import LLMService
@@ -13,6 +13,10 @@ from src.types.base_type import BaseNodeResult
 class ResolvedQueryResult(BaseNodeResult):
     name: Optional[str] = Field(default="resolved_query", description="tool name")
     max_attempt: Optional[int] = Field(default=1, description="max attempts")
+    answer: Optional[str] = Field(default="", description="resolved query")
+
+
+class ResolvedQueryStructuredResult(BaseModel):
     answer: Optional[str] = Field(default="", description="resolved query")
 
 
@@ -50,16 +54,18 @@ def resolved_query_tool(
         )
 
     try:
-        response: ResolvedQueryResult = LLMService.invoke(
+        payload = LLMService.invoke(
             llm=llm,
             messages=[HumanMessage(content=prompt)],
-            schema=ResolvedQueryResult,
+            schema=ResolvedQueryStructuredResult,
         )
-        response.success = True
-        response.name = "resolved_query"
-        response.answer = (response.answer or normalized_query).strip()
-        response.message = "resolved query success"
-        response.diagnostics = list(response.diagnostics or []) + ["resolved_query_completed"]
+        response = ResolvedQueryResult(
+            success=True,
+            name="resolved_query",
+            answer=(getattr(payload, "answer", None) or normalized_query).strip(),
+            message="resolved query success",
+            diagnostics=["resolved_query_completed"],
+        )
         if preferred_topics_note:
             response.diagnostics.append("preferred_topics_hint_applied:resolved_query")
         return response

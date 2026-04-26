@@ -1,4 +1,0 @@
-2026-03-14 23:48:37,905 - agent - ERROR - [rag切片错误]: 存储文件:$/public/uploads/TQ/颜色选择.txt $ServiceContext is deprecated. Use llama_index.settings.Settings instead, or pass in modules to local functions/methods/interfaces.
-See the docs for updated usage/migration: 
-https://docs.llamaindex.ai/en/stable/module_guides/supporting_modules/service_context_migration/
-2026-03-15 00:00:08,165 - agent - ERROR - [rag向量存储失败]:存储文件:$/public/uploads/TQ/颜色选择.txt---错误信息:$'PGVectorStore' object is not callable

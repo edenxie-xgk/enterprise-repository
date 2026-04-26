@@ -1,14 +1,5 @@
-from src.agent.policy import (
-    _looks_like_external_query,
-    _looks_like_structured_db_query,
-    decide_initial_action,
-    get_allowed_actions,
-    guard_input,
-    is_web_search_allowed,
-    should_decompose_query,
-    should_force_finish,
-    should_rewrite_query,
-)
+from src.agent.action_planner import choose_next_action
+from src.agent.policy import get_allowed_actions, guard_input, should_force_finish
 from src.types.agent_state import State
 
 
@@ -71,38 +62,45 @@ def _build_finish_response(
     }
 
 
-def _has_event(state: State, name: str) -> bool:
-    return any(item.name == name for item in state.action_history)
-
-
-def _reasoning_attempts(state: State) -> int:
-    return sum(
-        1
-        for item in state.action_history
-        if item.kind == "reasoning" and item.name in {"rewrite_query", "expand_query", "decompose_query"}
+def _build_clarify_response(state: State, question: str, reason: str, diagnostics: list[str]):
+    return _build_finish_response(
+        state,
+        answer=question or "Please clarify the exact subject, scope, or time period you want to ask about.",
+        reason=reason or "clarify_question",
+        status="success",
+        fail_reason="ambiguous_query",
+        diagnostics=diagnostics,
     )
 
 
-def _select_tool_after_reasoning(state: State, query: str) -> tuple[str, str]:
-    if _looks_like_structured_db_query(query):
-        return "db_search", "reasoning_completed_route_to_db_search"
-    if is_web_search_allowed(state) and _looks_like_external_query(query):
-        return "web_search", "reasoning_completed_route_to_web_search"
-    return "rag", "reasoning_completed_route_to_rag"
+def _route_with_planner(
+    state: State,
+    allowed_actions: list[str],
+    *,
+    planning_stage: str,
+    default_reason: str,
+):
+    decision = choose_next_action(state, allowed_actions, planning_stage=planning_stage)
+    chosen_action = decision.next_action or (allowed_actions[0] if allowed_actions else "finish")
+    diagnostics = state.diagnostics + list(decision.diagnostics or [])
 
+    if chosen_action == "finish" and _can_finalize(state, allow_partial=True):
+        chosen_action = "finalize"
+        diagnostics.append("agent:planner_promoted_finish_to_finalize")
 
-def _select_retry_action(state: State, query: str) -> tuple[str, str] | None:
-    if _looks_like_structured_db_query(query) and not _has_event(state, "db_search"):
-        return "db_search", "structured_query_retry_to_db_search"
-    if is_web_search_allowed(state) and _looks_like_external_query(query) and not _has_event(state, "web_search"):
-        return "web_search", "external_query_retry_to_web_search"
-    if _reasoning_attempts(state) >= 1:
-        return None
-    if should_rewrite_query(query) and not _has_event(state, "rewrite_query"):
-        return "rewrite_query", "retry_to_rewrite_query"
-    if should_decompose_query(query) and not _has_event(state, "decompose_query"):
-        return "decompose_query", "retry_to_decompose_query"
-    return None
+    if chosen_action == "clarify_question":
+        return _build_clarify_response(
+            state,
+            decision.clarification_question or "",
+            decision.reason or default_reason,
+            diagnostics + ["agent:planner=clarify_question"],
+        )
+
+    return {
+        "action": chosen_action,
+        "reason": decision.reason or default_reason,
+        "diagnostics": diagnostics + [f"agent:planner={chosen_action}"],
+    }
 
 
 def agent_node(state: State):
@@ -166,91 +164,57 @@ def agent_node(state: State):
             diagnostics=state.diagnostics + [f"agent:force_finish:{finish_reason}"],
         )
 
-    reasoning_history = [event for event in state.action_history if event.kind == "reasoning"]
-    if not reasoning_history:
-        initial_decision = decide_initial_action(state)
-        if initial_decision.next_action == "clarify_question":
-            return _build_finish_response(
-                state,
-                answer=initial_decision.clarification_question or "请补充你的问题背景、对象或范围。",
-                reason=initial_decision.reason or "clarify_question",
-                status="success",
-                fail_reason="ambiguous_query",
-                diagnostics=state.diagnostics + ["agent:clarify_question"],
-            )
+    if last_tool and last_tool.name == "db_search":
+        if _has_finalize_material(state):
+            return {
+                "action": "finalize",
+                "reason": "db_search_has_material",
+                "diagnostics": state.diagnostics + ["agent:db_search_finalize"],
+            }
+        return _build_finish_response(
+            state,
+            answer=get_last_answer(last_tool) or build_fallback_answer(state),
+            reason="db_search_without_material",
+            status="failed",
+            fail_reason=getattr(last_tool.output, "fail_reason", None) or "no_data",
+            diagnostics=state.diagnostics + ["agent:db_search_finish"],
+        )
 
-        return {
-            "action": initial_decision.next_action,
-            "reason": initial_decision.reason or "initial_action_selected",
-            "diagnostics": state.diagnostics + [f"agent:initial={initial_decision.next_action}"],
-        }
+    if last_tool and last_tool.name in {"rag", "web_search", "graph_rag"}:
+        if _can_finalize(state, allow_partial=False):
+            return {
+                "action": "finalize",
+                "reason": f"{last_tool.name}_has_sufficient_material",
+                "diagnostics": state.diagnostics + [f"agent:{last_tool.name}_finalize"],
+            }
+        if _has_finalize_material(state):
+            return {
+                "action": "finalize",
+                "reason": f"{last_tool.name}_has_partial_material",
+                "diagnostics": state.diagnostics + [f"agent:{last_tool.name}_partial_finalize"],
+            }
+
+        return _route_with_planner(
+            state,
+            get_allowed_actions(state),
+            planning_stage="followup",
+            default_reason=f"{last_tool.name}_planner_route",
+        )
 
     if last_event and last_event.kind == "reasoning":
-        action, reason = _select_tool_after_reasoning(state, effective_query)
-        return {
-            "action": action,
-            "reason": reason,
-            "diagnostics": state.diagnostics + [f"agent:after_reasoning={action}"],
-        }
+        return _route_with_planner(
+            state,
+            get_allowed_actions(state),
+            planning_stage="followup",
+            default_reason="planner_after_reasoning",
+        )
 
-    if last_tool:
-        if last_tool.name == "db_search":
-            if _has_finalize_material(state):
-                return {
-                    "action": "finalize",
-                    "reason": "db_search_has_material",
-                    "diagnostics": state.diagnostics + ["agent:db_search_finalize"],
-                }
-            return _build_finish_response(
-                state,
-                answer=get_last_answer(last_tool) or build_fallback_answer(state),
-                reason="db_search_without_material",
-                status="failed",
-                fail_reason=getattr(last_tool.output, "fail_reason", None) or "no_data",
-                diagnostics=state.diagnostics + ["agent:db_search_finish"],
-            )
-
-        if last_tool.name in {"rag", "web_search"}:
-            if _can_finalize(state, allow_partial=False):
-                return {
-                    "action": "finalize",
-                    "reason": f"{last_tool.name}_has_sufficient_material",
-                    "diagnostics": state.diagnostics + [f"agent:{last_tool.name}_finalize"],
-                }
-            if _has_finalize_material(state):
-                return {
-                    "action": "finalize",
-                    "reason": f"{last_tool.name}_has_partial_material",
-                    "diagnostics": state.diagnostics + [f"agent:{last_tool.name}_partial_finalize"],
-                }
-
-            retry_action = _select_retry_action(state, effective_query)
-            if retry_action:
-                action, reason = retry_action
-                return {
-                    "action": action,
-                    "reason": reason,
-                    "diagnostics": state.diagnostics + [f"agent:retry={action}"],
-                }
-
-            return _build_finish_response(
-                state,
-                answer=get_last_answer(last_tool) or build_fallback_answer(state),
-                reason=f"{last_tool.name}_exhausted",
-                status="failed",
-                fail_reason=getattr(last_tool.output, "fail_reason", None) or "insufficient_context",
-                diagnostics=state.diagnostics + [f"agent:{last_tool.name}_finish"],
-            )
-
-    allowed_actions = get_allowed_actions(state)
-    fallback_action = allowed_actions[0] if allowed_actions else "finish"
-    if fallback_action == "finish" and _can_finalize(state, allow_partial=True):
-        fallback_action = "finalize"
-    return {
-        "action": fallback_action,
-        "reason": "deterministic_fallback",
-        "diagnostics": state.diagnostics + [f"agent:fallback={fallback_action}"],
-    }
+    return _route_with_planner(
+        state,
+        get_allowed_actions(state),
+        planning_stage="initial" if not last_tool else "followup",
+        default_reason="planner_default_route",
+    )
 
 
 def get_last_answer(last_tool) -> str:
@@ -261,7 +225,7 @@ def get_last_answer(last_tool) -> str:
 
 def build_fallback_answer(state: State) -> str:
     if state.sub_query_results:
-        return "已尝试拆解并检索多个子问题，但当前证据仍不足以稳定回答原问题。"
+        return "The workflow tried decomposed retrieval, but the current evidence is still not stable enough to answer the original request."
     if state.last_rag_result and state.last_rag_result.fail_reason == "no_data":
-        return "当前知识库中未检索到足够相关内容，暂时无法给出可靠答案。"
-    return "当前信息不足，暂时无法稳定回答该问题。"
+        return "The current knowledge sources did not return enough relevant evidence to support a reliable answer."
+    return "The current evidence is insufficient to produce a stable answer."

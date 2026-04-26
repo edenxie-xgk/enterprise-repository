@@ -5,8 +5,6 @@ from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import HumanMessage
 from pydantic import BaseModel, Field
 from src.models.llm import deepseek_llm
-from utils.logger_handler import logger
-from core.settings import settings
 from src.config.llm_config import LLMService
 from src.prompts.rag.qa_generation import QA_GENERATION_PROMPT
 from utils.utils import get_current_time
@@ -25,44 +23,40 @@ class  QAResult(BaseModel):
     qa_list:List[QaData] = Field(...,description="QA列表")
 
 def generate_qa(llm:BaseChatModel, nodes, metadata=None):
-
     prompt = QA_GENERATION_PROMPT.format(nodes=nodes)
-    node_ids = [node['node_id'] for node in nodes]
+    node_ids = {node["node_id"] for node in nodes}
 
-    try:
-        response = LLMService.invoke(
-            schema=QAResult,
-            messages=[HumanMessage(content=prompt)],
-            llm=llm,
-        )
-        print(response)
-        qa_list = []
-        create_time = get_current_time()
-        for index, item in enumerate(response.qa_list):
-            if not item.question or not item.answer or not isinstance(item.node_ids, list) or not item.node_ids:
-                continue
-            step = False
-            for node_id in item.node_ids:
-                if node_id not in node_ids:
-                    step = True
-            if step:
-                continue
+    response = LLMService.invoke(
+        schema=QAResult,
+        messages=[HumanMessage(content=prompt)],
+        llm=llm,
+    )
 
-            qa_list.append({
-                "question": item.question,
-                "answer": item.answer,
-                "language": item.language,
-                "difficulty": item.difficulty,
-                "intent": item.intent,
-                "metadata": metadata,
-                "node_ids": item.node_ids,
-                "create_time": create_time,
-                "state": 0 if index % random.randint(0, len(response.qa_list) - 1) != 0 else 2  # 0代表未评估，1代表评估过 2验证集
-            })
-        return qa_list
-    except Exception as e:
-        logger.error(f"[QA生成失败] {e}")
-        return []
+    qa_list = []
+    create_time = get_current_time()
+    for item in response.qa_list:
+        if not item.question or not item.answer or not isinstance(item.node_ids, list) or not item.node_ids:
+            continue
+        if any(node_id not in node_ids for node_id in item.node_ids):
+            continue
+
+        qa_list.append({
+            "question": item.question,
+            "answer": item.answer,
+            "language": item.language,
+            "difficulty": item.difficulty,
+            "intent": item.intent,
+            "metadata": metadata,
+            "node_ids": item.node_ids,
+            "create_time": create_time,
+        })
+
+    validation_index = random.randrange(len(qa_list)) if len(qa_list) > 1 else None
+    for index, item in enumerate(qa_list):
+        # 0 代表未评估，1 代表评估过，2 代表验证集
+        item["state"] = 2 if validation_index is not None and index == validation_index else 0
+
+    return qa_list
 
 
 if __name__ == '__main__':

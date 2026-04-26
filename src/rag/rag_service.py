@@ -8,6 +8,7 @@ from core.custom_types import DocumentMetadata
 from core.settings import settings
 from src.database.es import ElasticsearchClient
 from src.database.mongodb import mongodb_client
+from src.graph import graph_service
 from src.models.embedding import embed_model
 from src.models.llm import deepseek_llm, chatgpt_llm
 from src.rag.context.builder import ContextBuilder
@@ -53,6 +54,22 @@ class RAGService:
         self.update_doc_time = time.time()
 
         self.qa_collection = mongodb_client.get_collection(settings.qa_collection_name)
+
+    @staticmethod
+    def _cursor_to_list(cursor_or_rows):
+        if cursor_or_rows is None:
+            return []
+        if hasattr(cursor_or_rows, "to_list"):
+            return cursor_or_rows.to_list()
+        return list(cursor_or_rows)
+
+    @staticmethod
+    def _matches_metadata_value(actual, expected) -> bool:
+        if isinstance(expected, (list, tuple, set)):
+            return any(RAGService._matches_metadata_value(actual, item) for item in expected)
+        if actual == expected:
+            return True
+        return str(actual) == str(expected)
 
     @staticmethod
     def _dedupe_queries(queries: list[str]) -> list[str]:
@@ -158,6 +175,142 @@ class RAGService:
             elif isinstance(doc, dict):
                 normalized.append(doc)
         return normalized
+
+    def _list_docs_for_qa_generation(
+        self,
+        *,
+        source_state: int = 2,
+        limit: int | None = None,
+        department_id=None,
+    ) -> list[dict]:
+        if not hasattr(self.doc_collection, "find"):
+            raise RuntimeError("当前文档存储后端不支持 QA 数据脚本化生成，请切换到支持 find 的实现。")
+
+        docs = self._cursor_to_list(self.doc_collection.find({"state": source_state}))
+
+        if department_id is not None:
+            docs = [
+                doc
+                for doc in docs
+                if self._matches_metadata_value((doc.get("metadata") or {}).get("department_id"), department_id)
+            ]
+
+        if limit is not None:
+            docs = docs[: max(limit, 0)]
+
+        return docs
+
+    def generate_qa_dataset(
+        self,
+        *,
+        source_state: int = 2,
+        mark_source_state: int | None = 1,
+        limit: int | None = None,
+        department_id=None,
+        dense_score_threshold: float = 0.8,
+        dense_top_k: int = 5,
+        max_related_docs: int = 3,
+        dry_run: bool = False,
+    ) -> dict:
+        docs = self._list_docs_for_qa_generation(
+            source_state=source_state,
+            limit=limit,
+            department_id=department_id,
+        )
+        if not docs:
+            return {
+                "message": "暂无数据生成评估数据",
+                "success": True,
+                "processed_docs": 0,
+                "generated_qa_count": 0,
+                "inserted_qa_count": 0,
+                "updated_doc_count": 0,
+                "error_nodes": [],
+                "generated_rows": [],
+                "dry_run": dry_run,
+            }
+
+        if mark_source_state is not None and not hasattr(self.doc_collection, "update_one"):
+            raise RuntimeError("当前文档存储后端不支持更新文档状态，无法标记 QA 生成结果。")
+
+        generated_rows = []
+        error_nodes = []
+        empty_qa_nodes = []
+        inserted_qa_count = 0
+        updated_doc_count = 0
+
+        for doc in tqdm(docs, desc="生成评估数据"):
+            node_id = doc.get("node_id")
+            metadata = doc.get("metadata") or {}
+            try:
+                retrieval_filters = {}
+                if metadata.get("department_id") is not None:
+                    retrieval_filters["department_id"] = metadata.get("department_id")
+
+                dense_docs = self.dense_retriever.run(
+                    [doc.get("content") or ""],
+                    top_k=max(1, dense_top_k),
+                    filters=retrieval_filters or None,
+                )
+                dense_docs = [
+                    item
+                    for item in dense_docs
+                    if item.get("node_id") != node_id and (item.get("dense_score") or 0.0) >= dense_score_threshold
+                ]
+                dense_docs = sorted(dense_docs, key=lambda item: item.get("dense_score") or 0.0, reverse=True)[
+                    : max(max_related_docs, 0)
+                ]
+
+                qa_list = generate_qa(llm=self.llm, nodes=[doc, *dense_docs], metadata=metadata)
+                if not qa_list:
+                    empty_qa_nodes.append(
+                        {
+                            "node_id": node_id,
+                            "reason": "no_qa_generated",
+                        }
+                    )
+                    continue
+
+                generated_rows.extend(qa_list)
+                if not dry_run:
+                    self.qa_collection.insert_many(qa_list)
+                    inserted_qa_count += len(qa_list)
+
+                if not dry_run and mark_source_state is not None:
+                    self.doc_collection.update_one({"node_id": node_id}, {"$set": {"state": mark_source_state}})
+                    updated_doc_count += 1
+            except Exception as exc:
+                logger.exception("生成 QA 数据失败: node_id=%s", node_id)
+                error_nodes.append(
+                    {
+                        "node_id": node_id,
+                        "error": str(exc),
+                    }
+                )
+
+        success = bool(generated_rows) and not error_nodes and not empty_qa_nodes
+        if success:
+            message = "生成评估数据成功"
+        elif error_nodes:
+            message = "部分评估数据生成失败"
+        elif empty_qa_nodes:
+            message = "未生成任何有效 QA 数据"
+        else:
+            message = "未生成评估数据"
+
+        return {
+            "message": message,
+            "success": success,
+            "processed_docs": len(docs),
+            "generated_qa_count": len(generated_rows),
+            "inserted_qa_count": inserted_qa_count,
+            "updated_doc_count": updated_doc_count,
+            "error_nodes": error_nodes,
+            "empty_qa_count": len(empty_qa_nodes),
+            "empty_qa_nodes": empty_qa_nodes,
+            "generated_rows": generated_rows,
+            "dry_run": dry_run,
+        }
 
     @staticmethod
     def _is_complex_evidence_query(query_context: RagContext) -> bool:
@@ -351,6 +504,17 @@ class RAGService:
 
             # 文档入库
             self.doc_collection.insert_many(nodelist)
+
+            # 财报事实图谱入库采用“旁路增强”方式：
+            # 即使图谱抽取失败，也不阻断主 RAG 的文档入库。
+            if settings.graph_enabled:
+                try:
+                    graph_result = graph_service.ingest_nodes(nodes)
+                    logger.info(
+                        f"[graph构建完成]: entities={graph_result.entity_count}, facts={graph_result.fact_count}"
+                    )
+                except Exception as graph_exc:
+                    logger.warning(f"[graph构建失败但主链路继续]: {graph_exc}")
 
             elapsed_time = time.time() - start_time
             logger.info(f"[rag向量存储成功]:存储文件:${metadata.file_path} 用时:${elapsed_time}s")
@@ -549,39 +713,15 @@ class RAGService:
 
 
     def generation_evaluate_data(self):
-        docs = self.doc_collection.find({"state":2}).to_list()
-        if not docs:
-            return {
-                "message": "暂无数据生成评估数据",
-                "success": True
-            }
-
-        error_nodes = []
-        for doc in tqdm(docs,desc=f"生成评估数据"):
-            try:
-                dense_docs = self.dense_retriever.run([doc['content']], top_k=5,filters={
-                    "department_id":doc['metadata']['department_id'],
-                })
-                dense_docs = [item for item in dense_docs if item['dense_score'] > 0.8]
-                if dense_docs:
-                    dense_docs = sorted(dense_docs, key=lambda x: x['dense_score'], reverse=True)[
-                        :min(3, settings.reranker_top_k - 2)]
-                qa_list = generate_qa(llm=self.llm, nodes=[doc, *dense_docs], metadata=doc['metadata'])
-                if qa_list:
-                    self.qa_collection.insert_many(qa_list)
-                self.doc_collection.update_one({"node_id":doc['node_id']},{"$set":{"state":1}})
-            except Exception:
-                error_nodes.append(doc['node_id'])
-        if error_nodes:
-            return {
-                "message":"生成评估数据成功",
-                "success":True
-            }
-        else:
-            return {
-                "error_nodes":error_nodes,
-                "success": False
-            }
+        summary = self.generate_qa_dataset(
+            source_state=2,
+            mark_source_state=1,
+            dense_score_threshold=0.8,
+            dense_top_k=5,
+            max_related_docs=3,
+        )
+        summary.pop("generated_rows", None)
+        return summary
 
     # 评估
     def benchmark(self):

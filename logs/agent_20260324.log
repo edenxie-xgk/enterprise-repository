@@ -1,7 +1,0 @@
-2026-03-24 18:44:44,947 - agent - INFO - [LLM调用成功] 耗时: 2.87s
-2026-03-24 18:44:44,947 - agent - INFO - [tokens]: {'completion_tokens': 54, 'prompt_tokens': 249, 'total_tokens': 303, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 0}, 'prompt_cache_hit_tokens': 0, 'prompt_cache_miss_tokens': 249}
-2026-03-24 18:44:47,866 - agent - INFO - [LLM调用成功] 耗时: 2.92s
-2026-03-24 18:44:47,866 - agent - INFO - [tokens]: {'completion_tokens': 54, 'prompt_tokens': 161, 'total_tokens': 215, 'completion_tokens_details': None, 'prompt_tokens_details': {'audio_tokens': None, 'cached_tokens': 0}, 'prompt_cache_hit_tokens': 0, 'prompt_cache_miss_tokens': 161}
-2026-03-24 18:45:28,150 - agent - WARNING - [LLM失败] 第1次: Error code: 500 - {'message': 'unknown error in the model inference server trace_id: 6dbbb2ab132a78f7bd3a1cd76ce2d4ea', 'type': 'server_error'}
-2026-03-24 18:45:48,755 - agent - WARNING - [LLM失败] 第2次: Error code: 500 - {'message': 'unknown error in the model inference server trace_id: 3b27a550d8a1313c21dabafaadb65f3c', 'type': 'server_error'}
-2026-03-24 18:46:11,851 - agent - WARNING - [LLM失败] 第3次: Error code: 500 - {'message': 'unknown error in the model inference server trace_id: 3b198f99879b933de4702c2d059a6d9b', 'type': 'server_error'}

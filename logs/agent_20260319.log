@@ -1,9 +1,0 @@
-2026-03-19 09:05:45,507 - agent - INFO - [rag向量存储成功]:存储文件:$public\uploads\TQ\market_data_1.json 用时:$45.25430631637573s
-2026-03-19 09:11:23,144 - agent - INFO - [rag向量存储成功]:存储文件:$public\uploads\TQ\market_data_1.json 用时:$262.9266664981842s
-2026-03-19 09:25:33,811 - agent - INFO - [rag向量存储成功]:存储文件:$public\uploads\TQ\market_data_1.json 用时:$286.2100501060486s
-2026-03-19 09:49:17,417 - agent - INFO - [rag向量存储成功]:存储文件:$public\uploads\TQ\market_data_1.json 用时:$2.884782075881958s
-2026-03-19 09:55:16,134 - agent - INFO - [rag向量存储成功]:存储文件:$public\uploads\TQ\market_data_1.json 用时:$5.265856981277466s
-2026-03-19 10:41:17,597 - agent - INFO - [rag向量存储失败]:内容为空
-2026-03-19 10:42:59,532 - agent - INFO - [rag向量存储成功]:存储文件:$public\uploads\TQ\文档上传测试.pdf 用时:$14.206475734710693s
-2026-03-19 10:52:18,838 - agent - INFO - [rag向量存储成功]:存储文件:$public\uploads\TQ\a1.png 用时:$4.429203271865845s
-2026-03-19 10:53:12,788 - agent - INFO - [rag向量存储成功]:存储文件:$public\uploads\TQ\文档上传测试.pdf 用时:$10.055861234664917s

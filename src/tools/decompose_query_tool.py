@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import HumanMessage
-from pydantic import Field
+from pydantic import BaseModel, Field
 
 from src.config.llm_config import LLMService
 from src.prompts.agent.decompose import DECOMPOSE_PROMPT
@@ -10,8 +10,12 @@ from src.types.base_type import BaseNodeResult
 
 
 class DecomposeResult(BaseNodeResult):
-    name: Optional[str] = Field(default="decompose_query", description="工具名称")
-    answer: List[str] = Field(default_factory=list, description="拆解后的子问题")
+    name: Optional[str] = Field(default="decompose_query", description="tool name")
+    answer: List[str] = Field(default_factory=list, description="decomposed sub queries")
+
+
+class DecomposeStructuredResult(BaseModel):
+    answer: List[str] = Field(default_factory=list, description="decomposed sub queries")
 
 
 def _normalize_sub_queries(queries: list[str]) -> list[str]:
@@ -32,16 +36,18 @@ def _normalize_sub_queries(queries: list[str]) -> list[str]:
 def decompose_query_tool(llm: BaseChatModel, query: str, chat_history=None) -> DecomposeResult:
     prompt = DECOMPOSE_PROMPT.format(query=query, chat_history=chat_history or [])
     try:
-        response: DecomposeResult = LLMService.invoke(
+        payload = LLMService.invoke(
             llm=llm,
             messages=[HumanMessage(content=prompt)],
-            schema=DecomposeResult,
+            schema=DecomposeStructuredResult,
         )
-        response.success = True
-        response.name = "decompose_query"
-        response.answer = _normalize_sub_queries(response.answer)
-        response.message = "decompose query success"
-        response.diagnostics = list(response.diagnostics or []) + ["decompose_query_completed"]
+        response = DecomposeResult(
+            success=True,
+            name="decompose_query",
+            answer=_normalize_sub_queries(getattr(payload, "answer", []) or []),
+            message="decompose query success",
+            diagnostics=["decompose_query_completed"],
+        )
         return response
     except Exception as exc:
         return DecomposeResult(

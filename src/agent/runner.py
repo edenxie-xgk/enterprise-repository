@@ -7,6 +7,7 @@ from typing import Any
 from uuid import uuid4
 
 from core.settings import settings
+from src.agent.answer_stream import AnswerTokenHandler, bind_answer_token_handler
 from src.memory.writeback import write_long_term_memory
 from src.config.llm_config import LLMService
 from src.types.agent_state import State
@@ -115,6 +116,7 @@ def run_agent(
     chat_history: list[str] | None = None,
     max_steps: int = 20,
     output_level: str | None = None,
+    answer_token_handler: AnswerTokenHandler | None = None,
 ) -> State:
     """Run the agent graph and return the final state."""
     from src.agent.graph import graph
@@ -137,7 +139,8 @@ def run_agent(
     usage_token = LLMService.start_usage_collection()
     start = time.time()
     try:
-        result = graph.invoke(initial_state)
+        with bind_answer_token_handler(answer_token_handler):
+            result = graph.invoke(initial_state)
     finally:
         llm_records = LLMService.stop_usage_collection(usage_token)
     duration_ms = int((time.time() - start) * 1000)
@@ -319,6 +322,7 @@ def _extract_preferred_topics_usage(state: State) -> dict[str, Any]:
 
 def build_run_report(state: State) -> dict[str, Any]:
     last_rag_result = state.last_rag_result
+    last_graph_result = state.last_graph_result
     raw_citations, citation_labels, citation_details = _build_citation_details(last_rag_result) if last_rag_result else ([], [], [])
     sub_query_results = []
     for item in state.sub_query_results:
@@ -354,6 +358,7 @@ def build_run_report(state: State) -> dict[str, Any]:
             for item in (state.long_term_memory_hits or [])
         ],
         "memory_write_summary": state.memory_write_summary,
+        "profile_sync_summary": (state.memory_write_summary or {}).get("profile_sync"),
         "user_profile": _summarize_user_profile(state.user_profile),
         "preferred_topics_usage": _extract_preferred_topics_usage(state),
         "diagnostics": state.diagnostics,
@@ -361,6 +366,20 @@ def build_run_report(state: State) -> dict[str, Any]:
         "expand_query": state.expand_query,
         "decompose_query": state.decompose_query,
         "sub_query_results": sub_query_results,
+        "last_graph_context": state.last_graph_context.model_dump() if state.last_graph_context else None,
+        "last_graph_result": {
+            "answer": getattr(last_graph_result, "answer", ""),
+            "evidence_summary": getattr(last_graph_result, "evidence_summary", ""),
+            "is_sufficient": getattr(last_graph_result, "is_sufficient", False),
+            "fail_reason": getattr(last_graph_result, "fail_reason", None),
+            "retrieval_queries": getattr(last_graph_result, "retrieval_queries", []),
+            "retrieval_candidate_node_ids": getattr(last_graph_result, "retrieval_candidate_node_ids", []),
+            "rerank_node_ids": getattr(last_graph_result, "rerank_node_ids", []),
+            "diagnostics": getattr(last_graph_result, "diagnostics", []),
+            "document_count": len(getattr(last_graph_result, "documents", []) or []),
+        }
+        if last_graph_result
+        else None,
         "action_history": summarize_action_history(state),
         "last_rag_result": {
             "answer": getattr(last_rag_result, "answer", ""),

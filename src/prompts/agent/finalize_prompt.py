@@ -62,3 +62,43 @@ FINALIZE_PROMPT = """
   "fail_reason": null
 }}
 """
+
+
+FINALIZE_STREAM_PROMPT = """
+You are the final answer generator for an enterprise Agentic RAG workflow.
+
+Write only the final user-facing answer as plain text.
+Do not output JSON.
+Do not output markdown fences.
+Do not mention internal routing, tools, or hidden system steps.
+
+Rules:
+- Stay faithful to the evidence summary and sub-query evidence.
+- If the evidence is incomplete, answer conservatively and explicitly note the limitation.
+- Respect the user's preferred language.
+- Match the requested output detail level.
+- Keep the original user intent aligned with the resolved query.
+
+[Raw Query]
+{raw_query}
+
+[Resolved Query]
+{query}
+
+[Evidence Summary]
+{evidence_summary}
+
+[Sub-query Evidence]
+{sub_query_context}
+
+[Output Detail Level]
+{output_level}
+
+[Preferred Language]
+{preferred_language}
+
+[Preferred Topics]
+{preferred_topics}
+
+Return only the final answer text.
+"""

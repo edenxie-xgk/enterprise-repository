@@ -7,6 +7,7 @@ from src.nodes.db_search_node import db_search_node
 from src.nodes.direct_answer_node import direct_answer_node
 from src.nodes.expand_query_node import expand_query_node
 from src.nodes.finalize_node import finalize_node
+from src.nodes.graph_rag_node import graph_rag_node
 from src.nodes.memory_recall_node import memory_recall_node
 from src.nodes.rag_node import rag_node
 from src.nodes.resolved_query_node import resolved_query_node
@@ -33,6 +34,7 @@ builder.add_node("rewrite_query", rewrite_query_node)
 builder.add_node("expand_query", expand_query_node)
 builder.add_node("decompose_query", decompose_query_node)
 builder.add_node("rag", rag_node)
+builder.add_node("graph_rag", graph_rag_node)
 builder.add_node("web_search", web_search_node)
 builder.add_node("db_search", db_search_node)
 builder.add_node("finalize", finalize_node)
@@ -41,6 +43,7 @@ builder.add_edge("resolved_query", "memory_recall")
 builder.add_edge("memory_recall", "agent")
 
 builder.add_edge("rag", "agent")
+builder.add_edge("graph_rag", "agent")
 builder.add_edge("web_search", "agent")
 builder.add_edge("db_search", "agent")
 builder.add_conditional_edges(

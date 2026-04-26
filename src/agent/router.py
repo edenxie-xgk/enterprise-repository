@@ -1,19 +1,11 @@
 from langgraph.constants import END
 
-reasoning_route = [
-    "rewrite_query",
-    "expand_query",
-    "decompose_query",
-]
+from src.agent.action_registry import REASONING_ACTION_NAMES, ROUTE_ACTION_NAMES, TOOL_ACTION_NAMES
 
-tool_route = [
-    'rag',
-    'web_search',
-    'db_search',
-]
+reasoning_route = list(REASONING_ACTION_NAMES)
+tool_route = list(TOOL_ACTION_NAMES)
 
-route_list = reasoning_route + tool_route + ["finalize", "abort", "finish"]
-route_list.append("direct_answer")
+route_list = list(ROUTE_ACTION_NAMES)
 route_map = {}
 
 for route in route_list:

@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import HumanMessage
-from pydantic import Field
+from pydantic import BaseModel, Field
 
 from src.agent.profile_utils import build_preferred_topics_note, merge_queries_with_topic_guidance
 from src.config.llm_config import LLMService
@@ -12,6 +12,10 @@ from src.types.base_type import BaseNodeResult
 
 class ExpandResult(BaseNodeResult):
     name: Optional[str] = Field(default="expand_query", description="tool name")
+    answer: List[str] = Field(default_factory=list, description="expanded queries")
+
+
+class ExpandStructuredResult(BaseModel):
     answer: List[str] = Field(default_factory=list, description="expanded queries")
 
 
@@ -32,16 +36,18 @@ def expand_query_tool(llm: BaseChatModel, query: str, chat_history=None, user_pr
         prompt = f"{prompt}\n\n{preferred_topics_note}"
 
     try:
-        response: ExpandResult = LLMService.invoke(
+        payload = LLMService.invoke(
             llm=llm,
             messages=[HumanMessage(content=prompt)],
-            schema=ExpandResult,
+            schema=ExpandStructuredResult,
         )
-        response.success = True
-        response.name = "expand_query"
-        response.answer = _normalize_expand_queries(response.answer, query, user_profile)
-        response.message = "expand query success"
-        response.diagnostics = list(response.diagnostics or []) + ["expand_query_completed"]
+        response = ExpandResult(
+            success=True,
+            name="expand_query",
+            answer=_normalize_expand_queries(getattr(payload, "answer", []) or [], query, user_profile),
+            message="expand query success",
+            diagnostics=["expand_query_completed"],
+        )
         if preferred_topics_note:
             response.diagnostics.append("preferred_topics_hint_applied:expand_query")
         return response

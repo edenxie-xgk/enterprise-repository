@@ -3,39 +3,26 @@ from __future__ import annotations
 import re
 
 from core.settings import settings
+from src.agent.action_registry import INITIAL_ACTION_NAMES, REASONING_ACTION_NAMES, TERMINAL_ACTION_NAMES, TOOL_ACTION_NAMES
+from src.graph.planner import looks_like_financial_graph_query
 from src.types.agent_state import State
 from src.types.policy_type import InitialActionDecision, InputGuardDecision, RetrievalPolicyPlan
 from src.types.rag_type import RagContext
 
 
-CURRENT_REASONING_ACTIONS = [
-    "rewrite_query",
-    "expand_query",
-    "decompose_query",
-]
+CURRENT_REASONING_ACTIONS = list(REASONING_ACTION_NAMES)
 
-CURRENT_TOOL_ACTIONS = [
-    "rag",
-    "web_search",
-    "db_search",
-]
+CURRENT_TOOL_ACTIONS = list(TOOL_ACTION_NAMES)
 
 FUTURE_TOOL_ACTIONS = [
+    "graph_rag",
     "web_search",
     "db_search",
     "export_rag_report",
 ]
 
-TERMINAL_ACTIONS = ["finish", "abort"]
-INITIAL_ACTIONS = {
-    "rag",
-    "db_search",
-    "web_search",
-    "rewrite_query",
-    "decompose_query",
-    "clarify_question",
-    "direct_answer",
-}
+TERMINAL_ACTIONS = list(TERMINAL_ACTION_NAMES)
+INITIAL_ACTIONS = set(INITIAL_ACTION_NAMES)
 
 COMPLEX_QUERY_MARKERS = [
     "对比",
@@ -124,7 +111,11 @@ def _should_direct_answer(text: str) -> bool:
         "internal",
     ]
 
-    if _looks_like_external_query(normalized) or _looks_like_structured_db_query(normalized):
+    if (
+        _looks_like_external_query(normalized)
+        or _looks_like_structured_db_query(normalized)
+        or _looks_like_graph_query(normalized)
+    ):
         return False
     if any(marker in normalized for marker in enterprise_markers):
         return False
@@ -186,6 +177,15 @@ def _looks_like_structured_db_query(text: str) -> bool:
     if mentions_permission and mentions_first_person:
         return True
     return False
+
+
+def _looks_like_graph_query(text: str) -> bool:
+    normalized = (text or "").strip().lower()
+    if not normalized:
+        return False
+    if _looks_like_structured_db_query(normalized) or _looks_like_external_query(normalized):
+        return False
+    return looks_like_financial_graph_query(normalized)
 
 
 def _contains_any(text: str, keywords: list[str]) -> bool:
@@ -396,6 +396,11 @@ def _fallback_initial_action(query: str, *, allow_web_search: bool = True) -> In
             next_action="db_search",
             reason="fallback_structured_db_query",
         )
+    if _looks_like_graph_query(query):
+        return InitialActionDecision(
+            next_action="graph_rag",
+            reason="fallback_financial_fact_graph_query",
+        )
     if allow_web_search and _looks_like_external_query(query):
         return InitialActionDecision(
             next_action="web_search",
@@ -417,6 +422,116 @@ def _fallback_initial_action(query: str, *, allow_web_search: bool = True) -> In
     )
 
 
+def _has_history_event(state: State, event_name: str) -> bool:
+    return any(event.name == event_name for event in state.action_history)
+
+
+def _append_action(actions: list[str], action_name: str, *, condition: bool = True) -> None:
+    if condition and action_name not in actions:
+        actions.append(action_name)
+
+
+def _build_initial_allowed_actions(state: State, query: str) -> list[str]:
+    primary = decide_initial_action(state).next_action
+    actions = [primary]
+
+    if primary in {"clarify_question", "db_search", "web_search"}:
+        return actions
+
+    if primary == "direct_answer":
+        _append_action(actions, "rag")
+        _append_action(actions, "rewrite_query", condition=should_rewrite_query(query))
+        return actions
+
+    if primary == "graph_rag":
+        _append_action(actions, "rag")
+        _append_action(actions, "rewrite_query", condition=should_rewrite_query(query))
+        return actions
+
+    if primary == "decompose_query":
+        _append_action(actions, "rewrite_query", condition=should_rewrite_query(query))
+        _append_action(actions, "rag")
+        return actions
+
+    if primary == "rewrite_query":
+        _append_action(actions, "rag")
+        _append_action(actions, "decompose_query", condition=should_decompose_query(query))
+        return actions
+
+    _append_action(actions, "rewrite_query", condition=should_rewrite_query(query))
+    _append_action(actions, "decompose_query", condition=should_decompose_query(query))
+    return actions
+
+
+def _build_post_reasoning_allowed_actions(query: str, *, allow_web_search: bool) -> list[str]:
+    if _looks_like_structured_db_query(query):
+        return ["db_search"]
+    if _looks_like_graph_query(query):
+        return ["graph_rag", "rag"]
+    if allow_web_search and _looks_like_external_query(query):
+        return ["web_search"]
+    return ["rag"]
+
+
+def _build_graph_retry_actions(state: State, query: str) -> list[str]:
+    actions: list[str] = []
+    _append_action(
+        actions,
+        "rewrite_query",
+        condition=should_rewrite_query(query) and not _has_history_event(state, "rewrite_query"),
+    )
+    _append_action(actions, "rag", condition=not _has_history_event(state, "rag"))
+    _append_action(
+        actions,
+        "decompose_query",
+        condition=should_decompose_query(query) and not _has_history_event(state, "decompose_query"),
+    )
+    _append_action(actions, "finish")
+    return actions
+
+
+def _build_web_retry_actions(state: State, query: str) -> list[str]:
+    actions: list[str] = []
+    _append_action(
+        actions,
+        "db_search",
+        condition=_looks_like_structured_db_query(query) and not _has_history_event(state, "db_search"),
+    )
+    _append_action(actions, "finish")
+    return actions
+
+
+def _build_rag_retry_actions(state: State, query: str, *, allow_web_search: bool) -> list[str]:
+    actions: list[str] = []
+    _append_action(
+        actions,
+        "graph_rag",
+        condition=_looks_like_graph_query(query) and not _has_history_event(state, "graph_rag"),
+    )
+    _append_action(
+        actions,
+        "db_search",
+        condition=_looks_like_structured_db_query(query) and not _has_history_event(state, "db_search"),
+    )
+    _append_action(
+        actions,
+        "web_search",
+        condition=allow_web_search and _looks_like_external_query(query) and not _has_history_event(state, "web_search"),
+    )
+    _append_action(
+        actions,
+        "rewrite_query",
+        condition=should_rewrite_query(query) and not _has_history_event(state, "rewrite_query"),
+    )
+    _append_action(
+        actions,
+        "decompose_query",
+        condition=should_decompose_query(query) and not _has_history_event(state, "decompose_query"),
+    )
+    _append_action(actions, "finish")
+    return actions
+
+
 def get_allowed_actions(state: State) -> list[str]:
     current_query = state.working_query or state.resolved_query or state.query or ""
     allow_web_search = is_web_search_allowed(state)
@@ -428,42 +543,33 @@ def get_allowed_actions(state: State) -> list[str]:
     last_tool = next((event for event in reversed(state.action_history) if event.kind == "tool"), None)
 
     if not reasoning_history and not last_tool:
-        return [decide_initial_action(state).next_action]
+        return _build_initial_allowed_actions(state, current_query)
 
     if last_event and last_event.kind == "reasoning":
-        if _looks_like_structured_db_query(current_query):
-            return ["db_search"]
-        if allow_web_search and _looks_like_external_query(current_query):
-            return ["web_search"]
-        return ["rag"]
+        return _build_post_reasoning_allowed_actions(current_query, allow_web_search=allow_web_search)
 
     if not last_tool:
         return ["rag"]
 
     if last_tool.name == "db_search":
         if getattr(last_tool.output, "is_sufficient", False):
-            return ["finalize"]
+            return ["finalize", "finish"]
         return ["finish"]
+
+    if last_tool.name == "graph_rag":
+        if getattr(last_tool.output, "documents", None):
+            return ["finalize", "finish"]
+        return _build_graph_retry_actions(state, current_query)
 
     if last_tool.name == "web_search":
         if getattr(last_tool.output, "documents", None):
-            return ["finalize"]
-        if _looks_like_structured_db_query(current_query):
-            return ["db_search"]
-        return ["finish"]
+            return ["finalize", "finish"]
+        return _build_web_retry_actions(state, current_query)
 
     if last_tool.name == "rag":
         if getattr(last_tool.output, "documents", None):
-            return ["finalize"]
-        if _looks_like_structured_db_query(current_query):
-            return ["db_search"]
-        if allow_web_search and _looks_like_external_query(current_query):
-            return ["web_search"]
-        if should_rewrite_query(current_query) and not any(item.name == "rewrite_query" for item in reasoning_history):
-            return ["rewrite_query"]
-        if should_decompose_query(current_query) and not any(item.name == "decompose_query" for item in reasoning_history):
-            return ["decompose_query"]
-        return ["finish"]
+            return ["finalize", "finish"]
+        return _build_rag_retry_actions(state, current_query, allow_web_search=allow_web_search)
 
     return ["finish"]
 
@@ -514,7 +620,11 @@ def should_rewrite_query(query: str) -> bool:
     normalized = (query or "").strip()
     if not normalized:
         return False
-    if _looks_like_structured_db_query(normalized) or _looks_like_external_query(normalized):
+    if (
+        _looks_like_structured_db_query(normalized)
+        or _looks_like_external_query(normalized)
+        or _looks_like_graph_query(normalized)
+    ):
         return False
     if should_decompose_query(normalized):
         return False
@@ -525,7 +635,11 @@ def should_decompose_query(query: str) -> bool:
     normalized = (query or "").strip()
     if not normalized:
         return False
-    if _looks_like_structured_db_query(normalized) or _looks_like_external_query(normalized):
+    if (
+        _looks_like_structured_db_query(normalized)
+        or _looks_like_external_query(normalized)
+        or _looks_like_graph_query(normalized)
+    ):
         return False
 
     lowered = normalized.lower()
