@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from contextlib import suppress
 from typing import Any
 
 from core.settings import settings
@@ -36,12 +37,8 @@ class MilvusMemoryStore(BaseMemoryStore):
             return None
 
         try:
-            token = settings.milvus_token or None
-            self._client = MilvusClient(
-                uri=self._normalized_uri(settings.milvus_uri),
-                token=token,
-                db_name=settings.milvus_db_name,
-            )
+            self._ensure_database_exists(MilvusClient)
+            self._client = MilvusClient(**self._client_kwargs(db_name=self._target_db_name()))
             self._ensure_collection()
             self._last_error = None
             return self._client
@@ -49,6 +46,50 @@ class MilvusMemoryStore(BaseMemoryStore):
             self._client = None
             self._last_error = str(exc)
             return None
+
+    def _client_kwargs(self, *, db_name: str | None = None) -> dict[str, Any]:
+        kwargs: dict[str, Any] = {"uri": self._normalized_uri(settings.milvus_uri)}
+        token = (settings.milvus_token or "").strip()
+        if token:
+            kwargs["token"] = token
+        if db_name:
+            kwargs["db_name"] = db_name
+        return kwargs
+
+    @staticmethod
+    def _close_client(client: Any) -> None:
+        if client is None:
+            return
+        close = getattr(client, "close", None)
+        if callable(close):
+            with suppress(Exception):
+                close()
+
+    @staticmethod
+    def _target_db_name() -> str | None:
+        raw_name = (settings.milvus_db_name or "").strip()
+        return raw_name or None
+
+    def _ensure_database_exists(self, client_cls: Any) -> None:
+        target_db_name = self._target_db_name()
+        if not target_db_name:
+            return
+
+        admin_client = None
+        try:
+            admin_client = client_cls(**self._client_kwargs())
+            existing_databases = set(admin_client.list_databases() or [])
+            if target_db_name in existing_databases:
+                return
+
+            try:
+                admin_client.create_database(target_db_name)
+            except Exception:
+                refreshed_databases = set(admin_client.list_databases() or [])
+                if target_db_name not in refreshed_databases:
+                    raise
+        finally:
+            self._close_client(admin_client)
 
     @staticmethod
     def _normalized_uri(uri: str) -> str:

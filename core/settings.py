@@ -11,6 +11,7 @@ dotenv.load_dotenv()
 os.environ["PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK"] = "True"
 
 _DEV_ONLY_JWT_SECRET = "dev-only-jwt-secret-change-me"
+_DEFAULT_LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 _TRUE_VALUES = {"1", "true", "yes", "on"}
 _FALSE_VALUES = {"0", "false", "no", "off", ""}
 
@@ -256,9 +257,6 @@ class Settings(BaseSettings):
     await_upload_file_num: int = Field(default=0)
 
     log_dir: pathlib.Path = Field(default=pathlib.Path(__file__).resolve().parent.parent / "logs")
-    log_format: logging.Formatter = Field(
-        default=logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-    )
 
     max_retries: int | None = Field(default=_env_int("MAX_RETRIES", 0) if os.getenv("MAX_RETRIES") else None)
     max_timeout: int | None = Field(default=_env_int("MAX_TIMEOUT", 0) if os.getenv("MAX_TIMEOUT") else None)
@@ -299,6 +297,10 @@ class Settings(BaseSettings):
         if self.public_dir:
             return pathlib.Path(self.public_dir)
         return self.root_dir / "service" / "public"
+
+    @property
+    def log_format(self) -> logging.Formatter:
+        return logging.Formatter(_DEFAULT_LOG_FORMAT)
 
     @property
     def normalized_public_url_path(self) -> str:

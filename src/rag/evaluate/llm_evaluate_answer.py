@@ -1,7 +1,6 @@
-from anthropic import BaseModel
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import HumanMessage
-from pydantic import Field
+from pydantic import BaseModel, Field
 
 from src.config.llm_config import LLMService
 from src.prompts.rag.evaluate import EVAL_PROMPT

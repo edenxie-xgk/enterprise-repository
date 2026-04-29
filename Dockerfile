@@ -43,40 +43,38 @@ RUN set -eux; \
 
 COPY requirements.txt ./requirements.txt
 
-RUN python - <<'PY'
-from pathlib import Path
+RUN python -c "exec(\"\"\"from pathlib import Path\nraw = Path('requirements.txt').read_bytes()\nencodings = ('utf-8', 'utf-8-sig', 'utf-16', 'utf-16-le', 'utf-16-be', 'gbk', 'cp936')\ntext = None\nfor encoding in encodings:\n    try:\n        text = raw.decode(encoding)\n        break\n    except UnicodeDecodeError:\n        pass\nif text is None:\n    raise SystemExit('Unable to decode requirements.txt')\nfiltered = [line for line in text.splitlines() if line.strip() and not line.startswith('psycopg2==') and not line.startswith('torch==')]\nPath('requirements.docker.txt').write_text('\\\\n'.join(filtered) + '\\\\n', encoding='utf-8')\n\"\"\")"
 
-raw = Path("requirements.txt").read_bytes()
-encodings = ("utf-8", "utf-8-sig", "utf-16", "utf-16-le", "utf-16-be", "gbk", "cp936")
-text = None
-
-for encoding in encodings:
-    try:
-        text = raw.decode(encoding)
-        break
-    except UnicodeDecodeError:
-        continue
-
-if text is None:
-    raise SystemExit("Unable to decode requirements.txt")
-
-filtered = [
-    line
-    for line in text.splitlines()
-    if line.strip()
-    and not line.startswith("psycopg2==")
-    and not line.startswith("torch==")
-]
-Path("requirements.docker.txt").write_text("\n".join(filtered) + "\n", encoding="utf-8")
-PY
-
-RUN pip install --upgrade pip setuptools wheel \
-    && pip install --index-url https://download.pytorch.org/whl/cpu torch==2.10.0 \
-    && pip install --prefer-binary -r requirements.docker.txt
+RUN set -eux; \
+    export PIP_NO_CACHE_DIR=0; \
+    export PIP_PROGRESS_BAR=off; \
+    pip install --upgrade pip setuptools wheel; \
+    torch_success=""; \
+    for attempt in 1 2 3 4 5; do \
+        if pip install --retries 10 --timeout 120 --index-url https://download.pytorch.org/whl/cpu torch==2.10.0; then \
+            torch_success="1"; \
+            break; \
+        fi; \
+        echo "torch install failed on attempt ${attempt}, retrying..." >&2; \
+        sleep 5; \
+    done; \
+    test -n "$torch_success"; \
+    deps_success=""; \
+    for attempt in 1 2 3 4 5; do \
+        if pip install --retries 10 --timeout 120 --prefer-binary -r requirements.docker.txt; then \
+            deps_success="1"; \
+            break; \
+        fi; \
+        echo "requirements install failed on attempt ${attempt}, retrying..." >&2; \
+        sleep 5; \
+    done; \
+    test -n "$deps_success"; \
+    rm -rf /root/.cache/pip
 
 COPY . .
 
-RUN mkdir -p /app/service/public/uploads /app/logs \
+RUN sed -i 's/\r$//' /app/docker/backend-entrypoint.sh \
+    && mkdir -p /app/service/public/uploads /app/logs \
     && chmod +x /app/docker/backend-entrypoint.sh
 
 EXPOSE 1016

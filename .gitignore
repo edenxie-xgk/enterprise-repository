@@ -6,6 +6,7 @@
 /ocr_service/logs/
 /ocr_service/__pycache__/
 /logs/*.log
+/docs/*
 __pycache__/
 *.py[cod]
 

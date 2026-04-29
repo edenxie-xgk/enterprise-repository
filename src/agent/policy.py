@@ -23,6 +23,7 @@ FUTURE_TOOL_ACTIONS = [
 
 TERMINAL_ACTIONS = list(TERMINAL_ACTION_NAMES)
 INITIAL_ACTIONS = set(INITIAL_ACTION_NAMES)
+RAG_RETRY_FAIL_REASONS = {"no_data", "low_recall", "bad_ranking", "verification_failed"}
 
 COMPLEX_QUERY_MARKERS = [
     "对比",
@@ -501,8 +502,15 @@ def _build_web_retry_actions(state: State, query: str) -> list[str]:
     return actions
 
 
-def _build_rag_retry_actions(state: State, query: str, *, allow_web_search: bool) -> list[str]:
+def _build_rag_retry_actions(
+    state: State,
+    query: str,
+    *,
+    allow_web_search: bool,
+    include_rag_retry: bool = False,
+) -> list[str]:
     actions: list[str] = []
+    _append_action(actions, "rag", condition=include_rag_retry)
     _append_action(
         actions,
         "graph_rag",
@@ -567,6 +575,15 @@ def get_allowed_actions(state: State) -> list[str]:
         return _build_web_retry_actions(state, current_query)
 
     if last_tool.name == "rag":
+        if getattr(last_tool.output, "is_sufficient", False):
+            return ["finalize", "finish"]
+        if getattr(last_tool.output, "fail_reason", None) in RAG_RETRY_FAIL_REASONS:
+            return _build_rag_retry_actions(
+                state,
+                current_query,
+                allow_web_search=allow_web_search,
+                include_rag_retry=True,
+            )
         if getattr(last_tool.output, "documents", None):
             return ["finalize", "finish"]
         return _build_rag_retry_actions(state, current_query, allow_web_search=allow_web_search)

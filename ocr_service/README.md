@@ -16,6 +16,7 @@ python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 uvicorn app:app --host 127.0.0.1 --port 8016
+.\.venv\Scripts\python.exe -m uvicorn app:app --host 127.0.0.1 --port 8016  
 ```
 
 ## Main app configuration

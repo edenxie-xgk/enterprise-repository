@@ -1,7 +1,9 @@
 from core.settings import settings
-from src.models.reranker import reranker_model
-class  CrossEncoderReRanker:
-    def __init__(self, model = reranker_model):
+from src.models.reranker import get_reranker_model
+
+
+class CrossEncoderReRanker:
+    def __init__(self, model=None):
         self.model = model
 
 
@@ -15,7 +17,8 @@ class  CrossEncoderReRanker:
         ]
 
         # 批量打分（关键优化点）
-        scores = self.model.predict(pairs)
+        model = self.model or get_reranker_model()
+        scores = model.predict(pairs)
 
         # 写回score
         for doc, score in zip(docs, scores):

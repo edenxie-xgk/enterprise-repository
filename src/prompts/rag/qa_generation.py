@@ -1,73 +1,39 @@
 QA_GENERATION_PROMPT = """
-你是企业级RAG系统的数据构建助手。
+You are preparing a high-precision QA benchmark for an enterprise RAG system.
 
-任务：
-基于多个文本片段，生成需要“综合多个片段”才能回答的问题。
+Task:
+Generate QA items only when the answer is strictly grounded in the provided nodes.
 
----
+Requirements:
+1. Precision is more important than recall. If the evidence is weak, ambiguous, repetitive, or low quality, return an empty `qa_list`.
+2. Every question must require at least 2 nodes to answer.
+3. Every answer must be fully supported by the provided nodes. Do not add assumptions, background knowledge, hidden causes, or unstated time ranges.
+4. Prefer factual or comparison questions with short, concrete answers.
+5. Only generate an analysis question when the conclusion is explicitly supported by the nodes.
+6. Use the same language as the source documents. Target language: `{source_language}`.
+7. Do not translate into another language.
+8. `node_ids` must contain only the minimal supporting nodes for the answer.
+9. If a question can be answered from a single node, do not generate it.
+10. If the answer contains a number, date, ratio, entity, or other factual value, that value must appear explicitly in the nodes.
+11. At most generate `{max_qa_per_batch}` QA items.
+12. `difficulty` must be one of: `easy`, `medium`, `hard`.
+13. `intent` must be one of: `factoid`, `comparison`, `analysis`.
+14. Output JSON only.
 
-【要求】
-
-1.  问题必须依赖多个node才能回答
-2.  答案必须来自这些node
-3.  标注涉及的node_id
-4.  不要生成单node即可回答的问题
-5.  每个问题独立成立
-6.  识别文本的语言（简体中文->language: zh-cn, 英文->language: en）
-7.  同种语言最多生成2个QA
-8.  至少必须同时生成英文版本和中文版本
-9.  对问题进行分级（easy/medium/hard）
-10. 对问题进行意图分类（factoid/analysis/comparison）
-11. 参考文档质量差可以不生成数据，直接返回JSON空数组
-
----
-
-【字段说明】
-
-- question：问题
-- answer：答案
-- language：语言
-- difficulty：分级（easy/medium/hard）
-- intent：意图分类（factoid/analysis/comparison）
-
----
-
-【intent（意图分类）】
-
-必须选择一个：
-- factoid（事实查询）
-- analysis（分析）
-- comparison（对比）
-
----
-
-【difficulty（分级）】
-
-必须选择一个：
-- easy
-- medium 
-- hard
-
----
-
-
-【多个片段内容】
+Nodes:
 {nodes}
 
----
-
-【输出格式（JSON）】
+Output JSON:
 {{
-    "qa_list":[
-        {{
-            "question": "...",
-            "answer": "...",
-            "language": "...",
-            "difficulty": "...",
-            "intent": "...",
-            "node_ids": ["node1", "node2"]
-        }}
-    ]
+  "qa_list": [
+    {{
+      "question": "...",
+      "answer": "...",
+      "language": "{source_language}",
+      "difficulty": "easy",
+      "intent": "factoid",
+      "node_ids": ["node1", "node2"]
+    }}
+  ]
 }}
-只输出JSON，不要解释。
 """

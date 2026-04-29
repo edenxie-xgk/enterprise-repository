@@ -13,9 +13,11 @@ from src.models.embedding import embed_model
 from src.models.llm import deepseek_llm, chatgpt_llm
 from src.rag.context.builder import ContextBuilder
 from src.rag.evaluate.generation import evaluate_generation
+from src.rag.evaluate.llm_evaluate_answer import evaluate_answer
 from src.rag.evaluate.qa import generate_qa
 from src.rag.evaluate.rerank import evaluate_rerank
 from src.rag.evaluate.retrieval import evaluate_retrieval
+from src.rag.generation.answer_verify import verify_answer
 from src.rag.generation.generator import evaluate_evidence
 from src.rag.rerank.reranker import Reranker
 from src.rag.retrieval.dense import DenseRetriever
@@ -176,6 +178,18 @@ class RAGService:
                 normalized.append(doc)
         return normalized
 
+    @staticmethod
+    def _dedupe_candidate_docs(documents):
+        deduped = []
+        seen = set()
+        for doc in RAGService._normalize_candidate_docs(documents):
+            node_id = doc.get("node_id")
+            if not node_id or node_id in seen:
+                continue
+            seen.add(node_id)
+            deduped.append(doc)
+        return deduped
+
     def _list_docs_for_qa_generation(
         self,
         *,
@@ -210,6 +224,13 @@ class RAGService:
         dense_score_threshold: float = 0.8,
         dense_top_k: int = 5,
         max_related_docs: int = 3,
+        max_qa_per_doc: int = 2,
+        verify_generated_qa: bool = True,
+        verification_retrieval_top_k: int = 8,
+        verification_rerank_top_k: int = 5,
+        verification_answer_score_threshold: float = 0.9,
+        verification_require_retrieval_coverage: bool = True,
+        verification_require_rerank_coverage: bool = True,
         dry_run: bool = False,
     ) -> dict:
         docs = self._list_docs_for_qa_generation(
@@ -236,6 +257,7 @@ class RAGService:
         generated_rows = []
         error_nodes = []
         empty_qa_nodes = []
+        rejected_qa_items = []
         inserted_qa_count = 0
         updated_doc_count = 0
 
@@ -261,12 +283,30 @@ class RAGService:
                     : max(max_related_docs, 0)
                 ]
 
-                qa_list = generate_qa(llm=self.llm, nodes=[doc, *dense_docs], metadata=metadata)
+                qa_list = generate_qa(
+                    llm=self.llm,
+                    nodes=[doc, *dense_docs],
+                    metadata=metadata,
+                    max_qa_per_batch=max_qa_per_doc,
+                )
+                if verify_generated_qa and qa_list:
+                    qa_list, rejected_items = self._verify_generated_qa_items(
+                        qa_list,
+                        source_doc=doc,
+                        related_docs=dense_docs,
+                        retrieval_filters=retrieval_filters or None,
+                        retrieval_top_k=verification_retrieval_top_k,
+                        rerank_top_k=verification_rerank_top_k,
+                        answer_score_threshold=verification_answer_score_threshold,
+                        require_retrieval_coverage=verification_require_retrieval_coverage,
+                        require_rerank_coverage=verification_require_rerank_coverage,
+                    )
+                    rejected_qa_items.extend(rejected_items)
                 if not qa_list:
                     empty_qa_nodes.append(
                         {
                             "node_id": node_id,
-                            "reason": "no_qa_generated",
+                            "reason": "no_verified_qa_generated" if verify_generated_qa else "no_qa_generated",
                         }
                     )
                     continue
@@ -288,9 +328,11 @@ class RAGService:
                     }
                 )
 
-        success = bool(generated_rows) and not error_nodes and not empty_qa_nodes
-        if success:
+        success = bool(generated_rows) and not error_nodes
+        if success and not empty_qa_nodes:
             message = "生成评估数据成功"
+        elif generated_rows and empty_qa_nodes:
+            message = "生成评估数据完成，但部分文档未产生可用 QA"
         elif error_nodes:
             message = "部分评估数据生成失败"
         elif empty_qa_nodes:
@@ -308,8 +350,165 @@ class RAGService:
             "error_nodes": error_nodes,
             "empty_qa_count": len(empty_qa_nodes),
             "empty_qa_nodes": empty_qa_nodes,
+            "rejected_qa_count": len(rejected_qa_items),
+            "rejected_qa_items": rejected_qa_items,
             "generated_rows": generated_rows,
+            "verification_enabled": verify_generated_qa,
             "dry_run": dry_run,
+        }
+
+    def _verify_generated_qa_items(
+        self,
+        qa_items: list[dict],
+        *,
+        source_doc: dict,
+        related_docs: list[dict],
+        retrieval_filters: dict | None,
+        retrieval_top_k: int,
+        rerank_top_k: int,
+        answer_score_threshold: float,
+        require_retrieval_coverage: bool,
+        require_rerank_coverage: bool,
+    ) -> tuple[list[dict], list[dict]]:
+        node_lookup = {
+            doc.get("node_id"): doc
+            for doc in [source_doc, *related_docs]
+            if isinstance(doc, dict) and doc.get("node_id")
+        }
+        verified_items = []
+        rejected_items = []
+
+        for item in qa_items:
+            verification = self._verify_generated_qa_item(
+                item,
+                node_lookup=node_lookup,
+                retrieval_filters=retrieval_filters,
+                retrieval_top_k=retrieval_top_k,
+                rerank_top_k=rerank_top_k,
+                answer_score_threshold=answer_score_threshold,
+                require_retrieval_coverage=require_retrieval_coverage,
+                require_rerank_coverage=require_rerank_coverage,
+            )
+            if verification["passed"]:
+                item["verification"] = verification
+                verified_items.append(item)
+                continue
+
+            rejected_items.append(
+                {
+                    "question": item.get("question"),
+                    "node_ids": item.get("node_ids") or [],
+                    "reason": verification.get("reason"),
+                    "details": verification,
+                }
+            )
+
+        return verified_items, rejected_items
+
+    def _verify_generated_qa_item(
+        self,
+        item: dict,
+        *,
+        node_lookup: dict[str, dict],
+        retrieval_filters: dict | None,
+        retrieval_top_k: int,
+        rerank_top_k: int,
+        answer_score_threshold: float,
+        require_retrieval_coverage: bool,
+        require_rerank_coverage: bool,
+    ) -> dict:
+        claimed_node_ids = [node_id for node_id in item.get("node_ids") or [] if node_id in node_lookup]
+        if len(claimed_node_ids) < 2:
+            return {"passed": False, "reason": "insufficient_supporting_nodes"}
+
+        claimed_docs = [node_lookup[node_id] for node_id in claimed_node_ids]
+        claimed_context = ContextBuilder().run(claimed_docs)
+        support_check = verify_answer(self.chatgpt_llm, claimed_context, item.get("answer") or "")
+        if not support_check.valid:
+            return {
+                "passed": False,
+                "reason": "answer_not_supported_by_claimed_nodes",
+                "support_reason": support_check.reason,
+            }
+
+        hybrid_docs = HybridRetriever(self.dense_retriever, self.bm25_retriever).run(
+            [item.get("question") or ""],
+            top_k=max(max(1, retrieval_top_k), len(claimed_node_ids)),
+            filters=retrieval_filters,
+        )
+        retrieval_docs = self._dedupe_candidate_docs(hybrid_docs)
+        retrieval_ids = self._extract_node_ids(retrieval_docs)
+        retrieval_coverage = all(node_id in retrieval_ids for node_id in claimed_node_ids)
+        if require_retrieval_coverage and not retrieval_coverage:
+            return {
+                "passed": False,
+                "reason": "retrieval_coverage_failed",
+                "retrieval_candidate_node_ids": retrieval_ids,
+            }
+
+        reranked_docs = self.rerank.run(
+            item.get("question") or "",
+            retrieval_docs[: max(1, retrieval_top_k)],
+            top_k=max(max(1, rerank_top_k), len(claimed_node_ids)),
+        )
+        reranked_docs = self._dedupe_candidate_docs(reranked_docs)
+        rerank_ids = self._extract_node_ids(reranked_docs)
+        rerank_coverage = all(node_id in rerank_ids for node_id in claimed_node_ids)
+        if require_rerank_coverage and not rerank_coverage:
+            return {
+                "passed": False,
+                "reason": "rerank_coverage_failed",
+                "retrieval_candidate_node_ids": retrieval_ids,
+                "rerank_node_ids": rerank_ids,
+            }
+
+        answer_docs = reranked_docs or retrieval_docs[: max(1, rerank_top_k)]
+        if not answer_docs:
+            return {
+                "passed": False,
+                "reason": "no_docs_after_verification_retrieval",
+                "retrieval_candidate_node_ids": retrieval_ids,
+                "rerank_node_ids": rerank_ids,
+            }
+
+        answer_context = ContextBuilder().run(answer_docs)
+        regenerated = evaluate_evidence(self.chatgpt_llm, item.get("question") or "", answer_context)
+        if not regenerated.is_sufficient or self._looks_self_declared_insufficient(regenerated.evidence_summary):
+            return {
+                "passed": False,
+                "reason": "regenerated_answer_insufficient",
+                "retrieval_candidate_node_ids": retrieval_ids,
+                "rerank_node_ids": rerank_ids,
+                "regenerated_fail_reason": regenerated.fail_reason,
+            }
+
+        answer_score = evaluate_answer(
+            self.chatgpt_llm,
+            item.get("question") or "",
+            item.get("answer") or "",
+            regenerated.evidence_summary,
+        )
+        if answer_score < answer_score_threshold:
+            return {
+                "passed": False,
+                "reason": "roundtrip_answer_score_too_low",
+                "retrieval_candidate_node_ids": retrieval_ids,
+                "rerank_node_ids": rerank_ids,
+                "answer_score": answer_score,
+                "threshold": answer_score_threshold,
+            }
+
+        return {
+            "passed": True,
+            "reason": "verified",
+            "retrieval_candidate_node_ids": retrieval_ids,
+            "rerank_node_ids": rerank_ids,
+            "retrieval_coverage": retrieval_coverage,
+            "rerank_coverage": rerank_coverage,
+            "answer_score": answer_score,
+            "threshold": answer_score_threshold,
+            "support_reason": support_check.reason,
+            "regenerated_citations": regenerated.citations,
         }
 
     @staticmethod

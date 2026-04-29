@@ -3,7 +3,6 @@ from typing import List
 from langchain_core.language_models import BaseChatModel
 
 from core.settings import settings
-from src.models.reranker import reranker_model
 from src.rag.rerank.corss_encoder_rerander import CrossEncoderReRanker
 from src.rag.rerank.llm_reranker import LLMReRanker
 
@@ -13,7 +12,7 @@ class Reranker:
         if  settings.reranker_type == "llm":
             self.reranker = LLMReRanker(llm=llm)
         elif settings.reranker_type == "cross-encoder":
-            self.reranker = CrossEncoderReRanker(model=reranker_model)
+            self.reranker = CrossEncoderReRanker()
         else:
             raise Exception("reranker type error")
 

@@ -87,6 +87,40 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--dense-top-k", type=int, default=5, help="Dense retrieval candidate count per source doc.")
     parser.add_argument("--max-related-docs", type=int, default=3, help="Maximum related docs kept per source doc.")
+    parser.add_argument("--max-qa-per-doc", type=int, default=2, help="Maximum QA items kept per source document.")
+    parser.add_argument(
+        "--disable-verification",
+        action="store_true",
+        help="Skip the strict verification stage before inserting generated QA.",
+    )
+    parser.add_argument(
+        "--verification-retrieval-top-k",
+        type=int,
+        default=8,
+        help="Hybrid retrieval candidate count used during QA verification.",
+    )
+    parser.add_argument(
+        "--verification-rerank-top-k",
+        type=int,
+        default=5,
+        help="Rerank keep count used during QA verification.",
+    )
+    parser.add_argument(
+        "--verification-answer-score-threshold",
+        type=float,
+        default=0.9,
+        help="Minimum round-trip answer agreement score required to keep a QA row.",
+    )
+    parser.add_argument(
+        "--allow-missing-retrieval-coverage",
+        action="store_true",
+        help="Do not reject QA rows when the generated question cannot fully retrieve all claimed node ids.",
+    )
+    parser.add_argument(
+        "--allow-missing-rerank-coverage",
+        action="store_true",
+        help="Do not reject QA rows when rerank does not keep all claimed node ids.",
+    )
     parser.add_argument("--dry-run", action="store_true", help="Preview action result without writing changes.")
     parser.add_argument(
         "--rollback-from-state",
@@ -120,6 +154,13 @@ def run_generate_mode(args: argparse.Namespace) -> dict[str, Any]:
         dense_score_threshold=args.dense_score_threshold,
         dense_top_k=args.dense_top_k,
         max_related_docs=args.max_related_docs,
+        max_qa_per_doc=args.max_qa_per_doc,
+        verify_generated_qa=not args.disable_verification,
+        verification_retrieval_top_k=args.verification_retrieval_top_k,
+        verification_rerank_top_k=args.verification_rerank_top_k,
+        verification_answer_score_threshold=args.verification_answer_score_threshold,
+        verification_require_retrieval_coverage=not args.allow_missing_retrieval_coverage,
+        verification_require_rerank_coverage=not args.allow_missing_rerank_coverage,
         dry_run=args.dry_run,
     )
 

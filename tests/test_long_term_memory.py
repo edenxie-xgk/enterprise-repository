@@ -161,6 +161,77 @@ class TouchFailStore(BaseMemoryStore):
         raise RuntimeError("touch failed")
 
 
+class FakeMilvusDataType:
+    VARCHAR = "VARCHAR"
+    BOOL = "BOOL"
+    FLOAT = "FLOAT"
+    FLOAT_VECTOR = "FLOAT_VECTOR"
+
+
+class FakeMilvusSchema:
+    def __init__(self):
+        self.fields = []
+
+    def add_field(self, **kwargs):
+        self.fields.append(kwargs)
+
+
+class FakeMilvusIndexParams:
+    def __init__(self):
+        self.indexes = []
+
+    def add_index(self, **kwargs):
+        self.indexes.append(kwargs)
+
+
+class FakeMilvusClient:
+    databases = {"default"}
+    collection_exists = False
+    init_calls = []
+    create_database_calls = []
+    create_collection_calls = []
+    close_calls = 0
+
+    @classmethod
+    def reset(cls, *, databases=None, collection_exists=False):
+        cls.databases = set(databases or {"default"})
+        cls.collection_exists = collection_exists
+        cls.init_calls = []
+        cls.create_database_calls = []
+        cls.create_collection_calls = []
+        cls.close_calls = 0
+
+    def __init__(self, *, uri, token=None, db_name=None, **kwargs):
+        self.uri = uri
+        self.token = token
+        self.db_name = db_name or ""
+        type(self).init_calls.append({"uri": uri, "token": token, "db_name": self.db_name})
+        if self.db_name and self.db_name not in type(self).databases:
+            raise RuntimeError(f"database not found[database={self.db_name}]")
+
+    def list_databases(self, *args, **kwargs):
+        return sorted(type(self).databases)
+
+    def create_database(self, db_name, *args, **kwargs):
+        type(self).create_database_calls.append(db_name)
+        type(self).databases.add(db_name)
+
+    def close(self):
+        type(self).close_calls += 1
+
+    def has_collection(self, collection_name):
+        return type(self).collection_exists
+
+    def create_schema(self, **kwargs):
+        return FakeMilvusSchema()
+
+    def prepare_index_params(self):
+        return FakeMilvusIndexParams()
+
+    def create_collection(self, **kwargs):
+        type(self).create_collection_calls.append(kwargs["collection_name"])
+
+
 class LongTermMemoryTests(unittest.TestCase):
     def test_memory_service_recall_skips_when_store_is_unavailable(self):
         service = MemoryService(store=DisabledMemoryStore())
@@ -200,6 +271,64 @@ class LongTermMemoryTests(unittest.TestCase):
         self.assertFalse(result.used)
         self.assertIn("memory_store_unavailable", result.diagnostics)
         self.assertIn("memory_store_import_error=milvus unavailable", result.diagnostics)
+
+    def test_milvus_store_auto_creates_missing_database(self):
+        FakeMilvusClient.reset(databases={"default"}, collection_exists=False)
+        store = MilvusMemoryStore()
+
+        with (
+            patch.dict(
+                "sys.modules",
+                {"pymilvus": SimpleNamespace(MilvusClient=FakeMilvusClient, DataType=FakeMilvusDataType)},
+            ),
+            patch.object(settings, "memory_enabled", True),
+            patch.object(settings, "memory_backend", "milvus"),
+            patch.object(settings, "milvus_uri", "127.0.0.1:19530"),
+            patch.object(settings, "milvus_token", "test-token"),
+            patch.object(settings, "milvus_db_name", "rag_agent"),
+            patch.object(settings, "milvus_collection_name", "long_term_memory"),
+            patch.object(settings, "milvus_consistency_level", "Strong"),
+            patch.object(settings, "milvus_search_metric", "COSINE"),
+            patch.object(settings, "milvus_index_type", "AUTOINDEX"),
+            patch.object(settings, "milvus_vector_dim", 1536),
+        ):
+            self.assertTrue(store.is_available())
+
+        self.assertEqual(FakeMilvusClient.create_database_calls, ["rag_agent"])
+        self.assertEqual(FakeMilvusClient.create_collection_calls, ["long_term_memory"])
+        self.assertEqual(len(FakeMilvusClient.init_calls), 2)
+        self.assertEqual(FakeMilvusClient.init_calls[0]["uri"], "http://127.0.0.1:19530")
+        self.assertEqual(FakeMilvusClient.init_calls[0]["db_name"], "")
+        self.assertEqual(FakeMilvusClient.init_calls[1]["db_name"], "rag_agent")
+        self.assertEqual(FakeMilvusClient.close_calls, 1)
+
+    def test_milvus_store_skips_database_creation_when_database_exists(self):
+        FakeMilvusClient.reset(databases={"default", "rag_agent"}, collection_exists=True)
+        store = MilvusMemoryStore()
+
+        with (
+            patch.dict(
+                "sys.modules",
+                {"pymilvus": SimpleNamespace(MilvusClient=FakeMilvusClient, DataType=FakeMilvusDataType)},
+            ),
+            patch.object(settings, "memory_enabled", True),
+            patch.object(settings, "memory_backend", "milvus"),
+            patch.object(settings, "milvus_uri", "http://127.0.0.1:19530"),
+            patch.object(settings, "milvus_token", ""),
+            patch.object(settings, "milvus_db_name", "rag_agent"),
+            patch.object(settings, "milvus_collection_name", "long_term_memory"),
+            patch.object(settings, "milvus_consistency_level", "Strong"),
+            patch.object(settings, "milvus_search_metric", "COSINE"),
+            patch.object(settings, "milvus_index_type", "AUTOINDEX"),
+            patch.object(settings, "milvus_vector_dim", 1536),
+        ):
+            self.assertTrue(store.is_available())
+
+        self.assertEqual(FakeMilvusClient.create_database_calls, [])
+        self.assertEqual(FakeMilvusClient.create_collection_calls, [])
+        self.assertEqual(len(FakeMilvusClient.init_calls), 2)
+        self.assertEqual(FakeMilvusClient.init_calls[1]["db_name"], "rag_agent")
+        self.assertEqual(FakeMilvusClient.close_calls, 1)
 
     def test_writeback_persists_explicit_memory_request(self):
         fake_store = FakeMemoryStore()

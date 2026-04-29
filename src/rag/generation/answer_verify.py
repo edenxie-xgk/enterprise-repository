@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Optional
 
 from langchain_core.language_models import BaseChatModel
@@ -9,23 +11,18 @@ from src.prompts.rag.answer_verify import VERIFY_PROMPT
 
 
 class AnswerVerifyResult(BaseModel):
-    """
-        验证回答是否正确
-    """
-    valid: bool = Field(...,description="回答是否正确")
-    reason:Optional[str] = Field(...,description="理由")
+    valid: bool = Field(..., description="Whether the answer is fully supported by the context")
+    reason: Optional[str] = Field(default=None, description="Why the answer failed or passed")
 
-def verify_answer(llm:BaseChatModel, context, answer):
 
+def verify_answer(llm: BaseChatModel, context: str, answer: str) -> AnswerVerifyResult:
     prompt = VERIFY_PROMPT.format(
         context=context,
-        answer=answer
+        answer=answer,
     )
 
-    result:AnswerVerifyResult = LLMService.invoke(
+    return LLMService.invoke(
         llm=llm,
         messages=[HumanMessage(content=prompt)],
-        schema=AnswerVerifyResult
+        schema=AnswerVerifyResult,
     )
-
-    return result.valid

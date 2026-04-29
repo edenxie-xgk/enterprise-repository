@@ -187,7 +187,9 @@ def agent_node(state: State):
                 "reason": f"{last_tool.name}_has_sufficient_material",
                 "diagnostics": state.diagnostics + [f"agent:{last_tool.name}_finalize"],
             }
-        if _has_finalize_material(state):
+        allowed_actions = get_allowed_actions(state)
+        has_followup_work = any(action not in {"finalize", "finish"} for action in allowed_actions)
+        if _has_finalize_material(state) and not has_followup_work:
             return {
                 "action": "finalize",
                 "reason": f"{last_tool.name}_has_partial_material",
@@ -196,7 +198,7 @@ def agent_node(state: State):
 
         return _route_with_planner(
             state,
-            get_allowed_actions(state),
+            allowed_actions,
             planning_stage="followup",
             default_reason=f"{last_tool.name}_planner_route",
         )

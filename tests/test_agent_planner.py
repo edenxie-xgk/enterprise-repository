@@ -92,8 +92,9 @@ from src.agent.action_planner import choose_next_action
 from src.agent.policy import get_allowed_actions
 from src.nodes.agent_node import agent_node
 from src.types.agent_state import State
-from src.types.event_type import MemoryEvent, ReasoningEvent
+from src.types.event_type import MemoryEvent, ReasoningEvent, ToolEvent
 from src.types.policy_type import AgentPlannerDecision, AgentPlannerStructuredDecision
+from src.types.rag_type import RAGResult
 
 
 def _build_initial_state(query: str) -> State:
@@ -104,6 +105,20 @@ def _build_initial_state(query: str) -> State:
         action_history=[
             ReasoningEvent(name="resolved_query", status="success", attempt=1),
             MemoryEvent(name="memory_recall", status="success", attempt=1),
+        ],
+    )
+
+
+def _build_rag_followup_state(query: str, rag_result: RAGResult) -> State:
+    return State(
+        query=query,
+        resolved_query=query,
+        working_query=query,
+        last_rag_result=rag_result,
+        action_history=[
+            ReasoningEvent(name="resolved_query", status="success", attempt=1),
+            MemoryEvent(name="memory_recall", status="success", attempt=1),
+            ToolEvent(name="rag", status="success", attempt=1, output=rag_result),
         ],
     )
 
@@ -169,6 +184,64 @@ class AgentPlannerTests(unittest.TestCase):
         self.assertEqual(result["action"], "graph_rag")
         self.assertEqual(result["reason"], "financial fact comparison fits graph retrieval")
         self.assertIn("agent:planner=graph_rag", result["diagnostics"])
+
+    def test_low_recall_rag_result_reenables_rag_retry(self):
+        rag_result = RAGResult(
+            success=False,
+            name="rag",
+            answer="Partial evidence",
+            evidence_summary="Partial evidence",
+            is_sufficient=False,
+            fail_reason="low_recall",
+            documents=[
+                {
+                    "node_id": "node-1",
+                    "content": "Revenue increased in 2024.",
+                    "metadata": {},
+                }
+            ],
+        )
+        state = _build_rag_followup_state("Compare revenue between 2024 and 2025", rag_result)
+
+        allowed_actions = get_allowed_actions(state)
+
+        self.assertEqual(allowed_actions[0], "rag")
+        self.assertIn("finish", allowed_actions)
+        self.assertNotEqual(allowed_actions, ["finalize", "finish"])
+
+    def test_agent_node_does_not_finalize_partial_low_recall_before_retry(self):
+        rag_result = RAGResult(
+            success=False,
+            name="rag",
+            answer="Partial evidence",
+            evidence_summary="Partial evidence",
+            is_sufficient=False,
+            fail_reason="low_recall",
+            documents=[
+                {
+                    "node_id": "node-1",
+                    "content": "Revenue increased in 2024.",
+                    "metadata": {},
+                }
+            ],
+        )
+        state = _build_rag_followup_state("Compare revenue between 2024 and 2025", rag_result)
+
+        with patch(
+            "src.nodes.agent_node.choose_next_action",
+            return_value=AgentPlannerDecision(
+                success=True,
+                next_action="rag",
+                reason="retry_rag_with_higher_recall",
+                confidence=0.88,
+                diagnostics=["planner:selected=rag"],
+            ),
+        ):
+            result = agent_node(state)
+
+        self.assertEqual(result["action"], "rag")
+        self.assertEqual(result["reason"], "retry_rag_with_higher_recall")
+        self.assertIn("agent:planner=rag", result["diagnostics"])
 
 
 if __name__ == "__main__":
