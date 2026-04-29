@@ -1,904 +1,1980 @@
-[{
-  "_id": {
-    "$oid": "69d8adae798ee4ca8cfe5755"
+[
+  {
+    "_id": {
+      "$oid": "69f1ae5061e439da7efe168c"
+    },
+    "question": "中国人寿2024年中期和末期利润分配方案分别由哪次董事会通过？",
+    "answer": "2024年中期利润分配方案由2024年8月29日董事会通过，2024年度利润分配方案由2025年3月26日董事会通过。",
+    "language": "zh-cn",
+    "difficulty": "medium",
+    "intent": "comparison",
+    "metadata": {
+      "file_name": "china_life_annual_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/323/download",
+      "file_type": "pdf",
+      "file_size": 816049,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "2.1  公司简介",
+      "page": 2,
+      "chunk_index": 3,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "80872ca7-14a2-4257-ae63-8f353454e76f",
+      "d2fc0593-3346-4d31-a901-f150d607ae0e"
+    ],
+    "create_time": "2026-04-29 15:07:09",
+    "state": 0,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "80872ca7-14a2-4257-ae63-8f353454e76f",
+        "d2fc0593-3346-4d31-a901-f150d607ae0e",
+        "56b7dea8-e433-4a14-b403-b2494a0096e7",
+        "916dc020-75de-4b1e-960d-1e248ca2ed1d",
+        "b401b82b-337b-43e0-a326-bc02c6bac2b2",
+        "e8cb6a9c-a6b1-441e-8351-9547a956f60f",
+        "0fa86824-3366-4422-a97f-f22146ade829",
+        "68ec18e2-2f9a-4e2c-9dad-dc59bf6bf2de",
+        "298efea3-8e0e-43d9-b360-6caeb3d67068",
+        "f6ba5718-39ad-4308-8d10-65ae859a0747",
+        "8995f3ee-d707-46a3-9e23-af9e2ba195a2",
+        "79588cca-7f9b-431a-be99-59549136f6a2"
+      ],
+      "rerank_node_ids": [
+        "56b7dea8-e433-4a14-b403-b2494a0096e7",
+        "b401b82b-337b-43e0-a326-bc02c6bac2b2",
+        "80872ca7-14a2-4257-ae63-8f353454e76f",
+        "d2fc0593-3346-4d31-a901-f150d607ae0e",
+        "916dc020-75de-4b1e-960d-1e248ca2ed1d"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "主张1：2024年中期利润分配方案由2024年8月29日董事会通过（上下文node_id:d2fc0593-3346-4d31-a901-f150d607ae0e第一条记录直接支持）。主张2：2024年度利润分配方案由2025年3月26日董事会通过（上下文node_id:80872ca7-14a2-4257-ae63-8f353454e76f第一条记录直接支持）。所有主张均被直接支持。",
+      "regenerated_citations": [
+        "56b7dea8-e433-4a14-b403-b2494a0096e7",
+        "d2fc0593-3346-4d31-a901-f150d607ae0e",
+        "80872ca7-14a2-4257-ae63-8f353454e76f"
+      ]
+    }
   },
-  "question": "What is the difference in total other comprehensive income, net of tax between the two financial statements for the period ended 30 September 2025?",
-  "answer": "The first statement shows total other comprehensive income, net of tax of 411,730, while the second statement shows 397,364. The difference is 14,366.",
-  "language": "en",
-  "difficulty": "medium",
-  "intent": "comparison",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 620486,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "SEPTEMBER 2025",
-    "page": 7,
-    "chunk_index": 13,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
-    "version": 1
+  {
+    "_id": {
+      "$oid": "69f1aea661e439da7efe168d"
+    },
+    "question": "2023年，中国企业会计准则下归属于母公司股东的净利润与国际财务报告准则下该数据分别为多少？",
+    "answer": "中国企业会计准则下为511.84亿元，国际财务报告准则下为461.81亿元。",
+    "language": "zh-cn",
+    "difficulty": "easy",
+    "intent": "comparison",
+    "metadata": {
+      "file_name": "china_life_annual_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/323/download",
+      "file_type": "pdf",
+      "file_size": 816049,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "2.3.2 报告期分季度主要数据",
+      "page": 6,
+      "chunk_index": 12,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "211fb4d2-910e-4901-9825-14cb879394c9",
+      "b5b27f3b-9690-4a73-b9fc-56ff2f4254a5"
+    ],
+    "create_time": "2026-04-29 15:08:45",
+    "state": 2,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "211fb4d2-910e-4901-9825-14cb879394c9",
+        "b5b27f3b-9690-4a73-b9fc-56ff2f4254a5",
+        "c2a191dc-90c4-49c1-aa58-d4dd01a16583",
+        "bf164f29-c5dd-493c-9f8e-bc1d22055d7f",
+        "d3bb22d2-ca78-4377-9d77-cc84bb5dc16b",
+        "f4779c31-839e-402f-b875-3d603ed18443",
+        "1bc2ae2e-42e6-4fb1-9f41-1adb3ed2e69a",
+        "e9ed1e29-72c1-4cb9-a452-8716d931c48b",
+        "0b0688e9-4086-49c4-8318-06031d9f2ef2",
+        "3a5371ca-e9ee-403b-af15-4ea904f1cc88",
+        "1e11cd3c-5864-418b-ab22-d648bf0f6134",
+        "b1976ac9-7d61-40ab-b9ba-ed8bfd934a7f",
+        "d81e916f-e62b-485a-ada0-4844e57ac8a5"
+      ],
+      "rerank_node_ids": [
+        "211fb4d2-910e-4901-9825-14cb879394c9",
+        "b5b27f3b-9690-4a73-b9fc-56ff2f4254a5",
+        "d3bb22d2-ca78-4377-9d77-cc84bb5dc16b",
+        "e9ed1e29-72c1-4cb9-a452-8716d931c48b",
+        "1bc2ae2e-42e6-4fb1-9f41-1adb3ed2e69a"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "主张是2023年归属于母公司股东的净利润中国企业会计准则下为511.84亿元，国际财务报告准则下为461.81亿元。上下文node_id:211fb4d2-910e-4901-9825-14cb879394c9明确给出这两项数据，主谓结构与上下文记录完全一致，主张得到直接支持。",
+      "regenerated_citations": [
+        "211fb4d2-910e-4901-9825-14cb879394c9"
+      ]
+    }
   },
-  "node_ids": [
-    "2e608c4d-b564-4ed3-a159-74a26a6914f3",
-    "895e869b-64c0-4c45-9402-eea3c4ad22d6"
-  ],
-  "create_time": "2026-04-10 15:58:38",
-  "state": 2
-},
-{
-  "_id": {
-    "$oid": "69d8adae798ee4ca8cfe5756"
+  {
+    "_id": {
+      "$oid": "69f1aea661e439da7efe168e"
+    },
+    "question": "2023年12月31日，中国企业会计准则下归属于母公司股东的股东权益与国际财务报告准则下该数据分别为多少？",
+    "answer": "中国企业会计准则下为3,277.84亿元，国际财务报告准则下为4,770.93亿元。",
+    "language": "zh-cn",
+    "difficulty": "easy",
+    "intent": "comparison",
+    "metadata": {
+      "file_name": "china_life_annual_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/323/download",
+      "file_type": "pdf",
+      "file_size": 816049,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "2.3.2 报告期分季度主要数据",
+      "page": 6,
+      "chunk_index": 12,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "211fb4d2-910e-4901-9825-14cb879394c9",
+      "b5b27f3b-9690-4a73-b9fc-56ff2f4254a5"
+    ],
+    "create_time": "2026-04-29 15:08:45",
+    "state": 0,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "211fb4d2-910e-4901-9825-14cb879394c9",
+        "b5b27f3b-9690-4a73-b9fc-56ff2f4254a5",
+        "1bc2ae2e-42e6-4fb1-9f41-1adb3ed2e69a",
+        "bf164f29-c5dd-493c-9f8e-bc1d22055d7f",
+        "c2a191dc-90c4-49c1-aa58-d4dd01a16583",
+        "f4779c31-839e-402f-b875-3d603ed18443",
+        "6c2c7975-20c0-4046-a41d-6737263b0580",
+        "e9ed1e29-72c1-4cb9-a452-8716d931c48b",
+        "d3bb22d2-ca78-4377-9d77-cc84bb5dc16b",
+        "b1976ac9-7d61-40ab-b9ba-ed8bfd934a7f",
+        "af7faffc-a0d3-4873-95d5-5414bdc69f14",
+        "3a5371ca-e9ee-403b-af15-4ea904f1cc88",
+        "0b0688e9-4086-49c4-8318-06031d9f2ef2",
+        "599f6a31-ae71-4c6e-ad00-ddc22595495c"
+      ],
+      "rerank_node_ids": [
+        "211fb4d2-910e-4901-9825-14cb879394c9",
+        "b5b27f3b-9690-4a73-b9fc-56ff2f4254a5",
+        "6c2c7975-20c0-4046-a41d-6737263b0580",
+        "1bc2ae2e-42e6-4fb1-9f41-1adb3ed2e69a",
+        "bf164f29-c5dd-493c-9f8e-bc1d22055d7f"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "主张为：中国企业会计准则下归属于母公司股东的股东权益为3,277.84亿元，国际财务报告准则下为4,770.93亿元。上下文明确记载了这两项数据并说明了编制准则，因此所有事实主张均直接被上下文支持。",
+      "regenerated_citations": [
+        "211fb4d2-910e-4901-9825-14cb879394c9",
+        "b5b27f3b-9690-4a73-b9fc-56ff2f4254a5"
+      ]
+    }
   },
-  "question": "How do the debt investments at FVOCI - net change in fair value differ between the two financial statements, and what is the impact on total other comprehensive income?",
-  "answer": "In the first statement, debt investments at FVOCI - net change in fair value is (214,711), while in the second statement it is (229,077). This difference of 14,366 contributes to the lower total other comprehensive income of 397,364 in the second statement compared to 411,730 in the first statement.",
-  "language": "en",
-  "difficulty": "hard",
-  "intent": "analysis",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 620486,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "SEPTEMBER 2025",
-    "page": 7,
-    "chunk_index": 13,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
-    "version": 1
+  {
+    "_id": {
+      "$oid": "69f1aec361e439da7efe168f"
+    },
+    "question": "中国人寿保险（集团）公司在不同报告期末的持股比例是否一致？",
+    "answer": "是的，在多个报告期末，中国人寿保险（集团）公司的持股比例均为68.37%。",
+    "language": "zh-cn",
+    "difficulty": "easy",
+    "intent": "comparison",
+    "metadata": {
+      "file_name": "china_life_annual_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/323/download",
+      "file_type": "pdf",
+      "file_size": 816049,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "2.4  股本及股东情况",
+      "page": 7,
+      "chunk_index": 14,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "e482f5e9-34e6-4f9f-9bcc-b7128c81966a",
+      "991c88c5-c050-444f-a5d5-df080e9b5b34",
+      "a6683df1-f8c0-494f-ac38-cb4b52699f2f"
+    ],
+    "create_time": "2026-04-29 15:09:33",
+    "state": 0,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "a6683df1-f8c0-494f-ac38-cb4b52699f2f",
+        "991c88c5-c050-444f-a5d5-df080e9b5b34",
+        "e482f5e9-34e6-4f9f-9bcc-b7128c81966a",
+        "c5caa823-6c12-463d-9936-791b3fd4fe9c",
+        "b6754ddb-c449-41ac-83d5-101ca9a8c65e",
+        "d2fc0593-3346-4d31-a901-f150d607ae0e",
+        "c04090c8-6f17-4ced-8e77-63abc2ace09b",
+        "b17a0d5e-19fd-437c-8f49-5f44250b9f8f",
+        "5b156187-6dcf-4ed9-a0cd-dcae2ab96a0b",
+        "478e1503-7f61-47fa-b5f8-70c77afc8c0f",
+        "6dfff509-d7f5-4ac5-97fd-d5dd137f4c42",
+        "7724f047-d051-473f-86f8-e2dc8db62e02",
+        "d64d29e7-a321-434d-ac06-3fffff521236"
+      ],
+      "rerank_node_ids": [
+        "e482f5e9-34e6-4f9f-9bcc-b7128c81966a",
+        "991c88c5-c050-444f-a5d5-df080e9b5b34",
+        "a6683df1-f8c0-494f-ac38-cb4b52699f2f"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "回答有一个事实主张：多个报告期末中国人寿保险（集团）公司持股比例均为68.37%。上下文两条数据（2.3和2.4.1）都显示该公司持股比例为68.37%。该主张为合理归纳，直接受到上下文支持。",
+      "regenerated_citations": [
+        "e482f5e9-34e6-4f9f-9bcc-b7128c81966a",
+        "991c88c5-c050-444f-a5d5-df080e9b5b34"
+      ]
+    }
   },
-  "node_ids": [
-    "2e608c4d-b564-4ed3-a159-74a26a6914f3",
-    "895e869b-64c0-4c45-9402-eea3c4ad22d6"
-  ],
-  "create_time": "2026-04-10 15:58:38",
-  "state": 0
-},
-{
-  "_id": {
-    "$oid": "69d8adae798ee4ca8cfe5757"
+  {
+    "_id": {
+      "$oid": "69f1af2361e439da7efe1690"
+    },
+    "question": "个险渠道在2024年上半年和本报告期内的总保费分别是多少？同比增长率分别是多少？",
+    "answer": "2024年上半年个险渠道总保费为3,901.34亿元，同比增长7.7%；本报告期内个险渠道总保费为5,290.33亿元，同比增长5.5%。",
+    "language": "zh-cn",
+    "difficulty": "medium",
+    "intent": "comparison",
+    "metadata": {
+      "file_name": "china_life_annual_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/323/download",
+      "file_type": "pdf",
+      "file_size": 816049,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "3.2.2 保险业务",
+      "page": 13,
+      "chunk_index": 26,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "0ccf31ce-408d-4e21-9cda-5b3ee851a127",
+      "a97a95b9-b867-4e63-917d-d8f97be52460"
+    ],
+    "create_time": "2026-04-29 15:10:58",
+    "state": 2,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "a97a95b9-b867-4e63-917d-d8f97be52460",
+        "0ccf31ce-408d-4e21-9cda-5b3ee851a127",
+        "26fd5ff1-3a1b-4dfe-9f9d-4f37d7c2cbe1",
+        "81523494-cef2-469f-9885-56fcdb48383d",
+        "2d22800c-d078-4536-89b9-e05438055b22",
+        "ad20da09-e065-4eba-a684-923624f933c1",
+        "04493481-eedd-420e-a9c0-b77bc3c0aee7",
+        "1fb82acc-46f6-4156-ad4f-711e5dbebd69",
+        "9b279f96-a39e-428a-bf99-f118ab4c176c",
+        "250ec961-85db-43ec-8e48-c7b735fd7321",
+        "04ea14ff-6653-4faf-8454-cb685075ecd1",
+        "1dc444de-f105-4024-8a8b-b4c35b2d0c71",
+        "c4ab3298-4409-4363-8bba-75fac5d8da2e"
+      ],
+      "rerank_node_ids": [
+        "26fd5ff1-3a1b-4dfe-9f9d-4f37d7c2cbe1",
+        "a97a95b9-b867-4e63-917d-d8f97be52460",
+        "0ccf31ce-408d-4e21-9cda-5b3ee851a127",
+        "2d22800c-d078-4536-89b9-e05438055b22",
+        "81523494-cef2-469f-9885-56fcdb48383d"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "第一句“2024年上半年个险渠道总保费为3,901.34亿元，同比增长7.7%”在context的第二段被直接支持。第二句“本报告期内个险渠道总保费为5,290.33亿元，同比增长5.5%”在context第一段被直接支持。因此这两个事实主张均被context明确支持。",
+      "regenerated_citations": [
+        "a97a95b9-b867-4e63-917d-d8f97be52460",
+        "0ccf31ce-408d-4e21-9cda-5b3ee851a127"
+      ]
+    }
   },
-  "question": "两份财务报表中，截至2025年9月30日的税后其他综合收入总额有何差异？",
-  "answer": "第一份报表显示税后其他综合收入总额为411,730，而第二份报表显示为397,364。差异为14,366。",
-  "language": "zh-cn",
-  "difficulty": "medium",
-  "intent": "comparison",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 620486,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "SEPTEMBER 2025",
-    "page": 7,
-    "chunk_index": 13,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
-    "version": 1
+  {
+    "_id": {
+      "$oid": "69f1af2361e439da7efe1691"
+    },
+    "question": "个险渠道十年期及以上首年期交保费占首年期交保费比重在两个报告期分别是多少？同比变化如何？",
+    "answer": "本报告期内十年期及以上首年期交保费占首年期交保费比重为56.42%，同比提升2.50个百分点；2024年上半年该比重为50.34%，同比提升1.72个百分点。",
+    "language": "zh-cn",
+    "difficulty": "medium",
+    "intent": "comparison",
+    "metadata": {
+      "file_name": "china_life_annual_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/323/download",
+      "file_type": "pdf",
+      "file_size": 816049,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "3.2.2 保险业务",
+      "page": 13,
+      "chunk_index": 26,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "0ccf31ce-408d-4e21-9cda-5b3ee851a127",
+      "a97a95b9-b867-4e63-917d-d8f97be52460"
+    ],
+    "create_time": "2026-04-29 15:10:58",
+    "state": 0,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "a97a95b9-b867-4e63-917d-d8f97be52460",
+        "0ccf31ce-408d-4e21-9cda-5b3ee851a127",
+        "920e5c39-6fcd-4388-ae4a-c87e47a5ec3d",
+        "efe3cc9d-074a-4033-9a18-c493cd747263",
+        "1d99fc56-7e21-42c3-8b94-21452cc039b9",
+        "196cbd42-38b1-4074-93e1-c8f2031fe9b8",
+        "bc096187-fc97-473c-a64b-24b1446ca6ed",
+        "1dc444de-f105-4024-8a8b-b4c35b2d0c71",
+        "96c810eb-4755-4ceb-92ad-9895d5cd799e",
+        "e03df8cf-b037-4d51-bd30-7a56c1c7e67a",
+        "2d22800c-d078-4536-89b9-e05438055b22",
+        "2bdcdb64-c43d-4b47-9c6e-fb3705d5a34d",
+        "04ea14ff-6653-4faf-8454-cb685075ecd1",
+        "083c119c-6100-4af3-a5b1-44e27acc17f9"
+      ],
+      "rerank_node_ids": [
+        "0ccf31ce-408d-4e21-9cda-5b3ee851a127",
+        "a97a95b9-b867-4e63-917d-d8f97be52460",
+        "196cbd42-38b1-4074-93e1-c8f2031fe9b8",
+        "1dc444de-f105-4024-8a8b-b4c35b2d0c71",
+        "1d99fc56-7e21-42c3-8b94-21452cc039b9"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 0.95,
+      "threshold": 0.92,
+      "support_reason": "回答的两个主张：（1）本报告期内十年期及以上首年期交保费占首年期交保费比重为56.42%，同比提升2.50个百分点；（2）2024年上半年该比重为50.34%，同比提升1.72个百分点。上下文分别在[node_id:0ccf31ce-408d-4e21-9cda-5b3ee851a127]和[node_id:a97a95b9-b867-4e63-917d-d8f97be52460]提供了完全相同的数据，不含推断或外延。",
+      "regenerated_citations": [
+        "0ccf31ce-408d-4e21-9cda-5b3ee851a127",
+        "a97a95b9-b867-4e63-917d-d8f97be52460"
+      ]
+    }
   },
-  "node_ids": [
-    "2e608c4d-b564-4ed3-a159-74a26a6914f3",
-    "895e869b-64c0-4c45-9402-eea3c4ad22d6"
-  ],
-  "create_time": "2026-04-10 15:58:38",
-  "state": 0
-},
-{
-  "_id": {
-    "$oid": "69d8adae798ee4ca8cfe5758"
+  {
+    "_id": {
+      "$oid": "69f1af4061e439da7efe1692"
+    },
+    "question": "2024年全年个险渠道一年新业务价值基于2023年经济假设同比增速与2024年上半年个险渠道新业务价值同比增速分别是多少？",
+    "answer": "2024年全年个险渠道一年新业务价值基于2023年经济假设同比增速为18.4%，2024年上半年个险渠道新业务价值同比上升14.6%。",
+    "language": "zh-cn",
+    "difficulty": "medium",
+    "intent": "comparison",
+    "metadata": {
+      "file_name": "china_life_annual_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/323/download",
+      "file_type": "pdf",
+      "file_size": 816049,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "3.2.2 保险业务",
+      "page": 13,
+      "chunk_index": 27,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "04493481-eedd-420e-a9c0-b77bc3c0aee7",
+      "a97a95b9-b867-4e63-917d-d8f97be52460"
+    ],
+    "create_time": "2026-04-29 15:11:37",
+    "state": 0,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "a97a95b9-b867-4e63-917d-d8f97be52460",
+        "0ccf31ce-408d-4e21-9cda-5b3ee851a127",
+        "04493481-eedd-420e-a9c0-b77bc3c0aee7",
+        "250ec961-85db-43ec-8e48-c7b735fd7321",
+        "81523494-cef2-469f-9885-56fcdb48383d",
+        "6471ead8-e32e-4cef-b87d-984f5551069b",
+        "2d22800c-d078-4536-89b9-e05438055b22",
+        "45fab86e-b48d-4d63-b0c5-89f098e13fd2",
+        "59668eee-03c4-4460-9a2b-5259055c642c",
+        "196cbd42-38b1-4074-93e1-c8f2031fe9b8",
+        "92a67d98-6919-4ddb-b547-3090b4bd5bd6"
+      ],
+      "rerank_node_ids": [
+        "04493481-eedd-420e-a9c0-b77bc3c0aee7",
+        "0ccf31ce-408d-4e21-9cda-5b3ee851a127",
+        "a97a95b9-b867-4e63-917d-d8f97be52460",
+        "250ec961-85db-43ec-8e48-c7b735fd7321",
+        "2d22800c-d078-4536-89b9-e05438055b22"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "第一条主张：2024年全年个险渠道一年新业务价值基于2023年经济假设同比增速为18.4% —— context中支持（node_id:04493481-eedd-420e-a9c0-b77bc3c0aee7：个险渠道一年新业务价值基于2023年经济假设同比增速达18.4%）。\n第二条主张：2024年上半年个险渠道新业务价值同比上升14.6% —— context中支持（node_id:a97a95b9-b867-4e63-917d-d8f97be52460：个险渠道上半年新业务价值为292.91亿元，同比上升14.6%）。\n所有主张均可在context中直接查证。",
+      "regenerated_citations": [
+        "04493481-eedd-420e-a9c0-b77bc3c0aee7",
+        "0ccf31ce-408d-4e21-9cda-5b3ee851a127",
+        "a97a95b9-b867-4e63-917d-d8f97be52460"
+      ]
+    }
   },
-  "question": "两份财务报表中，按公允价值计量且其变动计入其他综合收益的债务投资公允价值净变动有何不同，这对总其他综合收入有何影响？",
-  "answer": "在第一份报表中，按公允价值计量且其变动计入其他综合收益的债务投资公允价值净变动为(214,711)，而在第二份报表中为(229,077)。这一14,366的差异导致第二份报表的总其他综合收入为397,364，低于第一份报表的411,730。",
-  "language": "zh-cn",
-  "difficulty": "hard",
-  "intent": "analysis",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 620486,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "SEPTEMBER 2025",
-    "page": 7,
-    "chunk_index": 13,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
-    "version": 1
+  {
+    "_id": {
+      "$oid": "69f1af6861e439da7efe1693"
+    },
+    "question": "两个报告期内，团险渠道短期险保费同比变化分别是多少？",
+    "answer": "第一个报告期短期险保费同比下降1.0%，第二个报告期短期险保费同比下降6.9%。",
+    "language": "zh-cn",
+    "difficulty": "medium",
+    "intent": "comparison",
+    "metadata": {
+      "file_name": "china_life_annual_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/323/download",
+      "file_type": "pdf",
+      "file_size": 816049,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "3.2.2 保险业务",
+      "page": 13,
+      "chunk_index": 28,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "c4ab3298-4409-4363-8bba-75fac5d8da2e",
+      "ad20da09-e065-4eba-a684-923624f933c1"
+    ],
+    "create_time": "2026-04-29 15:12:05",
+    "state": 0,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "aa3d0355-6d53-40e6-8339-471cc74e85ff",
+        "1fb82acc-46f6-4156-ad4f-711e5dbebd69",
+        "ad20da09-e065-4eba-a684-923624f933c1",
+        "96c810eb-4755-4ceb-92ad-9895d5cd799e",
+        "bc096187-fc97-473c-a64b-24b1446ca6ed",
+        "c4ab3298-4409-4363-8bba-75fac5d8da2e",
+        "920e5c39-6fcd-4388-ae4a-c87e47a5ec3d",
+        "0d2e029d-ac94-4a8c-a41a-c4b7d4c880d5",
+        "efe3cc9d-074a-4033-9a18-c493cd747263",
+        "26fd5ff1-3a1b-4dfe-9f9d-4f37d7c2cbe1",
+        "9b279f96-a39e-428a-bf99-f118ab4c176c",
+        "04ea14ff-6653-4faf-8454-cb685075ecd1",
+        "8d9f7ad4-b1e0-4f78-b9b0-3e3a0130b666",
+        "1d99fc56-7e21-42c3-8b94-21452cc039b9"
+      ],
+      "rerank_node_ids": [
+        "c4ab3298-4409-4363-8bba-75fac5d8da2e",
+        "aa3d0355-6d53-40e6-8339-471cc74e85ff",
+        "1fb82acc-46f6-4156-ad4f-711e5dbebd69",
+        "ad20da09-e065-4eba-a684-923624f933c1",
+        "0d2e029d-ac94-4a8c-a41a-c4b7d4c880d5"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "第一个报告期短期险保费同比下降1.0%对应context '团险渠道短期险保费为247.34亿元，同比下降1.0%'，第二个报告期短期险保费同比下降6.9%对应context '团险渠道短期险保费为133.95亿元，同比下降6.9%'。两个主张均被上下文直接支持。",
+      "regenerated_citations": [
+        "aa3d0355-6d53-40e6-8339-471cc74e85ff",
+        "1fb82acc-46f6-4156-ad4f-711e5dbebd69",
+        "ad20da09-e065-4eba-a684-923624f933c1"
+      ]
+    }
   },
-  "node_ids": [
-    "2e608c4d-b564-4ed3-a159-74a26a6914f3",
-    "895e869b-64c0-4c45-9402-eea3c4ad22d6"
-  ],
-  "create_time": "2026-04-10 15:58:38",
-  "state": 2
-},
-{
-  "_id": {
-    "$oid": "69d8b13b798ee4ca8cfe5759"
+  {
+    "_id": {
+      "$oid": "69f1af9461e439da7efe1694"
+    },
+    "question": "2024年上半年，公司协同销售财产险公司业务实现的保费是多少？2024年全年该数据是多少？",
+    "answer": "2024年上半年为122.63亿元，2024年全年为246.88亿元。",
+    "language": "zh-cn",
+    "difficulty": "medium",
+    "intent": "comparison",
+    "metadata": {
+      "file_name": "china_life_annual_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/323/download",
+      "file_type": "pdf",
+      "file_size": 816049,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "3.2.2 保险业务",
+      "page": 14,
+      "chunk_index": 31,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "dd790c3c-040a-41d4-abe8-cb9df067acd7",
+      "8bb5160f-63c8-4063-a6e3-a659ebab257c"
+    ],
+    "create_time": "2026-04-29 15:12:50",
+    "state": 0,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "8bb5160f-63c8-4063-a6e3-a659ebab257c",
+        "dd790c3c-040a-41d4-abe8-cb9df067acd7",
+        "1dc444de-f105-4024-8a8b-b4c35b2d0c71",
+        "25ec7757-b39d-4614-b3cc-1577ebbb6c5a",
+        "20fafa42-e29b-4fe7-95bd-918ed46bd0f3",
+        "8d9f7ad4-b1e0-4f78-b9b0-3e3a0130b666",
+        "5532209d-dc9f-4a30-9365-dee149043f94",
+        "ac7ddacf-9a97-4f20-8c86-cd586852482e",
+        "6471ead8-e32e-4cef-b87d-984f5551069b",
+        "875d7973-3a27-4ef7-b49f-c565f37f9ac1",
+        "be4fedf5-b0b0-4ea0-9e9f-485e83b05b43",
+        "e87c8ccd-ccd9-401d-badf-558205a52990"
+      ],
+      "rerank_node_ids": [
+        "8bb5160f-63c8-4063-a6e3-a659ebab257c",
+        "dd790c3c-040a-41d4-abe8-cb9df067acd7",
+        "25ec7757-b39d-4614-b3cc-1577ebbb6c5a",
+        "1dc444de-f105-4024-8a8b-b4c35b2d0c71",
+        "5532209d-dc9f-4a30-9365-dee149043f94"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "主张包括两个保费数据：2024年上半年为122.63亿元，2024年全年为246.88亿元。上下文中第二段明确写到2024年上半年协同销售财产险公司业务实现保费122.63亿元，第一段写到2024年协同销售中国人寿财产保险股份有限公司业务实现保费246.88亿元。事实主张均由上下文直接支持。",
+      "regenerated_citations": [
+        "8bb5160f-63c8-4063-a6e3-a659ebab257c",
+        "dd790c3c-040a-41d4-abe8-cb9df067acd7"
+      ]
+    }
   },
-  "question": "What was the trend in total assets for Softlogic Life Insurance PLC's Life Insurance Fund from 31.12.2022 to 30.09.2025?",
-  "answer": "The total assets for Softlogic Life Insurance PLC's Life Insurance Fund showed an increasing trend from 31.12.2022 to 30.09.2025. Specifically: 31.12.2022: Rs. 35,399,068,000; 31.03.2023: Rs. 35,958,503,000; 30.06.2024: Rs. 37,728,652,000; 30.09.2025: Rs. 44,394,574,000. This represents growth over the period.",
-  "language": "en",
-  "difficulty": "medium",
-  "intent": "analysis",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 620486,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "SEPTEMBER 2025",
-    "page": 10,
-    "chunk_index": 23,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
-    "version": 1
+  {
+    "_id": {
+      "$oid": "69f1af9461e439da7efe1695"
+    },
+    "question": "2024年上半年协同销售财产险公司业务的保单件数同比增长率与2024年全年的保单件数同比增长率分别是多少？",
+    "answer": "2024年上半年保单件数同比增长4.8%，2024年全年保单件数同比增长5.2%。",
+    "language": "zh-cn",
+    "difficulty": "medium",
+    "intent": "comparison",
+    "metadata": {
+      "file_name": "china_life_annual_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/323/download",
+      "file_type": "pdf",
+      "file_size": 816049,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "3.2.2 保险业务",
+      "page": 14,
+      "chunk_index": 31,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "dd790c3c-040a-41d4-abe8-cb9df067acd7",
+      "8bb5160f-63c8-4063-a6e3-a659ebab257c"
+    ],
+    "create_time": "2026-04-29 15:12:50",
+    "state": 2,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "8bb5160f-63c8-4063-a6e3-a659ebab257c",
+        "dd790c3c-040a-41d4-abe8-cb9df067acd7",
+        "ac7ddacf-9a97-4f20-8c86-cd586852482e",
+        "1dc444de-f105-4024-8a8b-b4c35b2d0c71",
+        "6471ead8-e32e-4cef-b87d-984f5551069b",
+        "45fab86e-b48d-4d63-b0c5-89f098e13fd2",
+        "b1976ac9-7d61-40ab-b9ba-ed8bfd934a7f",
+        "a97a95b9-b867-4e63-917d-d8f97be52460",
+        "e6222ab4-332e-4e4f-b792-816108f12add",
+        "74a8ddd0-351f-4994-9b29-81063cd71828",
+        "8d9f7ad4-b1e0-4f78-b9b0-3e3a0130b666"
+      ],
+      "rerank_node_ids": [
+        "8bb5160f-63c8-4063-a6e3-a659ebab257c",
+        "dd790c3c-040a-41d4-abe8-cb9df067acd7",
+        "1dc444de-f105-4024-8a8b-b4c35b2d0c71",
+        "ac7ddacf-9a97-4f20-8c86-cd586852482e",
+        "a97a95b9-b867-4e63-917d-d8f97be52460"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "回答包含两个事实主张：1) 2024年上半年保单件数同比增长4.8%；2) 2024年全年保单件数同比增长5.2%。context中明确给出了2024年上半年保单件数同比增长4.8%（来自第二段），以及2024年全年保单件数同比增长5.2%（来自第一段）。两个事实主张均被上下文直接支持。",
+      "regenerated_citations": [
+        "8bb5160f-63c8-4063-a6e3-a659ebab257c",
+        "dd790c3c-040a-41d4-abe8-cb9df067acd7"
+      ]
+    }
   },
-  "node_ids": [
-    "92440ce4-5399-4b41-8fe3-adc5e2beec31",
-    "15a62aaf-5b7d-43cd-8848-233c24a45c95",
-    "fa34259c-6151-4264-a213-cac513bf258b"
-  ],
-  "create_time": "2026-04-10 16:13:47",
-  "state": 2
-},
-{
-  "_id": {
-    "$oid": "69d8b13b798ee4ca8cfe575a"
+  {
+    "_id": {
+      "$oid": "69f1afb561e439da7efe1696"
+    },
+    "question": "截至本报告期末，公司在多少个城市布局了多少个机构养老项目？",
+    "answer": "截至本报告期末，公司已在14个城市布局17个机构养老项目。",
+    "language": "zh-cn",
+    "difficulty": "easy",
+    "intent": "factoid",
+    "metadata": {
+      "file_name": "china_life_annual_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/323/download",
+      "file_type": "pdf",
+      "file_size": 816049,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "2.保险产品分析",
+      "page": 15,
+      "chunk_index": 34,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "d5460f47-90ca-421d-a04e-7fad8e89824f",
+      "8076530b-1425-4f88-ba35-5e0bdb6e17d3"
+    ],
+    "create_time": "2026-04-29 15:13:35",
+    "state": 0,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "8076530b-1425-4f88-ba35-5e0bdb6e17d3",
+        "d5bbd9fe-5d5d-4f35-a320-350911ef4a8b",
+        "d5460f47-90ca-421d-a04e-7fad8e89824f",
+        "d51751a7-346c-4e6d-a04f-1f1a9ed384d5",
+        "a05ba34a-5998-435f-b581-61a99cd8c3e1",
+        "7816c293-6de0-4dc5-8ddd-e915a3d2b67c",
+        "b4e05fad-7d73-46bc-b3b7-9dcd96c6e6c0",
+        "79d942b9-b168-4933-abf8-35e9b463ea51",
+        "6471ead8-e32e-4cef-b87d-984f5551069b"
+      ],
+      "rerank_node_ids": [
+        "8076530b-1425-4f88-ba35-5e0bdb6e17d3",
+        "d5bbd9fe-5d5d-4f35-a320-350911ef4a8b",
+        "d5460f47-90ca-421d-a04e-7fad8e89824f"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "事实主张：截至本报告期末，公司已在14个城市布局17个机构养老项目。上下文中两处明确提及“截至本报告期末，已累计在14个城市布局17个机构养老项目”，与主张完全一致，得到直接支持。",
+      "regenerated_citations": [
+        "8076530b-1425-4f88-ba35-5e0bdb6e17d3",
+        "d5bbd9fe-5d5d-4f35-a320-350911ef4a8b",
+        "d5460f47-90ca-421d-a04e-7fad8e89824f"
+      ]
+    }
   },
-  "question": "How did the equity position of Softlogic Life Insurance PLC's Life Insurance Fund change between 31.12.2022 and 30.09.2025?",
-  "answer": "The equity position of Softlogic Life Insurance PLC's Life Insurance Fund improved significantly between 31.12.2022 and 30.09.2025. On 31.12.2022, total equity was negative at Rs. (1,141,990,000). By 30.06.2024, it improved to Rs. (856,820,000). By 30.09.2025, it further improved to Rs. (47,764,000) as of 31.12.2024 (audited) and Rs. (12,412,000) as of 30.09.2025 (unaudited), showing a substantial reduction in negative equity.",
-  "language": "en",
-  "difficulty": "hard",
-  "intent": "analysis",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 620486,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "SEPTEMBER 2025",
-    "page": 10,
-    "chunk_index": 23,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
-    "version": 1
+  {
+    "_id": {
+      "$oid": "69f1affa61e439da7efe1697"
+    },
+    "question": "2024年中国人寿的净投资收益率和总投资收益率分别是多少？",
+    "answer": "2024年净投资收益率为3.47%，总投资收益率为5.50%。",
+    "language": "zh-cn",
+    "difficulty": "easy",
+    "intent": "factoid",
+    "metadata": {
+      "file_name": "china_life_annual_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/323/download",
+      "file_type": "pdf",
+      "file_size": 816049,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "3．信用风险管理",
+      "page": 19,
+      "chunk_index": 43,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "20cb9c87-ad81-4904-96bd-e30869e9bdae",
+      "3a18ba04-5192-4165-a03d-5b1f696cf97e"
+    ],
+    "create_time": "2026-04-29 15:14:21",
+    "state": 2,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "20cb9c87-ad81-4904-96bd-e30869e9bdae",
+        "88aab99b-d007-411a-8fb8-dcebba9af6d2",
+        "ff11d660-a79f-486e-8d35-b76114c4910f",
+        "c41ccc21-62cc-4916-9475-cc6dff896564",
+        "2455413e-5751-402d-8d21-17e835737314",
+        "3a18ba04-5192-4165-a03d-5b1f696cf97e",
+        "18c8e769-87ca-4922-8960-b4f60e7c5ec8",
+        "e8cb6a9c-a6b1-441e-8351-9547a956f60f",
+        "8071aace-7557-4999-8e7a-1440850e2f8d",
+        "b682ca64-3ad2-432d-9483-6e3926118a6e",
+        "80872ca7-14a2-4257-ae63-8f353454e76f",
+        "a0592194-6b6a-4643-8193-acdd9303b66f",
+        "be4fedf5-b0b0-4ea0-9e9f-485e83b05b43",
+        "c770d30b-3f2b-43c8-8ead-c68d4c62d37b"
+      ],
+      "rerank_node_ids": [
+        "20cb9c87-ad81-4904-96bd-e30869e9bdae",
+        "3a18ba04-5192-4165-a03d-5b1f696cf97e",
+        "ff11d660-a79f-486e-8d35-b76114c4910f",
+        "c41ccc21-62cc-4916-9475-cc6dff896564",
+        "88aab99b-d007-411a-8fb8-dcebba9af6d2"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "回答主张2024年净投资收益率为3.47%，总投资收益率为5.50%。在上下文中 node_id:20cb9c87-ad81-4904-96bd-e30869e9bdae 直接显示：2024年，实现净投资收益率为3.47%；总投资收益率为5.50%。因此，事实主张均得到直接支持。",
+      "regenerated_citations": [
+        "20cb9c87-ad81-4904-96bd-e30869e9bdae"
+      ]
+    }
   },
-  "node_ids": [
-    "92440ce4-5399-4b41-8fe3-adc5e2beec31",
-    "15a62aaf-5b7d-43cd-8848-233c24a45c95",
-    "fa34259c-6151-4264-a213-cac513bf258b"
-  ],
-  "create_time": "2026-04-10 16:13:47",
-  "state": 0
-},
-{
-  "_id": {
-    "$oid": "69d8b13b798ee4ca8cfe575b"
+  {
+    "_id": {
+      "$oid": "69f1b06561e439da7efe1698"
+    },
+    "question": "2024年全年与2024年1-6月，承保财务损益的金额和变动幅度分别是多少？",
+    "answer": "2024年全年承保财务损益为209,952百万元，变动幅度为64.8%；2024年1-6月承保财务损益为91,735百万元，变动幅度为39.7%。",
+    "language": "zh-cn",
+    "difficulty": "medium",
+    "intent": "comparison",
+    "metadata": {
+      "file_name": "china_life_annual_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/323/download",
+      "file_type": "pdf",
+      "file_size": 816049,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "3.3.2 保险服务费用",
+      "page": 20,
+      "chunk_index": 46,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "91c39768-191a-40cc-8ddc-ca9fb724b82f",
+      "df7b6785-7748-4d61-a713-91e41859c9c3"
+    ],
+    "create_time": "2026-04-29 15:16:08",
+    "state": 2,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "91c39768-191a-40cc-8ddc-ca9fb724b82f",
+        "f00a1191-ef6f-4cb2-bb2b-b456edf138a3",
+        "046681a1-49d8-4fc1-8599-a6ba4f0c3dab",
+        "53aeba9b-bad3-4525-beb5-dba0da8bf2f4",
+        "1dc444de-f105-4024-8a8b-b4c35b2d0c71",
+        "df7b6785-7748-4d61-a713-91e41859c9c3",
+        "8d9f7ad4-b1e0-4f78-b9b0-3e3a0130b666",
+        "1bc2ae2e-42e6-4fb1-9f41-1adb3ed2e69a",
+        "c28c8c26-fbea-41c2-bc25-b8f555faa848",
+        "ace9b1cc-dc61-43a0-84ec-b39dfb628623",
+        "25ec7757-b39d-4614-b3cc-1577ebbb6c5a",
+        "f85b0fdb-de8a-4acd-9182-74789295965d"
+      ],
+      "rerank_node_ids": [
+        "df7b6785-7748-4d61-a713-91e41859c9c3",
+        "91c39768-191a-40cc-8ddc-ca9fb724b82f",
+        "f00a1191-ef6f-4cb2-bb2b-b456edf138a3",
+        "1bc2ae2e-42e6-4fb1-9f41-1adb3ed2e69a",
+        "046681a1-49d8-4fc1-8599-a6ba4f0c3dab"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "主张1：2024年全年承保财务损益为209,952百万元，变动幅度为64.8%。上下文node_id:91c39768-191a-40cc-8ddc-ca9fb724b82f提供了该数据。主张2：2024年1-6月承保财务损益为91,735百万元，变动幅度为39.7%。上下文node_id:df7b6785-7748-4d61-a713-91e41859c9c3提供了该数据。所有主张都能在上下文中直接找到对应数据。",
+      "regenerated_citations": [
+        "df7b6785-7748-4d61-a713-91e41859c9c3",
+        "91c39768-191a-40cc-8ddc-ca9fb724b82f",
+        "f00a1191-ef6f-4cb2-bb2b-b456edf138a3"
+      ]
+    }
   },
-  "question": "Softlogic Life Insurance PLC人寿保险基金的总资产从2022年12月31日到2025年9月30日呈现什么趋势？",
-  "answer": "Softlogic Life Insurance PLC人寿保险基金的总资产从2022年12月31日到2025年9月30日呈现增长趋势。具体数据为：2022年12月31日：35,399,068,000卢比；2023年3月31日：35,958,503,000卢比；2024年6月30日：37,728,652,000卢比；2025年9月30日：44,394,574,000卢比。这表明在此期间总资产持续增长。",
-  "language": "zh-cn",
-  "difficulty": "medium",
-  "intent": "analysis",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 620486,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "SEPTEMBER 2025",
-    "page": 10,
-    "chunk_index": 23,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
-    "version": 1
+  {
+    "_id": {
+      "$oid": "69f1b09761e439da7efe1699"
+    },
+    "question": "2024年全年与2024年上半年，未采用保费分配法计量的合同的保险服务费用变动幅度分别是多少？",
+    "answer": "2024年全年未采用保费分配法计量的合同的保险服务费用变动幅度为29.9%，2024年上半年变动幅度为51.8%。",
+    "language": "zh-cn",
+    "difficulty": "medium",
+    "intent": "comparison",
+    "metadata": {
+      "file_name": "china_life_annual_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/323/download",
+      "file_type": "pdf",
+      "file_size": 816049,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "3.3.2 保险服务费用",
+      "page": 20,
+      "chunk_index": 47,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "91c39768-191a-40cc-8ddc-ca9fb724b82f",
+      "df7b6785-7748-4d61-a713-91e41859c9c3"
+    ],
+    "create_time": "2026-04-29 15:17:05",
+    "state": 0,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "91c39768-191a-40cc-8ddc-ca9fb724b82f",
+        "df7b6785-7748-4d61-a713-91e41859c9c3",
+        "1c595d5f-cc59-4e41-abfc-a4b0ea384f9b",
+        "f00a1191-ef6f-4cb2-bb2b-b456edf138a3",
+        "9b2bb300-717a-41d4-ba0a-7717413da4f8",
+        "d6ccec8f-88a3-4097-aad9-5690d16ba694",
+        "cd09b7b3-82c7-4de0-8cc0-076f6acfb8f6",
+        "895c04f9-1943-4b09-9207-1eaccd961c4d",
+        "8d9f7ad4-b1e0-4f78-b9b0-3e3a0130b666",
+        "8a71a193-2a08-440b-abe4-0ebbde3954bb"
+      ],
+      "rerank_node_ids": [
+        "91c39768-191a-40cc-8ddc-ca9fb724b82f",
+        "df7b6785-7748-4d61-a713-91e41859c9c3",
+        "895c04f9-1943-4b09-9207-1eaccd961c4d",
+        "1c595d5f-cc59-4e41-abfc-a4b0ea384f9b",
+        "cd09b7b3-82c7-4de0-8cc0-076f6acfb8f6"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "第一项“2024年全年未采用保费分配法计量的合同的保险服务费用变动幅度为29.9%”可以在context[91c39768-191a-40cc-8ddc-ca9fb724b82f]中直接找到。第二项“2024年上半年变动幅度为51.8%”可以在context[df7b6785-7748-4d61-a713-91e41859c9c3]中直接找到。两个主张均可以在context中找到直接支持。",
+      "regenerated_citations": [
+        "91c39768-191a-40cc-8ddc-ca9fb724b82f",
+        "df7b6785-7748-4d61-a713-91e41859c9c3"
+      ]
+    }
   },
-  "node_ids": [
-    "92440ce4-5399-4b41-8fe3-adc5e2beec31",
-    "15a62aaf-5b7d-43cd-8848-233c24a45c95",
-    "fa34259c-6151-4264-a213-cac513bf258b"
-  ],
-  "create_time": "2026-04-10 16:13:47",
-  "state": 2
-},
-{
-  "_id": {
-    "$oid": "69d8b13b798ee4ca8cfe575c"
+  {
+    "_id": {
+      "$oid": "69f1b09761e439da7efe169a"
+    },
+    "question": "2024年全年与2024年上半年，承保财务损益的金额和变动幅度分别是多少？",
+    "answer": "2024年全年承保财务损益为209,952百万元，变动幅度64.8%；2024年上半年承保财务损益为91,735百万元，变动幅度39.7%。",
+    "language": "zh-cn",
+    "difficulty": "medium",
+    "intent": "comparison",
+    "metadata": {
+      "file_name": "china_life_annual_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/323/download",
+      "file_type": "pdf",
+      "file_size": 816049,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "3.3.2 保险服务费用",
+      "page": 20,
+      "chunk_index": 47,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "f00a1191-ef6f-4cb2-bb2b-b456edf138a3",
+      "df7b6785-7748-4d61-a713-91e41859c9c3"
+    ],
+    "create_time": "2026-04-29 15:17:05",
+    "state": 2,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "91c39768-191a-40cc-8ddc-ca9fb724b82f",
+        "f00a1191-ef6f-4cb2-bb2b-b456edf138a3",
+        "8d9f7ad4-b1e0-4f78-b9b0-3e3a0130b666",
+        "1dc444de-f105-4024-8a8b-b4c35b2d0c71",
+        "df7b6785-7748-4d61-a713-91e41859c9c3",
+        "1bc2ae2e-42e6-4fb1-9f41-1adb3ed2e69a",
+        "c28c8c26-fbea-41c2-bc25-b8f555faa848",
+        "ace9b1cc-dc61-43a0-84ec-b39dfb628623",
+        "53aeba9b-bad3-4525-beb5-dba0da8bf2f4",
+        "e87c8ccd-ccd9-401d-badf-558205a52990",
+        "046681a1-49d8-4fc1-8599-a6ba4f0c3dab",
+        "20fafa42-e29b-4fe7-95bd-918ed46bd0f3",
+        "25ec7757-b39d-4614-b3cc-1577ebbb6c5a",
+        "250ec961-85db-43ec-8e48-c7b735fd7321"
+      ],
+      "rerank_node_ids": [
+        "f00a1191-ef6f-4cb2-bb2b-b456edf138a3",
+        "91c39768-191a-40cc-8ddc-ca9fb724b82f",
+        "df7b6785-7748-4d61-a713-91e41859c9c3",
+        "1bc2ae2e-42e6-4fb1-9f41-1adb3ed2e69a",
+        "ace9b1cc-dc61-43a0-84ec-b39dfb628623"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "回答中的两项主张：1）2024年全年承保财务损益为209,952百万元，变动幅度64.8%；2）2024年上半年承保财务损益为91,735百万元，变动幅度39.7%。context中[node_id:f00a1191-ef6f-4cb2-bb2b-b456edf138a3]列明了2024年承保财务损益为209,952百万元，变动幅度64.8%，[node_id:df7b6785-7748-4d61-a713-91e41859c9c3]给出2024年1-6月承保财务损益为91,735百万元，变动幅度39.7%，完全支持回答。",
+      "regenerated_citations": [
+        "f00a1191-ef6f-4cb2-bb2b-b456edf138a3",
+        "91c39768-191a-40cc-8ddc-ca9fb724b82f",
+        "df7b6785-7748-4d61-a713-91e41859c9c3"
+      ]
+    }
   },
-  "question": "Softlogic Life Insurance PLC人寿保险基金的权益状况在2022年12月31日至2025年9月30日期间发生了怎样的变化？",
-  "answer": "Softlogic Life Insurance PLC人寿保险基金的权益状况在2022年12月31日至2025年9月30日期间显著改善。2022年12月31日，总权益为负值，为(1,141,990,000)卢比。到2024年6月30日，改善至(856,820,000)卢比。到2025年9月30日，进一步改善至2024年12月31日（经审计）的(47,764,000)卢比和2025年9月30日（未经审计）的(12,412,000)卢比，显示负权益大幅减少。",
-  "language": "zh-cn",
-  "difficulty": "hard",
-  "intent": "analysis",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 620486,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "SEPTEMBER 2025",
-    "page": 10,
-    "chunk_index": 23,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
-    "version": 1
+  {
+    "_id": {
+      "$oid": "69f1b14761e439da7efe169b"
+    },
+    "question": "中国人寿2024年全年现金股利合计每股多少元（含税）？",
+    "answer": "每股人民币0.65元（含税）。",
+    "language": "zh-cn",
+    "difficulty": "easy",
+    "intent": "factoid",
+    "metadata": {
+      "file_name": "china_life_half_year_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/327/download",
+      "file_type": "pdf",
+      "file_size": 741045,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "2.1  公司简介",
+      "page": 2,
+      "chunk_index": 3,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "d2fc0593-3346-4d31-a901-f150d607ae0e",
+      "80872ca7-14a2-4257-ae63-8f353454e76f"
+    ],
+    "create_time": "2026-04-29 15:19:47",
+    "state": 2,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "80872ca7-14a2-4257-ae63-8f353454e76f",
+        "b401b82b-337b-43e0-a326-bc02c6bac2b2",
+        "68ec18e2-2f9a-4e2c-9dad-dc59bf6bf2de",
+        "d2fc0593-3346-4d31-a901-f150d607ae0e",
+        "f6ba5718-39ad-4308-8d10-65ae859a0747",
+        "b682ca64-3ad2-432d-9483-6e3926118a6e",
+        "f48f29c8-fb76-4328-9aba-65313ee4bec9",
+        "298efea3-8e0e-43d9-b360-6caeb3d67068",
+        "56b7dea8-e433-4a14-b403-b2494a0096e7",
+        "b784ef51-422e-4f9a-816e-f9836897ec2b",
+        "6ac8f063-8040-47d9-a2ba-cd746469bef1"
+      ],
+      "rerank_node_ids": [
+        "80872ca7-14a2-4257-ae63-8f353454e76f",
+        "d2fc0593-3346-4d31-a901-f150d607ae0e",
+        "b401b82b-337b-43e0-a326-bc02c6bac2b2",
+        "68ec18e2-2f9a-4e2c-9dad-dc59bf6bf2de",
+        "f48f29c8-fb76-4328-9aba-65313ee4bec9"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "答案主张为2024年全年现金股利为每股人民币0.65元（含税），上下文 80872ca7-14a2-4257-ae63-8f353454e76f 明确支持该主张。",
+      "regenerated_citations": [
+        "80872ca7-14a2-4257-ae63-8f353454e76f"
+      ]
+    }
   },
-  "node_ids": [
-    "92440ce4-5399-4b41-8fe3-adc5e2beec31",
-    "15a62aaf-5b7d-43cd-8848-233c24a45c95",
-    "fa34259c-6151-4264-a213-cac513bf258b"
-  ],
-  "create_time": "2026-04-10 16:13:47",
-  "state": 2
-},
-{
-  "_id": {
-    "$oid": "69d8b1b6798ee4ca8cfe575d"
+  {
+    "_id": {
+      "$oid": "69f1b18d61e439da7efe169c"
+    },
+    "question": "截至报告期末，中国人寿保险（集团）公司在中国人寿的持股比例在两个不同报告期分别是多少？",
+    "answer": "均为68.37%。",
+    "language": "zh-cn",
+    "difficulty": "easy",
+    "intent": "comparison",
+    "metadata": {
+      "file_name": "china_life_half_year_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/327/download",
+      "file_type": "pdf",
+      "file_size": 741045,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "2023 年",
+      "page": 5,
+      "chunk_index": 11,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "991c88c5-c050-444f-a5d5-df080e9b5b34",
+      "e482f5e9-34e6-4f9f-9bcc-b7128c81966a"
+    ],
+    "create_time": "2026-04-29 15:21:00",
+    "state": 2,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "a6683df1-f8c0-494f-ac38-cb4b52699f2f",
+        "991c88c5-c050-444f-a5d5-df080e9b5b34",
+        "5a1509ad-622f-4929-9d32-54c5c1e94918",
+        "b6754ddb-c449-41ac-83d5-101ca9a8c65e",
+        "b17a0d5e-19fd-437c-8f49-5f44250b9f8f",
+        "34776cd1-5c45-4901-a13d-3023060fd56a",
+        "e482f5e9-34e6-4f9f-9bcc-b7128c81966a",
+        "5b156187-6dcf-4ed9-a0cd-dcae2ab96a0b",
+        "b682ca64-3ad2-432d-9483-6e3926118a6e",
+        "d2fc0593-3346-4d31-a901-f150d607ae0e",
+        "4281c558-357e-45b5-86c8-1b192e9ba904",
+        "7724f047-d051-473f-86f8-e2dc8db62e02",
+        "1f79ac3f-13e3-4444-9662-e152f5d71ecd",
+        "298efea3-8e0e-43d9-b360-6caeb3d67068",
+        "c5caa823-6c12-463d-9936-791b3fd4fe9c"
+      ],
+      "rerank_node_ids": [
+        "e482f5e9-34e6-4f9f-9bcc-b7128c81966a",
+        "991c88c5-c050-444f-a5d5-df080e9b5b34",
+        "a6683df1-f8c0-494f-ac38-cb4b52699f2f"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "该回答只有一个事实主张：各项均为68.37%。上下文两条记录的 \"中国人寿保险（集团）公司\" 持股比例确实均为68.37%，与回答完全一致，主张可被直接支持。",
+      "regenerated_citations": [
+        "e482f5e9-34e6-4f9f-9bcc-b7128c81966a",
+        "991c88c5-c050-444f-a5d5-df080e9b5b34"
+      ]
+    }
   },
-  "question": "What was the total value of financial investments for Softlogic Life Insurance PLC as at 30 September 2025, and how does this compare to the total assets value at the same date?",
-  "answer": "As at 30 September 2025, the total value of financial investments was Rs. 57,714,422,000, while the total assets value at the same date was Rs. 69,094,597,000. This shows that financial investments constituted approximately 83.5% of total assets.",
-  "language": "en",
-  "difficulty": "medium",
-  "intent": "comparison",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 620486,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "8 FINANCE COST",
-    "page": 13,
-    "chunk_index": 29,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
-    "version": 1
+  {
+    "_id": {
+      "$oid": "69f1b1ce61e439da7efe169d"
+    },
+    "question": "2024年1-6月与2024年全年，寿险业务的续期业务数据分别是多少？",
+    "answer": "2024年1-6月寿险续期业务为303,498百万元，2024年全年寿险续期业务为409,028百万元。",
+    "language": "zh-cn",
+    "difficulty": "easy",
+    "intent": "comparison",
+    "metadata": {
+      "file_name": "china_life_half_year_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/327/download",
+      "file_type": "pdf",
+      "file_size": 741045,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "3.2 业务分析",
+      "page": 9,
+      "chunk_index": 21,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "eaffe22c-b503-426f-b73f-5d9cdd2b3627",
+      "e6222ab4-332e-4e4f-b792-816108f12add"
+    ],
+    "create_time": "2026-04-29 15:22:16",
+    "state": 2,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "b1976ac9-7d61-40ab-b9ba-ed8bfd934a7f",
+        "e6222ab4-332e-4e4f-b792-816108f12add",
+        "ac7ddacf-9a97-4f20-8c86-cd586852482e",
+        "eaffe22c-b503-426f-b73f-5d9cdd2b3627",
+        "74a8ddd0-351f-4994-9b29-81063cd71828",
+        "6471ead8-e32e-4cef-b87d-984f5551069b",
+        "25ec7757-b39d-4614-b3cc-1577ebbb6c5a",
+        "8479143c-cd9a-405a-9250-c3599765df9b",
+        "250ec961-85db-43ec-8e48-c7b735fd7321",
+        "895c04f9-1943-4b09-9207-1eaccd961c4d",
+        "e87c8ccd-ccd9-401d-badf-558205a52990",
+        "1dc444de-f105-4024-8a8b-b4c35b2d0c71",
+        "d17f118a-2cad-4768-beef-5dd9901f75f6",
+        "c770d30b-3f2b-43c8-8ead-c68d4c62d37b"
+      ],
+      "rerank_node_ids": [
+        "eaffe22c-b503-426f-b73f-5d9cdd2b3627",
+        "b1976ac9-7d61-40ab-b9ba-ed8bfd934a7f",
+        "e6222ab4-332e-4e4f-b792-816108f12add",
+        "8479143c-cd9a-405a-9250-c3599765df9b",
+        "25ec7757-b39d-4614-b3cc-1577ebbb6c5a"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "主张1：2024年1-6月寿险续期业务为303,498百万元，可以在第一个上下文片段找到直接对应的数据。主张2：2024年全年寿险续期业务为409,028百万元，可以在第二个上下文片段找到直接对应的数据。这两个数据都被上下文明确支持。",
+      "regenerated_citations": [
+        "eaffe22c-b503-426f-b73f-5d9cdd2b3627",
+        "e6222ab4-332e-4e4f-b792-816108f12add"
+      ]
+    }
   },
-  "node_ids": [
-    "2a5c7e9a-83ef-4c52-8345-2ab451cf3e30",
-    "d5013b25-f2db-4e29-946d-4205085666c1"
-  ],
-  "create_time": "2026-04-10 16:15:50",
-  "state": 2
-},
-{
-  "_id": {
-    "$oid": "69d8b1b6798ee4ca8cfe575e"
+  {
+    "_id": {
+      "$oid": "69f1b21861e439da7efe169e"
+    },
+    "question": "2024年上半年和2024年全年，协同销售财产险公司业务的保费分别是多少？",
+    "answer": "2024年上半年为122.63亿元，2024年全年为246.88亿元。",
+    "language": "zh-cn",
+    "difficulty": "easy",
+    "intent": "comparison",
+    "metadata": {
+      "file_name": "china_life_half_year_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/327/download",
+      "file_type": "pdf",
+      "file_size": 741045,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "3.2.2 保险业务",
+      "page": 12,
+      "chunk_index": 27,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "8bb5160f-63c8-4063-a6e3-a659ebab257c",
+      "dd790c3c-040a-41d4-abe8-cb9df067acd7"
+    ],
+    "create_time": "2026-04-29 15:23:27",
+    "state": 0,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "8bb5160f-63c8-4063-a6e3-a659ebab257c",
+        "dd790c3c-040a-41d4-abe8-cb9df067acd7",
+        "1dc444de-f105-4024-8a8b-b4c35b2d0c71",
+        "8d9f7ad4-b1e0-4f78-b9b0-3e3a0130b666",
+        "250ec961-85db-43ec-8e48-c7b735fd7321",
+        "ac7ddacf-9a97-4f20-8c86-cd586852482e",
+        "25ec7757-b39d-4614-b3cc-1577ebbb6c5a",
+        "bc096187-fc97-473c-a64b-24b1446ca6ed",
+        "45fab86e-b48d-4d63-b0c5-89f098e13fd2",
+        "a97a95b9-b867-4e63-917d-d8f97be52460",
+        "5532209d-dc9f-4a30-9365-dee149043f94",
+        "6471ead8-e32e-4cef-b87d-984f5551069b",
+        "e87c8ccd-ccd9-401d-badf-558205a52990"
+      ],
+      "rerank_node_ids": [
+        "dd790c3c-040a-41d4-abe8-cb9df067acd7",
+        "8bb5160f-63c8-4063-a6e3-a659ebab257c",
+        "1dc444de-f105-4024-8a8b-b4c35b2d0c71",
+        "250ec961-85db-43ec-8e48-c7b735fd7321",
+        "25ec7757-b39d-4614-b3cc-1577ebbb6c5a"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "主张1：（2024年上半年为122.63亿元）在context第一条中得到直接支持。主张2：（2024年全年为246.88亿元）在context第二条中得到直接支持。两个主张都得到context直接支持。",
+      "regenerated_citations": [
+        "dd790c3c-040a-41d4-abe8-cb9df067acd7",
+        "8bb5160f-63c8-4063-a6e3-a659ebab257c"
+      ]
+    }
   },
-  "question": "How did Softlogic Life Insurance PLC's financial investments composition change between 31 December 2024 and 30 September 2025, and what was the percentage increase in total financial investments during this period?",
-  "answer": "Between 31 December 2024 and 30 September 2025, Softlogic Life Insurance PLC's total financial investments increased from Rs. 43,938,018,000 to Rs. 57,714,422,000, representing a 31.4% increase. The composition shows significant growth in Treasury bonds (from Rs. 20,673,471,000 to Rs. 29,571,029,000) and Repo investments (from Rs. 1,140,922,000 to Rs. 9,658,986,000), while Equity Securities & Unit linked investments decreased from Rs. 4,214,895,000 to Rs. 1,940,355,000.",
-  "language": "en",
-  "difficulty": "hard",
-  "intent": "analysis",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 620486,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "8 FINANCE COST",
-    "page": 13,
-    "chunk_index": 29,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
-    "version": 1
+  {
+    "_id": {
+      "$oid": "69f1b21861e439da7efe169f"
+    },
+    "question": "2024年上半年与2024年全年，协同销售财产险公司业务的保单件数同比增长率分别是多少？",
+    "answer": "2024年上半年保单件数同比增长4.8%，2024年全年保单件数同比增长5.2%。",
+    "language": "zh-cn",
+    "difficulty": "easy",
+    "intent": "comparison",
+    "metadata": {
+      "file_name": "china_life_half_year_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/327/download",
+      "file_type": "pdf",
+      "file_size": 741045,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "3.2.2 保险业务",
+      "page": 12,
+      "chunk_index": 27,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "8bb5160f-63c8-4063-a6e3-a659ebab257c",
+      "dd790c3c-040a-41d4-abe8-cb9df067acd7"
+    ],
+    "create_time": "2026-04-29 15:23:27",
+    "state": 2,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "8bb5160f-63c8-4063-a6e3-a659ebab257c",
+        "dd790c3c-040a-41d4-abe8-cb9df067acd7",
+        "ac7ddacf-9a97-4f20-8c86-cd586852482e",
+        "1dc444de-f105-4024-8a8b-b4c35b2d0c71",
+        "45fab86e-b48d-4d63-b0c5-89f098e13fd2",
+        "6471ead8-e32e-4cef-b87d-984f5551069b",
+        "b1976ac9-7d61-40ab-b9ba-ed8bfd934a7f",
+        "74a8ddd0-351f-4994-9b29-81063cd71828",
+        "3f8de23d-c7a0-413b-a3ed-3c944691fcb9",
+        "a97a95b9-b867-4e63-917d-d8f97be52460",
+        "be4fedf5-b0b0-4ea0-9e9f-485e83b05b43",
+        "e6222ab4-332e-4e4f-b792-816108f12add"
+      ],
+      "rerank_node_ids": [
+        "8bb5160f-63c8-4063-a6e3-a659ebab257c",
+        "dd790c3c-040a-41d4-abe8-cb9df067acd7",
+        "1dc444de-f105-4024-8a8b-b4c35b2d0c71",
+        "ac7ddacf-9a97-4f20-8c86-cd586852482e",
+        "45fab86e-b48d-4d63-b0c5-89f098e13fd2"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "两个事实主张：1) 2024年上半年保单件数同比增长4.8% —— 上下文[node_id:8bb5160f]明确记载。2) 2024年全年保单件数同比增长5.2% —— 上下文[node_id:dd790c3c]明确记载。两者均有上下文直接支持。",
+      "regenerated_citations": [
+        "8bb5160f-63c8-4063-a6e3-a659ebab257c",
+        "dd790c3c-040a-41d4-abe8-cb9df067acd7"
+      ]
+    }
   },
-  "node_ids": [
-    "2a5c7e9a-83ef-4c52-8345-2ab451cf3e30",
-    "d5013b25-f2db-4e29-946d-4205085666c1"
-  ],
-  "create_time": "2026-04-10 16:15:50",
-  "state": 0
-},
-{
-  "_id": {
-    "$oid": "69d8b1b6798ee4ca8cfe575f"
+  {
+    "_id": {
+      "$oid": "69f1b23861e439da7efe16a0"
+    },
+    "question": "截至本报告期末，公司在多少个城市布局了养老服务？布局了多少个机构养老项目？",
+    "answer": "截至本报告期末，已累计在14个城市布局养老服务，其中已布局17个机构养老项目。",
+    "language": "zh-cn",
+    "difficulty": "easy",
+    "intent": "factoid",
+    "metadata": {
+      "file_name": "china_life_half_year_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/327/download",
+      "file_type": "pdf",
+      "file_size": 741045,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "2.保险产品分析",
+      "page": 13,
+      "chunk_index": 29,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "8076530b-1425-4f88-ba35-5e0bdb6e17d3",
+      "d5460f47-90ca-421d-a04e-7fad8e89824f"
+    ],
+    "create_time": "2026-04-29 15:24:18",
+    "state": 0,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "8076530b-1425-4f88-ba35-5e0bdb6e17d3",
+        "d5460f47-90ca-421d-a04e-7fad8e89824f",
+        "d5bbd9fe-5d5d-4f35-a320-350911ef4a8b",
+        "a05ba34a-5998-435f-b581-61a99cd8c3e1",
+        "d51751a7-346c-4e6d-a04f-1f1a9ed384d5",
+        "6471ead8-e32e-4cef-b87d-984f5551069b",
+        "02e5d0e8-bb71-4f25-8493-1d52167881e7",
+        "7816c293-6de0-4dc5-8ddd-e915a3d2b67c",
+        "79d942b9-b168-4933-abf8-35e9b463ea51",
+        "b4e05fad-7d73-46bc-b3b7-9dcd96c6e6c0",
+        "80099ab8-838a-4041-b30e-8449a703d7e2"
+      ],
+      "rerank_node_ids": [
+        "8076530b-1425-4f88-ba35-5e0bdb6e17d3",
+        "d5bbd9fe-5d5d-4f35-a320-350911ef4a8b",
+        "d5460f47-90ca-421d-a04e-7fad8e89824f",
+        "6471ead8-e32e-4cef-b87d-984f5551069b"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "主张“截至本报告期末，已累计在14个城市布局养老服务，其中已布局17个机构养老项目。”在上下文两处均有明确记载，内容完全一致，得到直接支持。",
+      "regenerated_citations": [
+        "8076530b-1425-4f88-ba35-5e0bdb6e17d3",
+        "d5bbd9fe-5d5d-4f35-a320-350911ef4a8b",
+        "d5460f47-90ca-421d-a04e-7fad8e89824f"
+      ]
+    }
   },
-  "question": "Softlogic Life Insurance PLC在2025年9月30日的金融投资总额是多少？与同期总资产价值相比如何？",
-  "answer": "截至2025年9月30日，Softlogic Life Insurance PLC的金融投资总额为57,714,422,000卢比，而同期总资产价值为69,094,597,000卢比。这表明金融投资约占公司总资产的83.5%。",
-  "language": "zh-cn",
-  "difficulty": "medium",
-  "intent": "comparison",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 620486,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "8 FINANCE COST",
-    "page": 13,
-    "chunk_index": 29,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
-    "version": 1
+  {
+    "_id": {
+      "$oid": "69f1b29061e439da7efe16a1"
+    },
+    "question": "2024年全年，未采用保费分配法计量的合同的保险服务费用是多少？与2023年相比变动幅度是多少？",
+    "answer": "2024年全年，未采用保费分配法计量的合同的保险服务费用为128,671百万元，较2023年增长29.9%。",
+    "language": "zh-cn",
+    "difficulty": "easy",
+    "intent": "factoid",
+    "metadata": {
+      "file_name": "china_life_half_year_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/327/download",
+      "file_type": "pdf",
+      "file_size": 741045,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "2.保险服务费用",
+      "page": 18,
+      "chunk_index": 41,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "91c39768-191a-40cc-8ddc-ca9fb724b82f",
+      "df7b6785-7748-4d61-a713-91e41859c9c3"
+    ],
+    "create_time": "2026-04-29 15:25:21",
+    "state": 2,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "91c39768-191a-40cc-8ddc-ca9fb724b82f",
+        "df7b6785-7748-4d61-a713-91e41859c9c3",
+        "1c595d5f-cc59-4e41-abfc-a4b0ea384f9b",
+        "f00a1191-ef6f-4cb2-bb2b-b456edf138a3",
+        "9b2bb300-717a-41d4-ba0a-7717413da4f8",
+        "8d9f7ad4-b1e0-4f78-b9b0-3e3a0130b666",
+        "895c04f9-1943-4b09-9207-1eaccd961c4d",
+        "cd09b7b3-82c7-4de0-8cc0-076f6acfb8f6",
+        "8a71a193-2a08-440b-abe4-0ebbde3954bb",
+        "bc096187-fc97-473c-a64b-24b1446ca6ed",
+        "d6ccec8f-88a3-4097-aad9-5690d16ba694"
+      ],
+      "rerank_node_ids": [
+        "91c39768-191a-40cc-8ddc-ca9fb724b82f",
+        "df7b6785-7748-4d61-a713-91e41859c9c3",
+        "895c04f9-1943-4b09-9207-1eaccd961c4d",
+        "1c595d5f-cc59-4e41-abfc-a4b0ea384f9b",
+        "f00a1191-ef6f-4cb2-bb2b-b456edf138a3"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "事实主张有两个：1) 2024年全年未采用保费分配法计量的合同的保险服务费用为128,671百万元；2) 较2023年增长29.9%。它们均可在【context】node_id:91c39768-191a-40cc-8ddc-ca9fb724b82f表格中直接找到对应数据，完全支持。",
+      "regenerated_citations": [
+        "91c39768-191a-40cc-8ddc-ca9fb724b82f"
+      ]
+    }
   },
-  "node_ids": [
-    "2a5c7e9a-83ef-4c52-8345-2ab451cf3e30",
-    "d5013b25-f2db-4e29-946d-4205085666c1"
-  ],
-  "create_time": "2026-04-10 16:15:50",
-  "state": 2
-},
-{
-  "_id": {
-    "$oid": "69d8b1b6798ee4ca8cfe5760"
+  {
+    "_id": {
+      "$oid": "69f1b29061e439da7efe16a2"
+    },
+    "question": "2024年全年与2024年上半年，承保财务损益的金额分别是多少？",
+    "answer": "2024年全年承保财务损益为209,952百万元，2024年上半年承保财务损益为91,735百万元。",
+    "language": "zh-cn",
+    "difficulty": "medium",
+    "intent": "comparison",
+    "metadata": {
+      "file_name": "china_life_half_year_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/327/download",
+      "file_type": "pdf",
+      "file_size": 741045,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "2.保险服务费用",
+      "page": 18,
+      "chunk_index": 41,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "91c39768-191a-40cc-8ddc-ca9fb724b82f",
+      "df7b6785-7748-4d61-a713-91e41859c9c3"
+    ],
+    "create_time": "2026-04-29 15:25:21",
+    "state": 0,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "91c39768-191a-40cc-8ddc-ca9fb724b82f",
+        "f00a1191-ef6f-4cb2-bb2b-b456edf138a3",
+        "1dc444de-f105-4024-8a8b-b4c35b2d0c71",
+        "8d9f7ad4-b1e0-4f78-b9b0-3e3a0130b666",
+        "df7b6785-7748-4d61-a713-91e41859c9c3",
+        "250ec961-85db-43ec-8e48-c7b735fd7321",
+        "46619932-3b9d-4c05-abc5-a6ef82ef746f",
+        "549d2157-8057-44b8-b675-009b695c25cd",
+        "25ec7757-b39d-4614-b3cc-1577ebbb6c5a",
+        "e87c8ccd-ccd9-401d-badf-558205a52990",
+        "9cc83a18-fdbd-4369-90be-1af92de0675d",
+        "20fafa42-e29b-4fe7-95bd-918ed46bd0f3",
+        "53aeba9b-bad3-4525-beb5-dba0da8bf2f4",
+        "0b2292c7-8e7d-4cb6-b10f-b3ec7985b856"
+      ],
+      "rerank_node_ids": [
+        "f00a1191-ef6f-4cb2-bb2b-b456edf138a3",
+        "91c39768-191a-40cc-8ddc-ca9fb724b82f",
+        "df7b6785-7748-4d61-a713-91e41859c9c3",
+        "1dc444de-f105-4024-8a8b-b4c35b2d0c71",
+        "8d9f7ad4-b1e0-4f78-b9b0-3e3a0130b666"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "回答中的两个事实主张：1) 2024年全年承保财务损益为209,952百万元，2) 2024年上半年承保财务损益为91,735百万元。上下文第一条（node_id:91c39768-191a-40cc-8ddc-ca9fb724b82f）明确给出全年“承保财务损益 2024年209,952百万元”；上下文第二条（node_id:df7b6785-7748-4d61-a713-91e41859c9c3）明确给出上半年“承保财务损益 2024年1-6月91,735百万元”。两者完全一致，属于直接支持，判定为true。",
+      "regenerated_citations": [
+        "f00a1191-ef6f-4cb2-bb2b-b456edf138a3",
+        "91c39768-191a-40cc-8ddc-ca9fb724b82f",
+        "df7b6785-7748-4d61-a713-91e41859c9c3"
+      ]
+    }
   },
-  "question": "Softlogic Life Insurance PLC的金融投资组合在2024年12月31日至2025年9月30日期间发生了哪些变化？总金融投资在此期间的增长百分比是多少？",
-  "answer": "在2024年12月31日至2025年9月30日期间，Softlogic Life Insurance PLC的总金融投资从43,938,018,000卢比增加到57,714,422,000卢比，增长了31.4%。投资组合变化包括：国债从20,673,471,000卢比增至29,571,029,000卢比；回购投资从1,140,922,000卢比大幅增至9,658,986,000卢比；而股权证券和单位挂钩投资则从4,214,895,000卢比减少至1,940,355,000卢比。",
-  "language": "zh-cn",
-  "difficulty": "hard",
-  "intent": "analysis",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 620486,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "8 FINANCE COST",
-    "page": 13,
-    "chunk_index": 29,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
-    "version": 1
+  {
+    "_id": {
+      "$oid": "69f1b32a61e439da7efe16a3"
+    },
+    "question": "2024年12月31日，新华人寿保险股份有限公司的核心偿付能力充足率和综合偿付能力充足率分别是多少？",
+    "answer": "核心偿付能力充足率为124.07%，综合偿付能力充足率为217.55%。",
+    "language": "zh-cn",
+    "difficulty": "easy",
+    "intent": "factoid",
+    "metadata": {
+      "file_name": "china_life_half_year_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/327/download",
+      "file_type": "pdf",
+      "file_size": 741045,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "6.偿付能力状况",
+      "page": 20,
+      "chunk_index": 45,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "f9a69e1b-11ca-4ba9-8cf7-49d53459c78c",
+      "484b0e4f-aacb-46f9-a154-2e9294ead37d"
+    ],
+    "create_time": "2026-04-29 15:27:50",
+    "state": 0,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "f9a69e1b-11ca-4ba9-8cf7-49d53459c78c",
+        "97f858c8-0bad-4cca-9e3d-ceb82d11db42",
+        "d8a2aa5d-3072-4c5a-9c5c-eeec97fcfdfa",
+        "484b0e4f-aacb-46f9-a154-2e9294ead37d",
+        "3d673146-8813-4141-b9d6-f7d2fb3eea25",
+        "e8ff839c-3c10-4c53-ba66-12c217a6be69",
+        "502f847b-9c75-4466-91e7-050c869ca289",
+        "ebe8e366-bac0-42e1-9efa-e6234ab9ba5d",
+        "c04090c8-6f17-4ced-8e77-63abc2ace09b",
+        "00623645-c7a7-4dcf-84e9-024028df2ca1"
+      ],
+      "rerank_node_ids": [
+        "97f858c8-0bad-4cca-9e3d-ceb82d11db42",
+        "f9a69e1b-11ca-4ba9-8cf7-49d53459c78c",
+        "484b0e4f-aacb-46f9-a154-2e9294ead37d",
+        "502f847b-9c75-4466-91e7-050c869ca289",
+        "d8a2aa5d-3072-4c5a-9c5c-eeec97fcfdfa"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "主张1：核心偿付能力充足率为124.07%，主张2：综合偿付能力充足率为217.55%。上下文（node_id:f9a69e1b-11ca-4ba9-8cf7-49d53459c78c）明确记载2024年12月31日新华人寿保险核心偿付能力充足率为124.07%，综合偿付能力充足率为217.55%。两项主张均被直接支持。",
+      "regenerated_citations": [
+        "f9a69e1b-11ca-4ba9-8cf7-49d53459c78c"
+      ]
+    }
   },
-  "node_ids": [
-    "2a5c7e9a-83ef-4c52-8345-2ab451cf3e30",
-    "d5013b25-f2db-4e29-946d-4205085666c1"
-  ],
-  "create_time": "2026-04-10 16:15:50",
-  "state": 2
-},
-{
-  "_id": {
-    "$oid": "69d8b1d6798ee4ca8cfe5761"
+  {
+    "_id": {
+      "$oid": "69f1b3b561e439da7efe16a4"
+    },
+    "question": "2024年平安寿险代理人渠道和银保渠道的新业务价值同比增长率分别是多少？",
+    "answer": "代理人渠道新业务价值同比增长26.5%，银保渠道新业务价值同比增长62.7%。",
+    "language": "zh-cn",
+    "difficulty": "easy",
+    "intent": "comparison",
+    "metadata": {
+      "file_name": "ping_an_group_annual_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/333/download",
+      "file_type": "pdf",
+      "file_size": 588291,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "四、 重要事项",
+      "page": 10,
+      "chunk_index": 23,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "870c23a3-8853-4ac9-b6b0-9bf4256d9195",
+      "6471ead8-e32e-4cef-b87d-984f5551069b"
+    ],
+    "create_time": "2026-04-29 15:29:58",
+    "state": 2,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "6471ead8-e32e-4cef-b87d-984f5551069b",
+        "ac7ddacf-9a97-4f20-8c86-cd586852482e",
+        "870c23a3-8853-4ac9-b6b0-9bf4256d9195",
+        "92a67d98-6919-4ddb-b547-3090b4bd5bd6",
+        "7c01a56c-1386-4b51-bb54-217c609bde51",
+        "74a8ddd0-351f-4994-9b29-81063cd71828",
+        "c4ab3298-4409-4363-8bba-75fac5d8da2e",
+        "9b279f96-a39e-428a-bf99-f118ab4c176c",
+        "ad20da09-e065-4eba-a684-923624f933c1",
+        "8a134cf6-43ac-4a74-aba9-0d3ef5c9b3a8",
+        "0ccf31ce-408d-4e21-9cda-5b3ee851a127"
+      ],
+      "rerank_node_ids": [
+        "6471ead8-e32e-4cef-b87d-984f5551069b",
+        "870c23a3-8853-4ac9-b6b0-9bf4256d9195",
+        "ac7ddacf-9a97-4f20-8c86-cd586852482e",
+        "92a67d98-6919-4ddb-b547-3090b4bd5bd6",
+        "9b279f96-a39e-428a-bf99-f118ab4c176c"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "主张1（代理人渠道新业务价值同比增长26.5%）被context记录直接支持。主张2（银保渠道新业务价值同比增长62.7%）也被context记录直接支持。两者均可在上下文中找到明确支撑。",
+      "regenerated_citations": [
+        "6471ead8-e32e-4cef-b87d-984f5551069b",
+        "870c23a3-8853-4ac9-b6b0-9bf4256d9195"
+      ]
+    }
   },
-  "question": "根据斯里兰卡保险监管委员会第16号指令，一次性盈余从保单持有人基金转移到股东基金后，这些资金的投资限制是什么？",
-  "answer": "根据IRCSL第16号指令，转移到股东基金的一次性盈余必须投资于政府债务证券和存款，并且作为限制性监管准备金的一部分，只有在满足IRCSL规定的治理要求并获得IRCSL批准后才能作为股息分配。",
-  "language": "zh-cn",
-  "difficulty": "medium",
-  "intent": "analysis",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 620486,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "8 FINANCE COST",
-    "page": 14,
-    "chunk_index": 31,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
-    "version": 1
+  {
+    "_id": {
+      "$oid": "69f1b3b561e439da7efe16a5"
+    },
+    "question": "2024年平安寿险13个月和25个月保单继续率同比分别上升了多少个百分点？",
+    "answer": "13个月保单继续率同比上升3.6个百分点，25个月保单继续率同比上升3.9个百分点。",
+    "language": "zh-cn",
+    "difficulty": "easy",
+    "intent": "comparison",
+    "metadata": {
+      "file_name": "ping_an_group_annual_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/333/download",
+      "file_type": "pdf",
+      "file_size": 588291,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "四、 重要事项",
+      "page": 10,
+      "chunk_index": 23,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "870c23a3-8853-4ac9-b6b0-9bf4256d9195",
+      "6471ead8-e32e-4cef-b87d-984f5551069b"
+    ],
+    "create_time": "2026-04-29 15:29:58",
+    "state": 0,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "74a8ddd0-351f-4994-9b29-81063cd71828",
+        "ac7ddacf-9a97-4f20-8c86-cd586852482e",
+        "6471ead8-e32e-4cef-b87d-984f5551069b",
+        "be4fedf5-b0b0-4ea0-9e9f-485e83b05b43",
+        "870c23a3-8853-4ac9-b6b0-9bf4256d9195",
+        "541b4222-087b-4701-8833-f3565a3a2488",
+        "895c04f9-1943-4b09-9207-1eaccd961c4d",
+        "8479143c-cd9a-405a-9250-c3599765df9b",
+        "1dc444de-f105-4024-8a8b-b4c35b2d0c71",
+        "a2392410-7dc0-44e7-8b21-2970a7e43a97"
+      ],
+      "rerank_node_ids": [
+        "870c23a3-8853-4ac9-b6b0-9bf4256d9195",
+        "74a8ddd0-351f-4994-9b29-81063cd71828",
+        "ac7ddacf-9a97-4f20-8c86-cd586852482e",
+        "6471ead8-e32e-4cef-b87d-984f5551069b",
+        "be4fedf5-b0b0-4ea0-9e9f-485e83b05b43"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "回答包含两个事实主张：1. 13个月保单继续率同比上升3.6个百分点；2. 25个月保单继续率同比上升3.9个百分点。上下文两处（870c23a3-8853-4ac9-b6b0-9bf4256d9195 和 6471ead8-e32e-4cef-b87d-984f5551069b）均明确给出了相同数据，直接支持回答所有事实主张。",
+      "regenerated_citations": [
+        "870c23a3-8853-4ac9-b6b0-9bf4256d9195",
+        "74a8ddd0-351f-4994-9b29-81063cd71828",
+        "ac7ddacf-9a97-4f20-8c86-cd586852482e"
+      ]
+    }
   },
-  "node_ids": [
-    "1179db20-0a86-4e79-b5bd-ae367d027210",
-    "c4b83029-4c62-4941-a433-d180a8eb65f8",
-    "09b5ac40-444f-4ebb-a1c1-6499f138c235"
-  ],
-  "create_time": "2026-04-10 16:16:22",
-  "state": 2
-},
-{
-  "_id": {
-    "$oid": "69d8b1d6798ee4ca8cfe5762"
+  {
+    "_id": {
+      "$oid": "69f1b40361e439da7efe16a6"
+    },
+    "question": "2024年平安寿险13个月保单继续率和25个月保单继续率分别是多少？相比2023年分别上升了多少个百分点？",
+    "answer": "2024年平安寿险13个月保单继续率为96.4%，同比上升3.6个百分点；25个月保单继续率为89.7%，同比上升3.9个百分点。",
+    "language": "zh-cn",
+    "difficulty": "easy",
+    "intent": "factoid",
+    "metadata": {
+      "file_name": "ping_an_group_annual_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/333/download",
+      "file_type": "pdf",
+      "file_size": 588291,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "4.4.2 寿险及健康险业务",
+      "page": 15,
+      "chunk_index": 38,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "6471ead8-e32e-4cef-b87d-984f5551069b",
+      "ac7ddacf-9a97-4f20-8c86-cd586852482e"
+    ],
+    "create_time": "2026-04-29 15:31:45",
+    "state": 0,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "ac7ddacf-9a97-4f20-8c86-cd586852482e",
+        "74a8ddd0-351f-4994-9b29-81063cd71828",
+        "6471ead8-e32e-4cef-b87d-984f5551069b",
+        "895c04f9-1943-4b09-9207-1eaccd961c4d",
+        "be4fedf5-b0b0-4ea0-9e9f-485e83b05b43",
+        "a2392410-7dc0-44e7-8b21-2970a7e43a97",
+        "870c23a3-8853-4ac9-b6b0-9bf4256d9195",
+        "541b4222-087b-4701-8833-f3565a3a2488",
+        "31c0e84e-5e5b-4533-97f2-76f867e44b49",
+        "8479143c-cd9a-405a-9250-c3599765df9b"
+      ],
+      "rerank_node_ids": [
+        "ac7ddacf-9a97-4f20-8c86-cd586852482e",
+        "74a8ddd0-351f-4994-9b29-81063cd71828",
+        "870c23a3-8853-4ac9-b6b0-9bf4256d9195",
+        "6471ead8-e32e-4cef-b87d-984f5551069b",
+        "541b4222-087b-4701-8833-f3565a3a2488"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "回答包含的两个主张：1）2024年平安寿险13个月保单继续率为96.4%，同比上升3.6个百分点；2）25个月保单继续率为89.7%，同比上升3.9个百分点。均可在context的ac7ddacf-9a97-4f20-8c86-cd586852482e节点直接找到对应数据和描述，事实主张与context完全一致。",
+      "regenerated_citations": [
+        "ac7ddacf-9a97-4f20-8c86-cd586852482e",
+        "74a8ddd0-351f-4994-9b29-81063cd71828",
+        "870c23a3-8853-4ac9-b6b0-9bf4256d9195"
+      ]
+    }
   },
-  "question": "What are the investment restrictions for One-off Surplus transferred from policyholder fund to shareholder fund according to IRCSL Direction No. 16?",
-  "answer": "According to IRCSL Direction No. 16, the One-off Surplus transferred to the shareholder fund must remain invested in government debt securities and deposits, and as part of the Restricted Regulatory Reserve, can only be released as dividends upon meeting governance requirements stipulated by the IRCSL and receiving approval from the IRCSL.",
-  "language": "en",
-  "difficulty": "medium",
-  "intent": "analysis",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 620486,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "8 FINANCE COST",
-    "page": 14,
-    "chunk_index": 31,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
-    "version": 1
+  {
+    "_id": {
+      "$oid": "69f1b40361e439da7efe16a7"
+    },
+    "question": "2024年平安寿险个人寿险销售代理人数量是多少？相比2023年有何变化？",
+    "answer": "截至2024年12月31日，平安寿险个人寿险销售代理人数量为36.3万，2023年同期为34.7万，增加了1.6万人。",
+    "language": "zh-cn",
+    "difficulty": "easy",
+    "intent": "factoid",
+    "metadata": {
+      "file_name": "ping_an_group_annual_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/333/download",
+      "file_type": "pdf",
+      "file_size": 588291,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "4.4.2 寿险及健康险业务",
+      "page": 15,
+      "chunk_index": 38,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "6471ead8-e32e-4cef-b87d-984f5551069b",
+      "ac7ddacf-9a97-4f20-8c86-cd586852482e"
+    ],
+    "create_time": "2026-04-29 15:31:45",
+    "state": 2,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "ac7ddacf-9a97-4f20-8c86-cd586852482e",
+        "6471ead8-e32e-4cef-b87d-984f5551069b",
+        "870c23a3-8853-4ac9-b6b0-9bf4256d9195",
+        "74a8ddd0-351f-4994-9b29-81063cd71828",
+        "7816c293-6de0-4dc5-8ddd-e915a3d2b67c",
+        "92a67d98-6919-4ddb-b547-3090b4bd5bd6",
+        "6cb5c84d-9554-446f-9bd9-7234c1d93377",
+        "81523494-cef2-469f-9885-56fcdb48383d",
+        "20fafa42-e29b-4fe7-95bd-918ed46bd0f3",
+        "a3ed0865-a95e-485b-b7d9-beebd6f4219a",
+        "d17f118a-2cad-4768-beef-5dd9901f75f6"
+      ],
+      "rerank_node_ids": [
+        "ac7ddacf-9a97-4f20-8c86-cd586852482e",
+        "6471ead8-e32e-4cef-b87d-984f5551069b",
+        "870c23a3-8853-4ac9-b6b0-9bf4256d9195",
+        "81523494-cef2-469f-9885-56fcdb48383d",
+        "74a8ddd0-351f-4994-9b29-81063cd71828"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "主张1：截至2024年12月31日，平安寿险个人寿险销售代理人数量为36.3万，得到支持（见第二段表格）。主张2：2023年同期为34.7万，也被支持（表格显示2023年末为34.7万）。主张3：增加了1.6万人，此为 36.3 - 34.7 = 1.6，合理归纳得出，计算正确。所有事实主张均被上下文直接或合理归纳支持。",
+      "regenerated_citations": [
+        "ac7ddacf-9a97-4f20-8c86-cd586852482e",
+        "6471ead8-e32e-4cef-b87d-984f5551069b",
+        "870c23a3-8853-4ac9-b6b0-9bf4256d9195"
+      ]
+    }
   },
-  "node_ids": [
-    "1179db20-0a86-4e79-b5bd-ae367d027210",
-    "c4b83029-4c62-4941-a433-d180a8eb65f8",
-    "09b5ac40-444f-4ebb-a1c1-6499f138c235"
-  ],
-  "create_time": "2026-04-10 16:16:22",
-  "state": 0
-},
-{
-  "_id": {
-    "$oid": "69d8b1d6798ee4ca8cfe5763"
+  {
+    "_id": {
+      "$oid": "69f1b43261e439da7efe16a8"
+    },
+    "question": "2024年平安寿险13个月保单继续率和25个月保单继续率分别同比上升了多少个百分点？",
+    "answer": "13个月保单继续率同比上升3.6个百分点，25个月保单继续率同比上升3.9个百分点。",
+    "language": "zh-cn",
+    "difficulty": "easy",
+    "intent": "factoid",
+    "metadata": {
+      "file_name": "ping_an_group_annual_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/333/download",
+      "file_type": "pdf",
+      "file_size": 588291,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "4.4.2 寿险及健康险业务",
+      "page": 15,
+      "chunk_index": 39,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "74a8ddd0-351f-4994-9b29-81063cd71828",
+      "ac7ddacf-9a97-4f20-8c86-cd586852482e"
+    ],
+    "create_time": "2026-04-29 15:32:25",
+    "state": 2,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "74a8ddd0-351f-4994-9b29-81063cd71828",
+        "ac7ddacf-9a97-4f20-8c86-cd586852482e",
+        "6471ead8-e32e-4cef-b87d-984f5551069b",
+        "be4fedf5-b0b0-4ea0-9e9f-485e83b05b43",
+        "895c04f9-1943-4b09-9207-1eaccd961c4d",
+        "a2392410-7dc0-44e7-8b21-2970a7e43a97",
+        "870c23a3-8853-4ac9-b6b0-9bf4256d9195",
+        "541b4222-087b-4701-8833-f3565a3a2488",
+        "8479143c-cd9a-405a-9250-c3599765df9b",
+        "31c0e84e-5e5b-4533-97f2-76f867e44b49"
+      ],
+      "rerank_node_ids": [
+        "74a8ddd0-351f-4994-9b29-81063cd71828",
+        "870c23a3-8853-4ac9-b6b0-9bf4256d9195",
+        "ac7ddacf-9a97-4f20-8c86-cd586852482e",
+        "6471ead8-e32e-4cef-b87d-984f5551069b",
+        "be4fedf5-b0b0-4ea0-9e9f-485e83b05b43"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "主张“13个月保单继续率同比上升3.6个百分点，25个月保单继续率同比上升3.9个百分点”在上下文中被直接支持，具体数据及同比变动均在上下文列出。",
+      "regenerated_citations": [
+        "74a8ddd0-351f-4994-9b29-81063cd71828",
+        "870c23a3-8853-4ac9-b6b0-9bf4256d9195",
+        "ac7ddacf-9a97-4f20-8c86-cd586852482e"
+      ]
+    }
   },
-  "question": "一次性盈余转移的会计处理在财务报表中如何体现？",
-  "answer": "一次性盈余转移在损益表中作为单独项目列示为\"因一次性盈余转移导致的合同负债变动\"，在财务状况表中作为权益下的单独准备金列示为\"限制性监管准备金\"。",
-  "language": "zh-cn",
-  "difficulty": "medium",
-  "intent": "factoid",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 620486,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "8 FINANCE COST",
-    "page": 14,
-    "chunk_index": 31,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
-    "version": 1
-  },
-  "node_ids": [
-    "1179db20-0a86-4e79-b5bd-ae367d027210",
-    "c4b83029-4c62-4941-a433-d180a8eb65f8",
-    "09b5ac40-444f-4ebb-a1c1-6499f138c235"
-  ],
-  "create_time": "2026-04-10 16:16:22",
-  "state": 0
-},
-{
-  "_id": {
-    "$oid": "69d8b1d6798ee4ca8cfe5764"
-  },
-  "question": "How is the accounting treatment of One-off Surplus transfer presented in the financial statements?",
-  "answer": "The transfer of One-off Surplus is presented as a separate line item in the Income Statement as \"Change in contract liability due to transfer of One-off surplus\" and as a separate reserve in the Statement of Financial Position as \"Restricted Regulatory Reserve\" under Equity.",
-  "language": "en",
-  "difficulty": "medium",
-  "intent": "factoid",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 620486,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "8 FINANCE COST",
-    "page": 14,
-    "chunk_index": 31,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
-    "version": 1
-  },
-  "node_ids": [
-    "1179db20-0a86-4e79-b5bd-ae367d027210",
-    "c4b83029-4c62-4941-a433-d180a8eb65f8",
-    "09b5ac40-444f-4ebb-a1c1-6499f138c235"
-  ],
-  "create_time": "2026-04-10 16:16:22",
-  "state": 2
-},
-{
-  "_id": {
-    "$oid": "69d8b26a798ee4ca8cfe5765"
-  },
-  "question": "Compare the basic/diluted EPS (Earnings Per Share) performance of Softlogic Life Insurance PLC across the three reporting periods: September 2025, June 2024, and December 2020.",
-  "answer": "The basic/diluted EPS for Softlogic Life Insurance PLC shows varying performance across the three periods: For September 2025, EPS was Rs. 7.24 (Group and Company). For June 2024, EPS was Rs. 5.48. For December 2020, EPS was Rs. 4.06. This indicates an overall improvement in EPS from December 2020 (Rs. 4.06) to September 2025 (Rs. 7.24), with June 2024 showing intermediate performance at Rs. 5.48.",
-  "language": "en",
-  "difficulty": "medium",
-  "intent": "comparison",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 620486,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "13.2 Contingencies",
-    "page": 18,
-    "chunk_index": 38,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
-    "version": 1
-  },
-  "node_ids": [
-    "9b596a1a-a55a-494a-b0ef-88c602d18a12",
-    "b78df78c-16bf-4798-a08e-71b0fe291f7a",
-    "6f28c648-40de-4e6f-9dde-5b3ff8490e48"
-  ],
-  "create_time": "2026-04-10 16:18:50",
-  "state": 2
-},
-{
-  "_id": {
-    "$oid": "69d8b26a798ee4ca8cfe5766"
-  },
-  "question": "Analyze the trend in net assets per share (excluding one-off surplus) for Softlogic Life Insurance PLC from December 2020 to September 2025 across the three reporting periods.",
-  "answer": "The net assets per share (excluding one-off surplus) for Softlogic Life Insurance PLC shows a consistent upward trend: December 2020: Rs. 24.37, June 2024: Rs. 33.43, September 2025: Rs. 34.25 (Company). This represents an increase of approximately 40% from December 2020 to September 2025, indicating steady growth in the company's net asset value per share over this period.",
-  "language": "en",
-  "difficulty": "medium",
-  "intent": "analysis",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 620486,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "13.2 Contingencies",
-    "page": 18,
-    "chunk_index": 38,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
-    "version": 1
-  },
-  "node_ids": [
-    "9b596a1a-a55a-494a-b0ef-88c602d18a12",
-    "b78df78c-16bf-4798-a08e-71b0fe291f7a",
-    "6f28c648-40de-4e6f-9dde-5b3ff8490e48"
-  ],
-  "create_time": "2026-04-10 16:18:50",
-  "state": 0
-},
-{
-  "_id": {
-    "$oid": "69d8b26a798ee4ca8cfe5767"
-  },
-  "question": "比较Softlogic Life Insurance PLC在三个报告期间（2025年9月、2024年6月和2020年12月）的基本/稀释每股收益（EPS）表现。",
-  "answer": "Softlogic Life Insurance PLC在三个报告期间的每股收益表现如下：2025年9月：每股收益为7.24卢比（集团和公司）。2024年6月：每股收益为5.48卢比。2020年12月：每股收益为4.06卢比。这表明从2020年12月（4.06卢比）到2025年9月（7.24卢比），每股收益整体呈上升趋势，2024年6月（5.48卢比）处于中间水平。",
-  "language": "zh-cn",
-  "difficulty": "medium",
-  "intent": "comparison",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 620486,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "13.2 Contingencies",
-    "page": 18,
-    "chunk_index": 38,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
-    "version": 1
-  },
-  "node_ids": [
-    "9b596a1a-a55a-494a-b0ef-88c602d18a12",
-    "b78df78c-16bf-4798-a08e-71b0fe291f7a",
-    "6f28c648-40de-4e6f-9dde-5b3ff8490e48"
-  ],
-  "create_time": "2026-04-10 16:18:50",
-  "state": 2
-},
-{
-  "_id": {
-    "$oid": "69d8b26a798ee4ca8cfe5768"
-  },
-  "question": "分析Softlogic Life Insurance PLC从2020年12月到2025年9月三个报告期间每股净资产（扣除一次性盈余）的变化趋势。",
-  "answer": "Softlogic Life Insurance PLC的每股净资产（扣除一次性盈余）呈现持续上升趋势：2020年12月：24.37卢比，2024年6月：33.43卢比，2025年9月：34.25卢比（公司）。从2020年12月到2025年9月，每股净资产增长了约40%，表明在此期间公司每股净资产价值稳步增长。",
-  "language": "zh-cn",
-  "difficulty": "medium",
-  "intent": "analysis",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_path": "/public/uploads/TQ/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 620486,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "13.2 Contingencies",
-    "page": 18,
-    "chunk_index": 38,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 2,
-    "department_name": "TQ",
-    "version": 1
-  },
-  "node_ids": [
-    "9b596a1a-a55a-494a-b0ef-88c602d18a12",
-    "b78df78c-16bf-4798-a08e-71b0fe291f7a",
-    "6f28c648-40de-4e6f-9dde-5b3ff8490e48"
-  ],
-  "create_time": "2026-04-10 16:18:50",
-  "state": 2
-},
-{
-  "_id": {
-    "$oid": "69d8b2b6798ee4ca8cfe5769"
-  },
-  "question": "What was the percentage change in profit before tax for Softlogic Life Insurance PLC between the period ended 31 March 2024 and 31 March 2025?",
-  "answer": "The profit before tax decreased by 44% from Rs. 1,196,172,000 in the period ended 31 March 2024 to Rs. 668,140,000 in the period ended 31 March 2025.",
-  "language": "en",
-  "difficulty": "medium",
-  "intent": "comparison",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the period ended 31st March 2025.pdf",
-    "file_path": "/public/uploads/OE/Interim Financial Statements for the period ended 31st March 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 525707,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "",
-    "page": 2,
-    "chunk_index": 2,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 1,
-    "department_name": "OE",
-    "version": 1
-  },
-  "node_ids": [
-    "1430d624-2080-4a0a-9047-2fd7408a6415"
-  ],
-  "create_time": "2026-04-10 16:20:06",
-  "state": 2
-},
-{
-  "_id": {
-    "$oid": "69d8b2b6798ee4ca8cfe576a"
-  },
-  "question": "How did Softlogic Life Insurance PLC's total net revenue change between the period ended 30 September 2023 and 30 September 2024?",
-  "answer": "Total net revenue increased by 21% from Rs. 22,707,909,000 in the period ended 30 September 2023 to Rs. 27,481,554,000 in the period ended 30 September 2024.",
-  "language": "en",
-  "difficulty": "medium",
-  "intent": "comparison",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the period ended 31st March 2025.pdf",
-    "file_path": "/public/uploads/OE/Interim Financial Statements for the period ended 31st March 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 525707,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "",
-    "page": 2,
-    "chunk_index": 2,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 1,
-    "department_name": "OE",
-    "version": 1
-  },
-  "node_ids": [
-    "114320c1-0734-41be-b18d-3f4aff45f22f"
-  ],
-  "create_time": "2026-04-10 16:20:06",
-  "state": 0
-},
-{
-  "_id": {
-    "$oid": "69d8b2b6798ee4ca8cfe576b"
-  },
-  "question": "Softlogic Life Insurance PLC在截至2024年3月31日和2025年3月31日的期间，税前利润的百分比变化是多少？",
-  "answer": "税前利润从2024年3月31日期间的1,196,172,000卢比下降到2025年3月31日期间的668,140,000卢比，下降了44%。",
-  "language": "zh-cn",
-  "difficulty": "medium",
-  "intent": "comparison",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the period ended 31st March 2025.pdf",
-    "file_path": "/public/uploads/OE/Interim Financial Statements for the period ended 31st March 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 525707,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "",
-    "page": 2,
-    "chunk_index": 2,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 1,
-    "department_name": "OE",
-    "version": 1
-  },
-  "node_ids": [
-    "1430d624-2080-4a0a-9047-2fd7408a6415"
-  ],
-  "create_time": "2026-04-10 16:20:06",
-  "state": 0
-},
-{
-  "_id": {
-    "$oid": "69d8b2b6798ee4ca8cfe576c"
-  },
-  "question": "Softlogic Life Insurance PLC在截至2023年9月30日和2024年9月30日的期间，总净收入的百分比变化是多少？",
-  "answer": "总净收入从2023年9月30日期间的22,707,909,000卢比增加到2024年9月30日期间的27,481,554,000卢比，增长了21%。",
-  "language": "zh-cn",
-  "difficulty": "medium",
-  "intent": "comparison",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the period ended 31st March 2025.pdf",
-    "file_path": "/public/uploads/OE/Interim Financial Statements for the period ended 31st March 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 525707,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "",
-    "page": 2,
-    "chunk_index": 2,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 1,
-    "department_name": "OE",
-    "version": 1
-  },
-  "node_ids": [
-    "114320c1-0734-41be-b18d-3f4aff45f22f"
-  ],
-  "create_time": "2026-04-10 16:20:06",
-  "state": 2
-},
-{
-  "_id": {
-    "$oid": "69d8b2e7798ee4ca8cfe576d"
-  },
-  "question": "What was the percentage change in total assets for Softlogic Life Insurance PLC from 31 December 2023 to 31 March 2025?",
-  "answer": "Total assets increased from Rs. 51,339,422,000 as at 31 December 2023 to Rs. 54,748,685,000 as at 31 March 2025, representing an increase of approximately 6.64%.",
-  "language": "en",
-  "difficulty": "medium",
-  "intent": "analysis",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the period ended 31st March 2025.pdf",
-    "file_path": "/public/uploads/OE/Interim Financial Statements for the period ended 31st March 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 525707,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "",
-    "page": 4,
-    "chunk_index": 5,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 1,
-    "department_name": "OE",
-    "version": 1
-  },
-  "node_ids": [
-    "1bcc0379-0ce5-49fc-85a2-11fd60a4da1f",
-    "909a71e4-f555-4a23-acd2-a1f89ee79ae0"
-  ],
-  "create_time": "2026-04-10 16:20:55",
-  "state": 2
-},
-{
-  "_id": {
-    "$oid": "69d8b2e7798ee4ca8cfe576e"
-  },
-  "question": "How did the composition of liabilities change between 30 September 2024 and 31 March 2025 for Softlogic Life Insurance PLC?",
-  "answer": "Between 30 September 2024 and 31 March 2025, total liabilities increased from Rs. 40,893,682,000 to Rs. 44,471,489,000. Insurance contract liabilities increased from Rs. 31,203,237,000 to Rs. 34,701,861,000, loans and borrowings decreased from Rs. 4,760,153,000 to Rs. 3,143,348,000, and bank overdraft increased from Rs. 282,746,000 to Rs. 387,212,000.",
-  "language": "en",
-  "difficulty": "hard",
-  "intent": "comparison",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the period ended 31st March 2025.pdf",
-    "file_path": "/public/uploads/OE/Interim Financial Statements for the period ended 31st March 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 525707,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "",
-    "page": 4,
-    "chunk_index": 5,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 1,
-    "department_name": "OE",
-    "version": 1
-  },
-  "node_ids": [
-    "1bcc0379-0ce5-49fc-85a2-11fd60a4da1f",
-    "909a71e4-f555-4a23-acd2-a1f89ee79ae0"
-  ],
-  "create_time": "2026-04-10 16:20:55",
-  "state": 0
-},
-{
-  "_id": {
-    "$oid": "69d8b2e7798ee4ca8cfe576f"
-  },
-  "question": "Softlogic Life Insurance PLC的总资产从2023年12月31日到2025年3月31日的变化百分比是多少？",
-  "answer": "总资产从2023年12月31日的51,339,422,000卢比增加到2025年3月31日的54,748,685,000卢比，增长了约6.64%。",
-  "language": "zh-cn",
-  "difficulty": "medium",
-  "intent": "analysis",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the period ended 31st March 2025.pdf",
-    "file_path": "/public/uploads/OE/Interim Financial Statements for the period ended 31st March 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 525707,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "",
-    "page": 4,
-    "chunk_index": 5,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 1,
-    "department_name": "OE",
-    "version": 1
-  },
-  "node_ids": [
-    "1bcc0379-0ce5-49fc-85a2-11fd60a4da1f",
-    "909a71e4-f555-4a23-acd2-a1f89ee79ae0"
-  ],
-  "create_time": "2026-04-10 16:20:55",
-  "state": 2
-},
-{
-  "_id": {
-    "$oid": "69d8b2e7798ee4ca8cfe5770"
-  },
-  "question": "Softlogic Life Insurance PLC的负债构成在2024年9月30日至2025年3月31日期间发生了哪些变化？",
-  "answer": "在2024年9月30日至2025年3月31日期间，总负债从40,893,682,000卢比增加到44,471,489,000卢比。保险合同负债从31,203,237,000卢比增加到34,701,861,000卢比，贷款和借款从4,760,153,000卢比减少到3,143,348,000卢比，银行透支从282,746,000卢比增加到387,212,000卢比。",
-  "language": "zh-cn",
-  "difficulty": "hard",
-  "intent": "comparison",
-  "metadata": {
-    "file_name": "Interim Financial Statements for the period ended 31st March 2025.pdf",
-    "file_path": "/public/uploads/OE/Interim Financial Statements for the period ended 31st March 2025.pdf",
-    "file_type": "pdf",
-    "file_size": 525707,
-    "source": "pdf",
-    "sheet_name": "",
-    "section_title": "",
-    "page": 4,
-    "chunk_index": 5,
-    "user_id": 1,
-    "user_name": "EdenXie",
-    "department_id": 1,
-    "department_name": "OE",
-    "version": 1
-  },
-  "node_ids": [
-    "1bcc0379-0ce5-49fc-85a2-11fd60a4da1f",
-    "909a71e4-f555-4a23-acd2-a1f89ee79ae0"
-  ],
-  "create_time": "2026-04-10 16:20:55",
-  "state": 2
-}]
+  {
+    "_id": {
+      "$oid": "69f1b43261e439da7efe16a9"
+    },
+    "question": "2024年平安寿险13个月保单继续率和25个月保单继续率的具体数值分别是多少？",
+    "answer": "13个月保单继续率为96.4%，25个月保单继续率为89.7%。",
+    "language": "zh-cn",
+    "difficulty": "easy",
+    "intent": "factoid",
+    "metadata": {
+      "file_name": "ping_an_group_annual_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/333/download",
+      "file_type": "pdf",
+      "file_size": 588291,
+      "source": "pdf",
+      "sheet_name": "",
+      "section_title": "4.4.2 寿险及健康险业务",
+      "page": 15,
+      "chunk_index": 39,
+      "user_id": 1,
+      "user_name": "EdenXie",
+      "department_id": 1,
+      "department_name": "Admin",
+      "version": 1
+    },
+    "node_ids": [
+      "74a8ddd0-351f-4994-9b29-81063cd71828",
+      "ac7ddacf-9a97-4f20-8c86-cd586852482e"
+    ],
+    "create_time": "2026-04-29 15:32:25",
+    "state": 0,
+    "verification": {
+      "passed": true,
+      "reason": "verified",
+      "retrieval_candidate_node_ids": [
+        "74a8ddd0-351f-4994-9b29-81063cd71828",
+        "ac7ddacf-9a97-4f20-8c86-cd586852482e",
+        "6471ead8-e32e-4cef-b87d-984f5551069b",
+        "a2392410-7dc0-44e7-8b21-2970a7e43a97",
+        "895c04f9-1943-4b09-9207-1eaccd961c4d",
+        "be4fedf5-b0b0-4ea0-9e9f-485e83b05b43",
+        "31c0e84e-5e5b-4533-97f2-76f867e44b49",
+        "870c23a3-8853-4ac9-b6b0-9bf4256d9195",
+        "541b4222-087b-4701-8833-f3565a3a2488"
+      ],
+      "rerank_node_ids": [
+        "74a8ddd0-351f-4994-9b29-81063cd71828",
+        "870c23a3-8853-4ac9-b6b0-9bf4256d9195",
+        "ac7ddacf-9a97-4f20-8c86-cd586852482e",
+        "895c04f9-1943-4b09-9207-1eaccd961c4d",
+        "31c0e84e-5e5b-4533-97f2-76f867e44b49"
+      ],
+      "retrieval_coverage": true,
+      "rerank_coverage": true,
+      "answer_score": 1.0,
+      "threshold": 0.92,
+      "support_reason": "主张1：13个月保单继续率为96.4%，主张2：25个月保单继续率为89.7%。二者都能在context中ac7ddacf节点直接找到支持。",
+      "regenerated_citations": [
+        "ac7ddacf-9a97-4f20-8c86-cd586852482e"
+      ]
+    }
+  }
+]

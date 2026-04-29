@@ -1,15 +1,16 @@
 {
-"role": [
-	{
-		"role_id" : 1,
-		"role_name" : "CEO"
-	},
-	{
-		"role_id" : 2,
-		"role_name" : "Supervisor"
-	},
-	{
-		"role_id" : 3,
-		"role_name" : "Manager"
-	}
-]}
+  "role": [
+    {
+      "role_id": 2,
+      "role_name": "Supervisor"
+    },
+    {
+      "role_id": 3,
+      "role_name": "Manager"
+    },
+    {
+      "role_id": 1,
+      "role_name": "默认权限角色"
+    }
+  ]
+}

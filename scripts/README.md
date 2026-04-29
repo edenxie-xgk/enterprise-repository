@@ -41,6 +41,7 @@ python scripts/init_project.py --seed-file db/seed/bootstrap_seed.example.json
 - `--schema-only`：只初始化 schema，不导入种子数据
 - `--seed-only`：只导入种子数据，要求 schema 已存在
 - `--seed-file`：指定种子文件路径
+- `--verification-answer-score-threshold`：指定生成分数不低于多少[0,1]
 
 脚本最终会输出一份 JSON 摘要。
 

@@ -1,11 +1,22 @@
 {
-"users": [
-	{
-		"id" : 1,
-		"username" : "EdenXie",
-		"password" : "e10adc3949ba59abbe56e057f20f883e",
-		"dept_id" : 1,
-		"role_id" : 1,
-		"create_time" : "2026-03-12 22:27:36"
-	}
-]}
+  "users": [
+    {
+      "id": 2,
+      "username": "admin",
+      "password": "$2b$12$OAY05YdKLqurL1BOSkVb8ui5VkNVIZkK1ZC2aAL/qmgPa/HVauqZi",
+      "dept_id": 1,
+      "role_id": 1,
+      "create_time": "2026-04-28 14:47:45",
+      "user_type": "admin"
+    },
+    {
+      "id": 1,
+      "username": "EdenXie",
+      "password": "$2b$12$S3/aKtpc2B4MfinKsqJo7ubUAkX/OXq60FNVTCEfvn8boEUCXdk/m",
+      "dept_id": 1,
+      "role_id": 1,
+      "create_time": "2026-03-12 22:27:36",
+      "user_type": "admin"
+    }
+  ]
+}

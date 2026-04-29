@@ -1,293 +1,134 @@
 {
-"file": [
-	{
-		"file_id" : 295,
-		"user_id" : 1,
-		"dept_id" : 2,
-		"create_time" : "2026-04-10 11:27:00",
-		"file_name" : "Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-		"file_path" : "\/public\/uploads\/TQ\/Interim Financial Statements for the Quarter ended 30th September 2025.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 297,
-		"user_id" : 1,
-		"dept_id" : 1,
-		"create_time" : "2026-04-10 11:27:02",
-		"file_name" : "Interim Financial Statements for the period ended 31st March 2025.pdf",
-		"file_path" : "\/public\/uploads\/OE\/Interim Financial Statements for the period ended 31st March 2025.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 299,
-		"user_id" : 1,
-		"dept_id" : 1,
-		"create_time" : "2026-04-10 11:27:02",
-		"file_name" : "Interim Financial Statements for the period ended 30th September 2024.pdf",
-		"file_path" : "\/public\/uploads\/OE\/Interim Financial Statements for the period ended 30th September 2024.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 302,
-		"user_id" : 1,
-		"dept_id" : 3,
-		"create_time" : "2026-04-10 11:27:03",
-		"file_name" : "Quarterly Financial Report as at 30.09.2023.pdf",
-		"file_path" : "\/public\/uploads\/HR\/Quarterly Financial Report as at 30.09.2023.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 296,
-		"user_id" : 1,
-		"dept_id" : 3,
-		"create_time" : "2026-04-10 11:27:02",
-		"file_name" : "Interim Financial Statements for the period ended 30 June 2025.pdf",
-		"file_path" : "\/public\/uploads\/HR\/Interim Financial Statements for the period ended 30 June 2025.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 298,
-		"user_id" : 1,
-		"dept_id" : 3,
-		"create_time" : "2026-04-10 11:27:02",
-		"file_name" : "Interim Financial Statements for the period ended 31st December 2024.pdf",
-		"file_path" : "\/public\/uploads\/HR\/Interim Financial Statements for the period ended 31st December 2024.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 294,
-		"user_id" : 1,
-		"dept_id" : 1,
-		"create_time" : "2026-04-10 11:27:00",
-		"file_name" : "Interim Financial Statements for the Quarter ended 31st December 2025.pdf",
-		"file_path" : "\/public\/uploads\/OE\/Interim Financial Statements for the Quarter ended 31st December 2025.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 301,
-		"user_id" : 1,
-		"dept_id" : 3,
-		"create_time" : "2026-04-10 11:27:02",
-		"file_name" : "Interim Financial Statement for the period ended 31st March 2024.pdf",
-		"file_path" : "\/public\/uploads\/HR\/Interim Financial Statement for the period ended 31st March 2024.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 300,
-		"user_id" : 1,
-		"dept_id" : 2,
-		"create_time" : "2026-04-10 11:27:02",
-		"file_name" : "Interim Financial Statements - For the period ended 30 June 2024 .pdf",
-		"file_path" : "\/public\/uploads\/TQ\/Interim Financial Statements - For the period ended 30 June 2024 .pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 303,
-		"user_id" : 1,
-		"dept_id" : 2,
-		"create_time" : "2026-04-10 11:27:03",
-		"file_name" : "Interim Financial Statment for the period ended 31st December  2023.pdf",
-		"file_path" : "\/public\/uploads\/TQ\/Interim Financial Statment for the period ended 31st December  2023.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 304,
-		"user_id" : 1,
-		"dept_id" : 1,
-		"create_time" : "2026-04-10 11:27:04",
-		"file_name" : "Quarterly Financial Report as at 30-06-2023.pdf",
-		"file_path" : "\/public\/uploads\/OE\/Quarterly Financial Report as at 30-06-2023.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 305,
-		"user_id" : 1,
-		"dept_id" : 2,
-		"create_time" : "2026-04-10 11:27:05",
-		"file_name" : "Quarterly Financial Report as at 31-03-2023.pdf",
-		"file_path" : "\/public\/uploads\/TQ\/Quarterly Financial Report as at 31-03-2023.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 307,
-		"user_id" : 1,
-		"dept_id" : 2,
-		"create_time" : "2026-04-10 11:27:05",
-		"file_name" : "Quarterly Financial Report as at 30th September 2022.pdf",
-		"file_path" : "\/public\/uploads\/TQ\/Quarterly Financial Report as at 30th September 2022.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 306,
-		"user_id" : 1,
-		"dept_id" : 1,
-		"create_time" : "2026-04-10 11:27:05",
-		"file_name" : "Quarterly Financial Report as at 31st December 2022.pdf",
-		"file_path" : "\/public\/uploads\/OE\/Quarterly Financial Report as at 31st December 2022.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 308,
-		"user_id" : 1,
-		"dept_id" : 3,
-		"create_time" : "2026-04-10 11:27:05",
-		"file_name" : "Quarterly Financial Report as at 30th June 2022.pdf",
-		"file_path" : "\/public\/uploads\/HR\/Quarterly Financial Report as at 30th June 2022.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 309,
-		"user_id" : 1,
-		"dept_id" : 1,
-		"create_time" : "2026-04-10 11:27:06",
-		"file_name" : "Interim Financial Statements as of 31.03.2022.pdf",
-		"file_path" : "\/public\/uploads\/OE\/Interim Financial Statements as of 31.03.2022.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 310,
-		"user_id" : 1,
-		"dept_id" : 3,
-		"create_time" : "2026-04-10 11:27:06",
-		"file_name" : "Quarterly Financial Report as at 31st December 2021.pdf",
-		"file_path" : "\/public\/uploads\/HR\/Quarterly Financial Report as at 31st December 2021.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 311,
-		"user_id" : 1,
-		"dept_id" : 1,
-		"create_time" : "2026-04-10 11:27:06",
-		"file_name" : "Quarterly Financial Report as at 30th September 2021.pdf",
-		"file_path" : "\/public\/uploads\/OE\/Quarterly Financial Report as at 30th September 2021.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 312,
-		"user_id" : 1,
-		"dept_id" : 2,
-		"create_time" : "2026-04-10 11:27:06",
-		"file_name" : "Quarterly Financial Report as at 30th June 2021.pdf",
-		"file_path" : "\/public\/uploads\/TQ\/Quarterly Financial Report as at 30th June 2021.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 313,
-		"user_id" : 1,
-		"dept_id" : 3,
-		"create_time" : "2026-04-10 11:27:06",
-		"file_name" : "Quarterly Financial Report as at 31st March 2021.pdf",
-		"file_path" : "\/public\/uploads\/HR\/Quarterly Financial Report as at 31st March 2021.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 317,
-		"user_id" : 1,
-		"dept_id" : 2,
-		"create_time" : "2026-04-10 11:27:07",
-		"file_name" : "Interim Financial Statements 31-12-2020.pdf",
-		"file_path" : "\/public\/uploads\/TQ\/Interim Financial Statements 31-12-2020.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 318,
-		"user_id" : 1,
-		"dept_id" : 3,
-		"create_time" : "2026-04-10 11:27:07",
-		"file_name" : "Interim Financial Statements as of 30-09-2020.pdf",
-		"file_path" : "\/public\/uploads\/HR\/Interim Financial Statements as of 30-09-2020.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 320,
-		"user_id" : 1,
-		"dept_id" : 1,
-		"create_time" : "2026-04-10 11:27:07",
-		"file_name" : "Quarterly Financial Report as at 30-06-2020.pdf",
-		"file_path" : "\/public\/uploads\/OE\/Quarterly Financial Report as at 30-06-2020.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 321,
-		"user_id" : 1,
-		"dept_id" : 2,
-		"create_time" : "2026-04-10 11:27:07",
-		"file_name" : "Interim Financial Statements as of 31-03-2020.pdf",
-		"file_path" : "\/public\/uploads\/TQ\/Interim Financial Statements as of 31-03-2020.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 316,
-		"user_id" : 1,
-		"dept_id" : 2,
-		"create_time" : "2026-04-10 11:27:06",
-		"file_name" : "Annual Report 2021.pdf",
-		"file_path" : "\/public\/uploads\/TQ\/Annual Report 2021.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 314,
-		"user_id" : 1,
-		"dept_id" : 3,
-		"create_time" : "2026-04-10 11:27:06",
-		"file_name" : "Annual Report 2022.pdf",
-		"file_path" : "\/public\/uploads\/HR\/Annual Report 2022.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 315,
-		"user_id" : 1,
-		"dept_id" : 1,
-		"create_time" : "2026-04-10 11:27:06",
-		"file_name" : "Annual Report 2023.pdf",
-		"file_path" : "\/public\/uploads\/OE\/Annual Report 2023.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 322,
-		"user_id" : 1,
-		"dept_id" : 1,
-		"create_time" : "2026-04-10 11:27:07",
-		"file_name" : "Annual Report 2020.pdf",
-		"file_path" : "\/public\/uploads\/OE\/Annual Report 2020.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	},
-	{
-		"file_id" : 319,
-		"user_id" : 1,
-		"dept_id" : 2,
-		"create_time" : "2026-04-10 11:27:07",
-		"file_name" : "Annual Report 2024.pdf",
-		"file_path" : "\/public\/uploads\/TQ\/Annual Report 2024.pdf",
-		"file_type" : "pdf",
-		"state" : "1"
-	}
-]}
+  "file": [
+    {
+      "file_id": 333,
+      "user_id": 1,
+      "dept_id": 1,
+      "create_time": "2026-04-29 10:16:38",
+      "file_name": "ping_an_group_annual_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/333/download",
+      "file_type": "pdf",
+      "state": "1"
+    },
+    {
+      "file_id": 334,
+      "user_id": 1,
+      "dept_id": 1,
+      "create_time": "2026-04-29 10:16:38",
+      "file_name": "xinhua_insurance_annual_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/334/download",
+      "file_type": "pdf",
+      "state": "1"
+    },
+    {
+      "file_id": 326,
+      "user_id": 1,
+      "dept_id": 1,
+      "create_time": "2026-04-29 10:16:35",
+      "file_name": "picc_group_operating_indicators_2024_zh.pdf",
+      "file_path": "/file/files/326/download",
+      "file_type": "pdf",
+      "state": "1"
+    },
+    {
+      "file_id": 332,
+      "user_id": 1,
+      "dept_id": 1,
+      "create_time": "2026-04-29 10:16:36",
+      "file_name": "xinhua_insurance_half_year_report_2024_zh.pdf",
+      "file_path": "/file/files/332/download",
+      "file_type": "pdf",
+      "state": "1"
+    },
+    {
+      "file_id": 328,
+      "user_id": 1,
+      "dept_id": 1,
+      "create_time": "2026-04-29 10:16:36",
+      "file_name": "china_life_annual_report_2024_zh.pdf",
+      "file_path": "/file/files/328/download",
+      "file_type": "pdf",
+      "state": "1"
+    },
+    {
+      "file_id": 330,
+      "user_id": 1,
+      "dept_id": 1,
+      "create_time": "2026-04-29 10:16:36",
+      "file_name": "picc_property_casualty_half_year_report_2024_zh.pdf",
+      "file_path": "/file/files/330/download",
+      "file_type": "pdf",
+      "state": "1"
+    },
+    {
+      "file_id": 335,
+      "user_id": 1,
+      "dept_id": 1,
+      "create_time": "2026-04-29 18:30:13",
+      "file_name": "xinhua_insurance_esg_report_2024_zh.pdf",
+      "file_path": "/file/files/335/download",
+      "file_type": "pdf",
+      "state": "4"
+    },
+    {
+      "file_id": 324,
+      "user_id": 1,
+      "dept_id": 1,
+      "create_time": "2026-04-29 10:16:33",
+      "file_name": "china_taibao_half_year_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/324/download",
+      "file_type": "pdf",
+      "state": "1"
+    },
+    {
+      "file_id": 325,
+      "user_id": 1,
+      "dept_id": 1,
+      "create_time": "2026-04-29 10:16:35",
+      "file_name": "china_life_q1_report_2024_zh.pdf",
+      "file_path": "/file/files/325/download",
+      "file_type": "pdf",
+      "state": "1"
+    },
+    {
+      "file_id": 329,
+      "user_id": 1,
+      "dept_id": 1,
+      "create_time": "2026-04-29 10:16:36",
+      "file_name": "manifest.csv",
+      "file_path": "/file/files/329/download",
+      "file_type": "csv",
+      "state": "1"
+    },
+    {
+      "file_id": 323,
+      "user_id": 1,
+      "dept_id": 1,
+      "create_time": "2026-04-29 10:16:33",
+      "file_name": "china_life_annual_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/323/download",
+      "file_type": "pdf",
+      "state": "1"
+    },
+    {
+      "file_id": 331,
+      "user_id": 1,
+      "dept_id": 1,
+      "create_time": "2026-04-29 10:16:36",
+      "file_name": "xinhua_insurance_esg_report_2024_zh.pdf",
+      "file_path": "/file/files/331/download",
+      "file_type": "pdf",
+      "state": "4"
+    },
+    {
+      "file_id": 327,
+      "user_id": 1,
+      "dept_id": 1,
+      "create_time": "2026-04-29 10:16:35",
+      "file_name": "china_life_half_year_report_summary_2024_zh.pdf",
+      "file_path": "/file/files/327/download",
+      "file_type": "pdf",
+      "state": "1"
+    }
+  ]
+}
