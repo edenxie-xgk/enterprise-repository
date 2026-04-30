@@ -350,7 +350,7 @@ OCR_MIN_SCORE=0.5
 | `scripts/import_db_exports.py` | 从 `db/` 导入 PostgreSQL / MongoDB 数据 |
 | `scripts/generate_qa_dataset.py` | 从已入库文档生成 QA 数据，或回滚 QA 源文档状态 |
 | `scripts/export_financial_fact_lora.py` | 从金融事实图谱导出 LoRA 训练 JSONL |
-| `scripts/prepare_financial_fact_lora_from_hf.py` | 从 Hugging Face 数据集准备金融事实 LoRA 训练 JSONL |
+| `scripts/prepare_financial_fact_lora_from_data.py` | 从本地 `data/` 目录准备金融事实 LoRA 训练 JSONL |
 | `scripts/train_financial_fact_extractor.py` | 训练金融事实抽取 LoRA 适配器 |
 
 训练相关依赖位于 `requirements-train.txt`。

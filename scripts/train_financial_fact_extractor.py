@@ -146,8 +146,8 @@ def _resolve_dtype(dtype_name: str):
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Train a LoRA adapter for the financial fact extraction model.")
-    parser.add_argument("--train-file", default="data/financial_fact_lora_from_hf.jsonl", help="Training JSONL file")
-    parser.add_argument("--model-name", required=True, help="Base Hugging Face causal LM")
+    parser.add_argument("--train-file", default="data/financial_fact_lora_from_data.jsonl", help="Training JSONL file")
+    parser.add_argument("--model-name", required=True, help="Base causal LM identifier or local path")
     parser.add_argument("--output-dir", default="outputs/financial_fact_extractor_lora", help="Adapter output directory")
     parser.add_argument("--max-length", type=int, default=2048, help="Maximum tokenized sequence length")
     parser.add_argument("--batch-size", type=int, default=1, help="Per-step batch size")
