@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 
 from src.config.llm_config import LLMService
 from src.prompts.rag.evaluate import EVAL_PROMPT
+from utils.logger_handler import logger
 
 
 class EvaluateAnswerResult(BaseModel):
@@ -24,4 +25,13 @@ def evaluate_answer(llm_service:BaseChatModel, query, gt, answer):
         schema=EvaluateAnswerResult
     )
 
-    return  result.score
+    if result is None:
+        logger.warning("[benchmark] answer judge returned empty structured payload")
+        return 0.0
+
+    score = getattr(result, "score", None)
+    if score is None:
+        logger.warning("[benchmark] answer judge payload missing score")
+        return 0.0
+
+    return float(score)

@@ -30,6 +30,13 @@ def evaluate_evidence(llm: BaseChatModel, query: str, context: str) -> EvidenceA
         messages=[HumanMessage(content=prompt)],
         schema=EvidenceAssessmentResult,
     )
+    if response is None:
+        return EvidenceAssessmentResult(
+            evidence_summary="",
+            citations=[],
+            is_sufficient=False,
+            fail_reason="insufficient_context",
+        )
     return response
 
 

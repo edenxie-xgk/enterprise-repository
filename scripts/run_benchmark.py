@@ -26,18 +26,44 @@ def resolve_output_path(raw_path: str) -> Path:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run offline QA benchmark from MongoDB QA data.")
     parser.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        help="Optional maximum number of QA rows to evaluate.",
+    )
+    parser.add_argument(
+        "--generation-workers",
+        type=int,
+        default=1,
+        help="Concurrent worker count for the generation evaluation stage.",
+    )
+    parser.add_argument(
         "--export-path",
         type=str,
         default=None,
         help="Optional JSON export path for the benchmark summary.",
     )
+    parser.add_argument(
+        "--no-details",
+        action="store_true",
+        help="Omit per-sample details from the benchmark output JSON.",
+    )
     return parser.parse_args()
 
 
-def run_benchmark() -> dict[str, Any]:
+def run_benchmark(
+    *,
+    generation_workers: int = 1,
+    limit: int | None = None,
+    include_details: bool = True,
+) -> dict[str, Any]:
     from src.rag.rag_service import rag_service
 
-    return rag_service.benchmark()
+    return rag_service.benchmark(
+        generation_workers=generation_workers,
+        limit=limit,
+        include_details=include_details,
+    )
 
 
 def write_export_payload(output_path: str | None, summary: dict[str, Any]) -> str | None:
@@ -52,7 +78,11 @@ def write_export_payload(output_path: str | None, summary: dict[str, Any]) -> st
 
 def main() -> None:
     args = parse_args()
-    summary = run_benchmark()
+    summary = run_benchmark(
+        generation_workers=args.generation_workers,
+        limit=args.limit,
+        include_details=not args.no_details,
+    )
     export_path = write_export_payload(args.export_path, summary)
     if export_path:
         summary = dict(summary)

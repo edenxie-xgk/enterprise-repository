@@ -923,8 +923,10 @@ class RAGService:
         return summary
 
     # 评估
-    def benchmark(self):
+    def benchmark(self, *, generation_workers: int = 1, limit: int | None = None, include_details: bool = True):
         benchmark_data = self._cursor_to_list(self.qa_collection.find({"state": 0}))
+        if limit is not None and limit > 0:
+            benchmark_data = benchmark_data[:limit]
 
         if not benchmark_data:
             return {
@@ -938,19 +940,32 @@ class RAGService:
         print(f"rerank report: {rerank_report}")
         generation_report = evaluate_generation(
             answer_llm=self.llm,
-            judge_llm=self.chatgpt_llm,
+            judge_llm=self.llm,
             benchmark=benchmark_data,
             retriever=self.dense_retriever,
             rerank=self.rerank,
+            max_workers=generation_workers,
+            include_details=include_details,
         )
+        sample_details = None
+        if include_details and "sample_details" in generation_report:
+            sample_details = generation_report.get("sample_details") or []
+            generation_report = dict(generation_report)
+            generation_report.pop("sample_details", None)
         print(f"generation report: {generation_report}")
-        return {
+        summary = {
             "success": True,
             "benchmark_count": len(benchmark_data),
+            "benchmark_limit": limit,
+            "generation_workers": max(1, int(generation_workers or 1)),
             "retrieval_report": retrieval_report,
             "rerank_report": rerank_report,
             "generation_report": generation_report,
         }
+        if include_details:
+            summary["sample_detail_count"] = len(sample_details or [])
+            summary["sample_details"] = sample_details or []
+        return summary
 
 
 rag_service = RAGService()
