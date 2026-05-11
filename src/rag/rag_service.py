@@ -15,7 +15,7 @@ from src.rag.context.builder import ContextBuilder
 from src.rag.evaluate.generation import evaluate_generation
 from src.rag.evaluate.llm_evaluate_answer import evaluate_answer
 from src.rag.evaluate.qa import generate_qa
-from src.rag.evaluate.rerank import evaluate_rerank
+from src.rag.evaluate.rerank import evaluate_rerank, evaluate_rerank_diagnostics
 from src.rag.evaluate.retrieval import evaluate_retrieval
 from src.rag.generation.answer_verify import verify_answer
 from src.rag.generation.generator import evaluate_evidence
@@ -152,6 +152,21 @@ class RAGService:
         return node_ids
 
     @staticmethod
+    def _normalize_citations(raw_citations, allowed_citations: list[str]) -> list[str]:
+        allowed_set = {item for item in allowed_citations if item}
+        normalized = []
+        seen = set()
+
+        for item in raw_citations or []:
+            citation = str(item).strip()
+            if not citation or citation not in allowed_set or citation in seen:
+                continue
+            seen.add(citation)
+            normalized.append(citation)
+
+        return normalized
+
+    @staticmethod
     def _normalize_candidate_docs(documents):
         """
         规范化候选文档格式，统一转换为字典形式
@@ -189,6 +204,263 @@ class RAGService:
             seen.add(node_id)
             deduped.append(doc)
         return deduped
+
+    @staticmethod
+    def _resolve_top_k_limit(top_k, default_count: int) -> int:
+        value = int(top_k or 0)
+        if value <= 0:
+            return max(default_count, 0)
+        return value
+
+    @staticmethod
+    def _slice_docs(documents, top_k) -> list[dict]:
+        docs = list(documents or [])
+        limit = RAGService._resolve_top_k_limit(top_k, len(docs))
+        return docs[:limit]
+
+    def _build_rerank_view_payload(self, ranked_docs, *, rerank_top_k: int, threshold) -> dict:
+        ranked_docs = list(ranked_docs or [])
+        top_k_docs = self._slice_docs(ranked_docs, rerank_top_k)
+        if threshold is None:
+            threshold_docs = list(top_k_docs)
+        else:
+            limit = self._resolve_top_k_limit(rerank_top_k, len(ranked_docs))
+            threshold_docs = [
+                doc for doc in ranked_docs
+                if (doc.get("rerank_score") or 0.0) >= threshold
+            ][:limit]
+
+        return {
+            "rerank_full_node_ids": self._extract_node_ids(ranked_docs),
+            "rerank_top_k_only_node_ids": self._extract_node_ids(top_k_docs),
+            "rerank_threshold_node_ids": self._extract_node_ids(threshold_docs),
+            "rerank_threshold": threshold,
+            "rerank_top_k_only_docs": top_k_docs,
+            "rerank_threshold_docs": threshold_docs,
+        }
+
+    def _build_search_queries(self, query_context: RagContext) -> list[str]:
+        search_queries = []
+        if query_context.query and query_context.query.strip() != "":
+            search_queries.append(query_context.query)
+        if query_context.rewritten_query and query_context.rewritten_query.strip() != "":
+            search_queries.append(query_context.rewritten_query)
+        if query_context.expand_query:
+            search_queries.extend([item for item in query_context.expand_query if item and item.strip() != ""])
+        if query_context.decompose_query:
+            search_queries.extend([item for item in query_context.decompose_query if item and item.strip() != ""])
+        return self._dedupe_queries(search_queries)
+
+    def _run_retrieval_and_rerank(self, query_context: RagContext, previous_result: RAGResult | None = None) -> dict:
+        search_queries = self._build_search_queries(query_context)
+        if not search_queries:
+            return {
+                "success": False,
+                "message": "暂无查询语句",
+                "fail_reason": "no_data",
+                "search_queries": [],
+                "retrieval_docs": [],
+                "docs": [],
+                "retrieval_candidate_node_ids": [],
+                "rerank_node_ids": [],
+                "rerank_full_node_ids": [],
+                "rerank_top_k_only_node_ids": [],
+                "rerank_threshold_node_ids": [],
+                "rerank_threshold": settings.reranker_min_score,
+                "retrieval_diagnostics": ["empty_search_queries"],
+                "rerank_diagnostics": [],
+            }
+
+        docs = []
+        retrieval_candidate_node_ids = []
+        rerank_node_ids = []
+        rerank_view_payload = {
+            "rerank_full_node_ids": [],
+            "rerank_top_k_only_node_ids": [],
+            "rerank_threshold_node_ids": [],
+            "rerank_threshold": settings.reranker_min_score,
+        }
+
+        if query_context.use_retrieval or not previous_result or not previous_result.documents:
+            hybrid_docs = HybridRetriever(self.dense_retriever, self.bm25_retriever).run(
+                search_queries,
+                top_k=query_context.retrieval_top_k,
+                filters=query_context.filters,
+            )
+            docs = self._dedupe_candidate_docs(hybrid_docs)
+            retrieval_candidate_node_ids = self._extract_node_ids(docs)
+            retrieval_diagnostics = ["hybrid_retrieval_executed"]
+        else:
+            docs = self._normalize_candidate_docs(previous_result.documents)
+            retrieval_candidate_node_ids = list(
+                getattr(previous_result, "retrieval_candidate_node_ids", []) or self._extract_node_ids(docs)
+            )
+            retrieval_diagnostics = ["retrieval_reused_previous_docs"]
+
+        retrieval_docs = list(docs)
+        if not retrieval_docs:
+            return {
+                "success": False,
+                "message": "未检索到相关文档",
+                "fail_reason": "no_data",
+                "search_queries": search_queries,
+                "retrieval_docs": retrieval_docs,
+                "docs": [],
+                "retrieval_candidate_node_ids": retrieval_candidate_node_ids,
+                "rerank_node_ids": rerank_node_ids,
+                **rerank_view_payload,
+                "retrieval_diagnostics": retrieval_diagnostics + ["hybrid_retrieval_returned_no_docs"],
+                "rerank_diagnostics": [],
+            }
+
+        fallback_keep_count = min(
+            len(retrieval_docs),
+            max(
+                query_context.rerank_top_k,
+                3 if self._is_complex_evidence_query(query_context) else 1,
+            ),
+        )
+        if query_context.use_rerank:
+            rerank_query = f"{query_context.query} {query_context.rewritten_query}".strip()
+            rerank_candidates = self._slice_docs(retrieval_docs, query_context.retrieval_top_k)
+            ranked_docs = self.rerank.rank(
+                rerank_query,
+                rerank_candidates,
+            )
+            rerank_view_payload = self._build_rerank_view_payload(
+                ranked_docs,
+                rerank_top_k=query_context.rerank_top_k,
+                threshold=settings.reranker_min_score,
+            )
+            reranked_docs = list(rerank_view_payload["rerank_threshold_docs"])
+            rerank_diagnostics = [
+                "reranker_executed",
+                f"reranker_raw_result_count={len(rerank_view_payload['rerank_full_node_ids'])}",
+                f"reranker_top_k_only_count={len(rerank_view_payload['rerank_top_k_only_node_ids'])}",
+                f"reranker_threshold_result_count={len(rerank_view_payload['rerank_threshold_node_ids'])}",
+            ]
+            if not reranked_docs:
+                docs = retrieval_docs[:fallback_keep_count]
+                rerank_diagnostics.extend(
+                    [
+                        "reranker_fallback_applied",
+                        "reranker_filtered_all_docs",
+                        f"reranker_fallback_count={len(docs)}",
+                    ]
+                )
+            elif len(reranked_docs) < fallback_keep_count:
+                docs = self._merge_fallback_docs(reranked_docs, retrieval_docs, fallback_keep_count)
+                rerank_diagnostics.extend(
+                    [
+                        "reranker_fallback_supplemented",
+                        f"reranker_fallback_count={len(docs)}",
+                    ]
+                )
+            else:
+                docs = reranked_docs
+
+            rerank_node_ids = self._extract_node_ids(docs)
+        else:
+            docs = self._slice_docs(retrieval_docs, query_context.rerank_top_k)
+            rerank_node_ids = self._extract_node_ids(docs)
+            rerank_view_payload = {
+                "rerank_full_node_ids": self._extract_node_ids(retrieval_docs),
+                "rerank_top_k_only_node_ids": self._extract_node_ids(docs),
+                "rerank_threshold_node_ids": self._extract_node_ids(docs),
+                "rerank_threshold": None,
+            }
+            rerank_diagnostics = ["reranker_skipped"]
+
+        if not docs:
+            return {
+                "success": False,
+                "message": "检索到了候选文档，但重排后没有足够相关的结果",
+                "fail_reason": "bad_ranking",
+                "search_queries": search_queries,
+                "retrieval_docs": retrieval_docs,
+                "docs": [],
+                "retrieval_candidate_node_ids": retrieval_candidate_node_ids,
+                "rerank_node_ids": rerank_node_ids,
+                **rerank_view_payload,
+                "retrieval_diagnostics": retrieval_diagnostics,
+                "rerank_diagnostics": rerank_diagnostics + ["reranker_fallback_failed"],
+            }
+
+        return {
+            "success": True,
+            "message": "ok",
+            "fail_reason": None,
+            "search_queries": search_queries,
+            "retrieval_docs": retrieval_docs,
+            "docs": docs,
+            "retrieval_candidate_node_ids": retrieval_candidate_node_ids,
+            "rerank_node_ids": rerank_node_ids,
+            **rerank_view_payload,
+            "retrieval_diagnostics": retrieval_diagnostics,
+            "rerank_diagnostics": rerank_diagnostics,
+        }
+
+    def _prepare_benchmark_case(self, item: dict, sample_index: int) -> dict:
+        question = item.get("question") or ""
+        ground_truth_node_ids = list(item.get("node_ids") or [])
+        case = {
+            "sample_index": sample_index,
+            "qa_id": str(item.get("_id")) if item.get("_id") is not None else None,
+            "question": question,
+            "reference_answer": item.get("answer") or "",
+            "ground_truth_node_ids": ground_truth_node_ids,
+            "search_queries": [],
+            "retrieval_docs": [],
+            "retrieval_node_ids": [],
+            "rerank_docs": [],
+            "rerank_node_ids": [],
+            "rerank_full_node_ids": [],
+            "rerank_top_k_only_node_ids": [],
+            "rerank_threshold_node_ids": [],
+            "rerank_threshold": settings.reranker_min_score,
+            "retrieval_diagnostics": [],
+            "rerank_diagnostics": [],
+            "skipped_reason": None,
+        }
+
+        if not question:
+            case["skipped_reason"] = "missing_question"
+            return case
+
+        if not ground_truth_node_ids:
+            case["skipped_reason"] = "missing_node_ids"
+            return case
+
+        search_result = self._run_retrieval_and_rerank(
+            RagContext(
+                query=question,
+                retrieval_top_k=settings.retriever_top_k,
+                rerank_top_k=settings.reranker_top_k,
+                use_retrieval=True,
+                use_rerank=True,
+            )
+        )
+
+        case.update(
+            {
+                "search_queries": search_result["search_queries"],
+                "retrieval_docs": search_result["retrieval_docs"],
+                "retrieval_node_ids": search_result["retrieval_candidate_node_ids"],
+                "rerank_docs": search_result["docs"],
+                "rerank_node_ids": search_result["rerank_node_ids"],
+                "rerank_full_node_ids": search_result.get("rerank_full_node_ids") or [],
+                "rerank_top_k_only_node_ids": search_result.get("rerank_top_k_only_node_ids") or [],
+                "rerank_threshold_node_ids": search_result.get("rerank_threshold_node_ids") or [],
+                "rerank_threshold": search_result.get("rerank_threshold"),
+                "retrieval_diagnostics": search_result["retrieval_diagnostics"],
+                "rerank_diagnostics": search_result["rerank_diagnostics"],
+            }
+        )
+
+        if not search_result["success"]:
+            case["skipped_reason"] = search_result["fail_reason"] or "search_failed"
+
+        return case
 
     def _list_docs_for_qa_generation(
         self,
@@ -472,7 +744,12 @@ class RAGService:
             }
 
         answer_context = ContextBuilder().run(answer_docs)
-        regenerated = evaluate_evidence(self.chatgpt_llm, item.get("question") or "", answer_context)
+        regenerated = evaluate_evidence(
+            self.chatgpt_llm,
+            item.get("question") or "",
+            answer_context,
+            min_citation_count=min(2, len(claimed_node_ids)) if claimed_node_ids else 1,
+        )
         if not regenerated.is_sufficient or self._looks_self_declared_insufficient(regenerated.evidence_summary):
             return {
                 "passed": False,
@@ -617,9 +894,14 @@ class RAGService:
         evidence_summary = (response.evidence_summary or "").strip()
         citations = list(response.citations or [])
 
-        # 获取文档的唯一节点ID并计算最小所需来源数
-        unique_node_ids = self._extract_node_ids(docs)
-        # 复杂查询需要至少2个来源，普通查询1个
+        # 仅允许引用当前上下文中的真实 node_id。
+        available_citations = self._extract_node_ids(docs)
+        normalized_citations = self._normalize_citations(citations, available_citations)
+        if len(normalized_citations) != len(citations):
+            citations = normalized_citations
+            diagnostics.append("evidence_guard_filtered_invalid_citations")
+
+        # 复杂查询需要至少 2 个引用来源，普通查询 1 个。
         min_required_sources = 2 if self._is_complex_evidence_query(query_context) else 1
 
         # 检查1：证据摘要是否为空
@@ -634,11 +916,11 @@ class RAGService:
             fail_reason = fail_reason or "insufficient_context"
             diagnostics.append("evidence_guard_missing_citations")
 
-        # 检查3：来源数量是否足够
-        if len(unique_node_ids) < min_required_sources:
+        # 检查3：模型实际引用的来源数量是否足够
+        if citations and len(citations) < min_required_sources:
             is_sufficient = False
             fail_reason = fail_reason or "insufficient_context"
-            diagnostics.append(f"evidence_guard_min_sources={min_required_sources}")
+            diagnostics.append(f"evidence_guard_min_citations={min_required_sources}")
 
         # 检查4：响应是否自声明不足
         if self._looks_self_declared_insufficient(evidence_summary):
@@ -733,122 +1015,26 @@ class RAGService:
         Returns:
             RAGResult: 包含查询结果、文档、引用等信息的封装对象
         """
-        # 构建搜索查询列表，合并原始查询、改写查询、扩展查询和分解查询
-        search_queries = []
-        if query_context.query and query_context.query.strip() != '':
-            search_queries.append(query_context.query)
-        if query_context.rewritten_query and query_context.rewritten_query.strip() != '':
-            search_queries.append(query_context.rewritten_query)
-        if query_context.expand_query:
-            search_queries.extend([item for item in query_context.expand_query if item and item.strip() != ""])
-        if query_context.decompose_query:
-            search_queries.extend([item for item in query_context.decompose_query if item and item.strip() != ""])
-        # 去重处理
-        search_queries = self._dedupe_queries(search_queries)
-
-        # 无有效查询时的返回处理
-        if not search_queries:
-            return self._build_rag_result(
-                "暂无查询语句",
-                is_sufficient=False,
-                fail_reason="no_data",
-                retrieval_queries=[],
-                diagnostics=["empty_search_queries"],
-            )
+        search_queries = self._build_search_queries(query_context)
 
         try:
-            docs = []
-            retrieval_candidate_node_ids = []
-            rerank_node_ids = []
-
-            # 检索阶段：使用混合检索或复用之前的结果
-            if query_context.use_retrieval or not previous_result or not previous_result.documents:
-                print("hybrid retrieval")
-                # 执行混合检索（稠密检索+BM25）
-                hybrid_docs = HybridRetriever(self.dense_retriever, self.bm25_retriever).run(
-                    search_queries,
-                    top_k=query_context.retrieval_top_k,
-                    filters=query_context.filters,
-                )
-                # 去重处理
-                doc_ids = []
-                for doc in hybrid_docs:
-                    if doc['node_id'] not in doc_ids:
-                        doc_ids.append(doc['node_id'])
-                        docs.append(doc)
-                retrieval_candidate_node_ids = self._extract_node_ids(docs)
-                retrieval_diagnostics = ["hybrid_retrieval_executed"]
-            else:
-                # 复用之前的检索结果
-                docs = self._normalize_candidate_docs(previous_result.documents)
-                retrieval_candidate_node_ids = list(
-                    getattr(previous_result, "retrieval_candidate_node_ids", []) or self._extract_node_ids(docs)
-                )
-                retrieval_diagnostics = ["retrieval_reused_previous_docs"]
-
-            # 无检索结果处理
-            if not docs:
+            search_result = self._run_retrieval_and_rerank(query_context, previous_result=previous_result)
+            if not search_result["success"]:
                 return self._build_rag_result(
-                    "未检索到相关文档",
+                    search_result["message"],
                     is_sufficient=False,
-                    fail_reason="no_data",
-                    retrieval_queries=search_queries,
-                    retrieval_candidate_node_ids=retrieval_candidate_node_ids,
-                    rerank_node_ids=rerank_node_ids,
-                    diagnostics=retrieval_diagnostics + ["hybrid_retrieval_returned_no_docs"],
+                    fail_reason=search_result["fail_reason"],
+                    retrieval_queries=search_result["search_queries"],
+                    retrieval_candidate_node_ids=search_result["retrieval_candidate_node_ids"],
+                    rerank_node_ids=search_result["rerank_node_ids"],
+                    diagnostics=search_result["retrieval_diagnostics"] + search_result["rerank_diagnostics"],
                 )
 
-            # 重排序阶段
-            retrieval_docs = list(docs)
-            fallback_keep_count = min(
-                len(retrieval_docs),
-                max(
-                    query_context.rerank_top_k,
-                    3 if self._is_complex_evidence_query(query_context) else 1,
-                ),
-            )
-            if query_context.use_rerank:
-                print("***" * 50)
-                print("reranker")
-                reranked_docs = self.rerank.run(
-                    f"{query_context.query} {query_context.rewritten_query}",
-                    retrieval_docs[:query_context.retrieval_top_k],
-                    top_k=query_context.rerank_top_k,
-                )
-                rerank_diagnostics = ["reranker_executed", f"reranker_result_count={len(reranked_docs)}"]
-                # 重排结果不足处理
-                if not reranked_docs:
-                    docs = retrieval_docs[:fallback_keep_count]
-                    rerank_diagnostics.extend([
-                        "reranker_fallback_applied",
-                        "reranker_filtered_all_docs",
-                        f"reranker_fallback_count={len(docs)}",
-                    ])
-                elif len(reranked_docs) < fallback_keep_count:
-                    docs = self._merge_fallback_docs(reranked_docs, retrieval_docs, fallback_keep_count)
-                    rerank_diagnostics.extend([
-                        "reranker_fallback_supplemented",
-                        f"reranker_fallback_count={len(docs)}",
-                    ])
-                else:
-                    docs = reranked_docs
-
-                rerank_node_ids = self._extract_node_ids(docs)
-            else:
-                docs = retrieval_docs[:query_context.rerank_top_k]
-                rerank_node_ids = self._extract_node_ids(docs)
-                rerank_diagnostics = ["reranker_skipped"]
-
-            if not docs:
-                return self._build_rag_result(
-                    "检索到了候选文档，但重排后没有足够相关的结果",
-                    is_sufficient=False,
-                    fail_reason="bad_ranking",
-                    retrieval_queries=search_queries,
-                    retrieval_candidate_node_ids=retrieval_candidate_node_ids,
-                    rerank_node_ids=rerank_node_ids,
-                    diagnostics=retrieval_diagnostics + rerank_diagnostics + ["reranker_fallback_failed"],
-                )
+            docs = search_result["docs"]
+            retrieval_candidate_node_ids = search_result["retrieval_candidate_node_ids"]
+            rerank_node_ids = search_result["rerank_node_ids"]
+            retrieval_diagnostics = search_result["retrieval_diagnostics"]
+            rerank_diagnostics = search_result["rerank_diagnostics"]
 
             print("***" * 50)
             print("build context")
@@ -863,6 +1049,16 @@ class RAGService:
                 self.chatgpt_llm,
                 f"{query_context.query} {query_context.rewritten_query}",
                 context,
+                min_citation_count=2 if self._is_complex_evidence_query(query_context) else 1,
+            )
+            available_citations = self._extract_node_ids(docs)
+            normalized_citations = self._normalize_citations(response.citations, available_citations)
+            normalized_summary = (response.evidence_summary or "").strip()
+            response = response.model_copy(
+                update={
+                    "citations": normalized_citations,
+                    "evidence_summary": normalized_summary,
+                }
             )
             guarded_is_sufficient, guarded_fail_reason, evidence_guard_diagnostics = self._apply_evidence_guardrails(
                 query_context,
@@ -923,8 +1119,17 @@ class RAGService:
         return summary
 
     # 评估
-    def benchmark(self, *, generation_workers: int = 1, limit: int | None = None, include_details: bool = True):
-        benchmark_data = self._cursor_to_list(self.qa_collection.find({"state": 0}))
+    def benchmark(
+        self,
+        *,
+        generation_workers: int = 1,
+        limit: int | None = None,
+        include_details: bool = True,
+        states: list[int] | None = None,
+    ):
+        selected_states = list(states or [0])
+        query = {"state": selected_states[0]} if len(selected_states) == 1 else {"state": {"$in": selected_states}}
+        benchmark_data = self._cursor_to_list(self.qa_collection.find(query))
         if limit is not None and limit > 0:
             benchmark_data = benchmark_data[:limit]
 
@@ -934,16 +1139,21 @@ class RAGService:
                 "success": True,
             }
 
-        retrieval_report = evaluate_retrieval(self.dense_retriever, benchmark_data)
+        benchmark_cases = [
+            self._prepare_benchmark_case(item, sample_index)
+            for sample_index, item in enumerate(tqdm(benchmark_data, desc="prepare benchmark"), start=1)
+        ]
+
+        retrieval_report = evaluate_retrieval(benchmark_cases)
         print(f"retrieval report: {retrieval_report}")
-        rerank_report = evaluate_rerank(self.dense_retriever, self.rerank, benchmark_data)
+        rerank_report = evaluate_rerank(benchmark_cases)
         print(f"rerank report: {rerank_report}")
+        rerank_diagnostics_report = evaluate_rerank_diagnostics(benchmark_cases)
+        print(f"rerank diagnostics report: {rerank_diagnostics_report}")
         generation_report = evaluate_generation(
             answer_llm=self.llm,
             judge_llm=self.llm,
-            benchmark=benchmark_data,
-            retriever=self.dense_retriever,
-            rerank=self.rerank,
+            benchmark_cases=benchmark_cases,
             max_workers=generation_workers,
             include_details=include_details,
         )
@@ -957,9 +1167,11 @@ class RAGService:
             "success": True,
             "benchmark_count": len(benchmark_data),
             "benchmark_limit": limit,
+            "benchmark_states": selected_states,
             "generation_workers": max(1, int(generation_workers or 1)),
             "retrieval_report": retrieval_report,
             "rerank_report": rerank_report,
+            "rerank_diagnostics_report": rerank_diagnostics_report,
             "generation_report": generation_report,
         }
         if include_details:

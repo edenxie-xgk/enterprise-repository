@@ -64,20 +64,27 @@ class QAGenerationTests(unittest.TestCase):
                 QaData(
                     question="问题1",
                     answer="答案1",
-                    language="zh",
+                    language="zh-cn",
                     difficulty="easy",
-                    intent="fact",
-                    node_ids=["node-1"],
+                    intent="factoid",
+                    node_ids=["node-1", "node-2"],
                 )
             ]
         )
 
         with patch("src.rag.evaluate.qa.LLMService.invoke", return_value=response):
-            rows = generate_qa(llm=object(), nodes=[{"node_id": "node-1", "content": "内容"}], metadata={"dept": 1})
+            rows = generate_qa(
+                llm=object(),
+                nodes=[
+                    {"node_id": "node-1", "content": "内容1"},
+                    {"node_id": "node-2", "content": "内容2"},
+                ],
+                metadata={"dept": 1, "language": "zh-cn"},
+            )
 
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0]["state"], 0)
-        self.assertEqual(rows[0]["metadata"], {"dept": 1})
+        self.assertEqual(rows[0]["metadata"], {"dept": 1, "language": "zh-cn"})
 
     def test_multiple_qa_results_assign_exactly_one_validation_sample(self):
         response = QAResult(
@@ -85,26 +92,26 @@ class QAGenerationTests(unittest.TestCase):
                 QaData(
                     question="问题1",
                     answer="答案1",
-                    language="zh",
+                    language="zh-cn",
                     difficulty="easy",
-                    intent="fact",
-                    node_ids=["node-1"],
+                    intent="factoid",
+                    node_ids=["node-1", "node-2"],
                 ),
                 QaData(
                     question="问题2",
                     answer="答案2",
-                    language="zh",
+                    language="zh-cn",
                     difficulty="medium",
-                    intent="compare",
+                    intent="comparison",
                     node_ids=["node-1", "node-2"],
                 ),
                 QaData(
                     question="问题3",
                     answer="答案3",
-                    language="zh",
+                    language="zh-cn",
                     difficulty="hard",
-                    intent="summary",
-                    node_ids=["node-2"],
+                    intent="analysis",
+                    node_ids=["node-1", "node-2"],
                 ),
             ]
         )
@@ -116,7 +123,7 @@ class QAGenerationTests(unittest.TestCase):
 
         with patch("src.rag.evaluate.qa.LLMService.invoke", return_value=response):
             with patch("src.rag.evaluate.qa.random.randrange", return_value=1):
-                rows = generate_qa(llm=object(), nodes=nodes, metadata=None)
+                rows = generate_qa(llm=object(), nodes=nodes, metadata={"language": "zh-cn"})
 
         self.assertEqual(len(rows), 3)
         self.assertEqual(sum(1 for row in rows if row["state"] == 2), 1)

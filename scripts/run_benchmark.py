@@ -26,6 +26,12 @@ def resolve_output_path(raw_path: str) -> Path:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run offline QA benchmark from MongoDB QA data.")
     parser.add_argument(
+        "--states",
+        type=str,
+        default="0",
+        help="Comma-separated QA states to evaluate, for example: 0 or 0,2.",
+    )
+    parser.add_argument(
         "--limit",
         type=int,
         default=None,
@@ -51,11 +57,27 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def parse_states(raw_states: str) -> list[int]:
+    states = []
+    seen = set()
+    for raw_item in (raw_states or "0").split(","):
+        item = raw_item.strip()
+        if not item:
+            continue
+        state = int(item)
+        if state in seen:
+            continue
+        seen.add(state)
+        states.append(state)
+    return states or [0]
+
+
 def run_benchmark(
     *,
     generation_workers: int = 1,
     limit: int | None = None,
     include_details: bool = True,
+    states: list[int] | None = None,
 ) -> dict[str, Any]:
     from src.rag.rag_service import rag_service
 
@@ -63,6 +85,7 @@ def run_benchmark(
         generation_workers=generation_workers,
         limit=limit,
         include_details=include_details,
+        states=states,
     )
 
 
@@ -82,6 +105,7 @@ def main() -> None:
         generation_workers=args.generation_workers,
         limit=args.limit,
         include_details=not args.no_details,
+        states=parse_states(args.states),
     )
     export_path = write_export_payload(args.export_path, summary)
     if export_path:

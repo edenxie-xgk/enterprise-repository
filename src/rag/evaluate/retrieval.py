@@ -1,39 +1,26 @@
 from tqdm import tqdm
 
-from core.settings import settings
-from src.rag.evaluate.function import mrr_multi, recall_at_k, coverage
+from src.rag.evaluate.function import coverage, mrr_multi, recall_at_k
 
 
-def evaluate_retrieval(retriever, benchmark):
-
-    total_recall = 0
-    total_mrr = 0
+def evaluate_retrieval(benchmark_cases):
+    total_recall = 0.0
+    total_mrr = 0.0
     total_coverage = 0
 
-    for item in tqdm(benchmark, desc="召回评估中..."):
-
-        docs = retriever.run([item["question"]])
-        if not docs:
+    for case in tqdm(benchmark_cases, desc="evaluate retrieval"):
+        docs = case.get("retrieval_docs") or []
+        gt = list(case.get("ground_truth_node_ids") or [])
+        if not gt:
             continue
 
-        gt = item["node_ids"]
+        total_recall += recall_at_k(docs, gt) if docs else 0.0
+        total_mrr += mrr_multi(docs, gt) if docs else 0.0
+        total_coverage += coverage(docs, gt) if docs else 0
 
-        # 召回率@K
-        recall = recall_at_k(docs, gt)
-        total_recall += recall
-
-        # 平均倒数排名
-        mrr = mrr_multi(docs, gt)
-        total_mrr += mrr
-
-        # 覆盖率
-        cov = coverage(docs, gt)
-        total_coverage += cov
-
-    n = len(benchmark)
-
+    n = len(benchmark_cases) or 1
     return {
         "recall@k": total_recall / n,
         "mrr": total_mrr / n,
-        "coverage": total_coverage / n
+        "coverage": total_coverage / n,
     }

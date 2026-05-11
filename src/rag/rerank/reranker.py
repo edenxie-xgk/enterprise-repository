@@ -17,8 +17,28 @@ class Reranker:
             raise Exception("reranker type error")
 
 
+    @staticmethod
+    def _clone_docs(docs: List[dict]) -> List[dict]:
+        cloned = []
+        for doc in docs or []:
+            if hasattr(doc, "model_dump"):
+                cloned.append(doc.model_dump())
+            elif isinstance(doc, dict):
+                cloned.append(dict(doc))
+        return cloned
+
+
+    def rank(self, query: str, docs: List[dict]) -> List[dict]:
+        return self.reranker.run(query, self._clone_docs(docs))
+
+
     def run(self,query: str, docs: List[dict],score=settings.reranker_min_score,top_k:int=settings.reranker_top_k):
-        return [doc for doc in self.reranker.run(query, docs) if doc["rerank_score"] >= score][:top_k]
+        ranked_docs = self.rank(query, docs)
+        if score is not None:
+            ranked_docs = [doc for doc in ranked_docs if (doc.get("rerank_score") or 0.0) >= score]
+        if top_k is not None and int(top_k) > 0:
+            ranked_docs = ranked_docs[:top_k]
+        return ranked_docs
 
 
 
