@@ -1,3 +1,5 @@
+# ruff: noqa: E402
+
 import asyncio
 import importlib
 import os
@@ -248,7 +250,12 @@ class APISmokeTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(upload_payload["code"], 200)
         self.assertEqual(upload_payload["data"]["file_name"], "Quarterly_Report_.pdf")
         self.assertEqual(upload_payload["data"]["dept_id"], 1)
+        self.assertEqual(upload_payload["data"]["dept_name"], "Research")
+        self.assertEqual(upload_payload["data"]["state"], "3")
+        self.assertEqual(upload_payload["data"]["state_label"], "待处理")
+        self.assertFalse(upload_payload["data"]["is_ready"])
         self.assertEqual(upload_payload["data"]["file_path"], "/file/files/1/download")
+        self.assertEqual(upload_payload["data"]["download_url"], "/file/files/1/download")
         self.assertEqual(len(self.fake_rag_service.calls), 1)
         self.assertEqual(self.fake_rag_service.calls[0]["metadata"].user_id, 1)
         self.assertEqual(self.fake_rag_service.calls[0]["metadata"].department_id, 1)
@@ -262,6 +269,9 @@ class APISmokeTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(file_row["user_id"], 1)
         self.assertEqual(file_row["dept_id"], 1)
         self.assertEqual(file_row["file_name"], "Quarterly_Report_.pdf")
+        self.assertEqual(file_row["state"], "1")
+        self.assertEqual(file_row["state_label"], "已就绪")
+        self.assertTrue(file_row["is_ready"])
         self.assertEqual(file_row["download_url"], "/file/files/1/download")
 
         download_response = await self.client.get(file_row["download_url"], headers=headers)

@@ -26,7 +26,7 @@
         <button
           v-if="!isLogin"
           class="px-4 py-1.5 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors flex items-center"
-          @click="showLoginModal = true"
+          @click="openLoginModal"
         >
           <i class="fas fa-user-circle mr-2"></i>
           <span>登录</span>
@@ -80,6 +80,20 @@
           <p class="text-gray-700">
             请围绕你有权限访问的文档提问。系统会在直接回答、RAG、结构化数据查询，以及允许时的联网搜索之间自动选择合适路径。
           </p>
+          <div v-if="isLogin && !messages.length" class="mt-4">
+            <div class="text-xs font-medium text-gray-500 mb-2">可以直接试试</div>
+            <div class="grid gap-2 sm:grid-cols-2">
+              <button
+                v-for="suggestion in promptSuggestions"
+                :key="suggestion"
+                class="suggestion-button"
+                :disabled="isStreaming"
+                @click="sendSuggestedPrompt(suggestion)"
+              >
+                {{ suggestion }}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -108,10 +122,16 @@
           class="p-4 rounded-lg shadow-sm max-w-3xl"
           :class="{
             'rounded-tr-none bg-primary/10': isUserMessage(message),
-            'rounded-tl-none bg-white': !isUserMessage(message),
+            'rounded-tl-none bg-white': !isUserMessage(message) && !isFailedMessage(message),
+            'rounded-tl-none bg-red-50 border border-red-200': !isUserMessage(message) && isFailedMessage(message),
           }"
         >
-          <p class="text-gray-700 whitespace-pre-wrap">{{ message.content }}</p>
+          <p
+            class="whitespace-pre-wrap"
+            :class="isFailedMessage(message) ? 'text-red-700' : 'text-gray-700'"
+          >
+            {{ getDisplayContent(message) }}
+          </p>
 
           <div
             v-if="!isUserMessage(message) && message.report_summary"
@@ -142,16 +162,33 @@
               路由说明：{{ message.report_summary.reason }}
             </div>
 
-            <div v-if="message.citations && message.citations.length">
-              <div class="text-xs font-medium text-gray-500 mb-2">引用</div>
-              <div class="flex flex-wrap gap-2">
-                <span
-                  v-for="citation in message.citations"
-                  :key="citation"
-                  class="px-2 py-1 bg-gray-100 rounded text-xs text-gray-600"
+            <div v-if="getEvidenceSources(message).length" class="evidence-panel">
+              <div class="evidence-header">
+                <span>证据来源</span>
+                <span>{{ getEvidenceSources(message).length }} 条</span>
+              </div>
+              <div class="evidence-list">
+                <div
+                  v-for="source in getEvidenceSources(message)"
+                  :key="getEvidenceKey(source)"
+                  class="evidence-source"
                 >
-                  {{ citation }}
-                </span>
+                  <div class="evidence-title">
+                    <i class="fas fa-file-lines text-primary"></i>
+                    <span>{{ getEvidenceTitle(source) }}</span>
+                  </div>
+                  <div class="evidence-meta">
+                    <span v-if="getEvidenceDepartment(source)">
+                      部门：{{ getEvidenceDepartment(source) }}
+                    </span>
+                    <span v-if="getEvidenceLocation(source)">
+                      {{ getEvidenceLocation(source) }}
+                    </span>
+                    <span v-if="source.node_id" :title="source.node_id">
+                      节点：{{ formatNodeId(source.node_id) }}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -364,6 +401,10 @@
             <span class="inline-block w-2 h-2 rounded-full bg-primary animate-pulse"></span>
             正在生成
           </div>
+          <div v-if="isFailedMessage(message)" class="mt-2 text-xs text-red-600 flex items-center gap-2">
+            <i class="fas fa-circle-exclamation"></i>
+            本次回复没有完成，请检查登录状态或稍后重试。
+          </div>
         </div>
       </div>
     </div>
@@ -412,39 +453,55 @@
     </div>
 
     <teleport to="body">
-      <div v-if="showLoginModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div
+        v-if="showLoginModal"
+        class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+        @click.self="closeLoginModal"
+      >
         <div class="bg-white rounded-lg w-full max-w-sm p-6">
           <h3 class="text-lg font-semibold text-center mb-4">用户登录</h3>
 
-          <div class="space-y-4">
+          <form class="space-y-4" @submit.prevent="handleLogin">
             <input
               v-model="loginForm.username"
               type="text"
               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
+              autocomplete="username"
+              :disabled="isLoggingIn"
               placeholder="用户名"
             />
             <input
               v-model="loginForm.password"
               type="password"
               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
+              autocomplete="current-password"
+              :disabled="isLoggingIn"
               placeholder="密码"
             />
-          </div>
+            <div v-if="loginError" class="login-error">
+              <i class="fas fa-circle-exclamation"></i>
+              <span>{{ loginError }}</span>
+            </div>
 
-          <div class="flex space-x-2 mt-4">
-            <button
-              class="flex-1 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-              @click="showLoginModal = false"
-            >
-              取消
-            </button>
-            <button
-              class="flex-1 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
-              @click="handleLogin"
-            >
-              登录
-            </button>
-          </div>
+            <div class="flex space-x-2 pt-1">
+              <button
+                type="button"
+                class="flex-1 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                :disabled="isLoggingIn"
+                @click="closeLoginModal"
+              >
+                取消
+              </button>
+              <button
+                type="submit"
+                class="flex-1 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                :disabled="isLoggingIn"
+              >
+                <i v-if="isLoggingIn" class="fas fa-spinner fa-spin mr-2"></i>
+                {{ isLoggingIn ? "登录中" : "登录" }}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </teleport>
@@ -453,6 +510,7 @@
       v-model="showProfilePanel"
       :profile="userProfile"
       :saving="isSavingProfile"
+      :error-message="profileSaveError"
       @save="handleProfileSave"
     />
   </div>
@@ -461,6 +519,7 @@
 <script setup>
 import { computed, nextTick, ref, watch } from "vue";
 import { useRouter } from "vue-router";
+import { ElMessage } from "element-plus";
 
 import { user_login } from "../api/user";
 import UserProfilePanel from "./UserProfilePanel.vue";
@@ -521,12 +580,22 @@ const inputMessage = ref("");
 const showLoginModal = ref(false);
 const showProfilePanel = ref(false);
 const showUserMenu = ref(false);
+const isLoggingIn = ref(false);
+const loginError = ref("");
+const profileSaveError = ref("");
 const chatContainer = ref(null);
 const detailOpenMap = ref({});
 const loginForm = ref({
-  username: "EdenXie",
-  password: "123456",
+  username: "",
+  password: "",
 });
+
+const promptSuggestions = [
+  "我可以访问哪些部门和文件？",
+  "最近上传的文件有哪些？",
+  "总结我有权限访问的最新文档。",
+  "对比 2024 年保险公司的关键财务指标。",
+];
 
 const outputLevelOptions = [
   { label: "精简", value: "concise" },
@@ -573,6 +642,15 @@ const scrollToBottom = async () => {
 
 const isUserMessage = (message) => message.role === "user";
 
+const isFailedMessage = (message) =>
+  message?.status === "failed" || message?.report_summary?.status === "failed";
+
+const getDisplayContent = (message) => {
+  if (message?.content) return message.content;
+  if (message?.status === "streaming") return "正在分析你的问题...";
+  return "";
+};
+
 const getProfileSyncSummary = (message) =>
   message?.report_summary?.profile_sync_summary ||
   message?.report_summary?.memory_write_summary?.profile_sync ||
@@ -581,6 +659,56 @@ const getProfileSyncSummary = (message) =>
 const getProfileSyncValueEntries = (message) => {
   const summary = getProfileSyncSummary(message);
   return Object.entries(summary?.values || {});
+};
+
+const getEvidenceSources = (message) => {
+  const details = message?.report_summary?.citation_details || [];
+  if (details.length) {
+    return details;
+  }
+  return (message?.citations || []).map((citation) => ({
+    node_id: citation,
+    label: citation,
+    metadata: {},
+  }));
+};
+
+const getEvidenceKey = (source) => source?.node_id || source?.label || JSON.stringify(source || {});
+
+const getEvidenceMetadata = (source) => source?.metadata || {};
+
+const getEvidenceTitle = (source) => {
+  const metadata = getEvidenceMetadata(source);
+  return source?.label || metadata.file_name || metadata.file_path || source?.node_id || "未知来源";
+};
+
+const getEvidenceDepartment = (source) => {
+  const metadata = getEvidenceMetadata(source);
+  return metadata.department_name || metadata.department_id || "";
+};
+
+const getEvidenceLocation = (source) => {
+  const metadata = getEvidenceMetadata(source);
+  const parts = [];
+  if (metadata.page) {
+    parts.push(`第 ${metadata.page} 页`);
+  }
+  if (metadata.sheet_name) {
+    parts.push(`Sheet：${metadata.sheet_name}`);
+  }
+  if (metadata.section_title) {
+    parts.push(metadata.section_title);
+  }
+  if (metadata.chunk_index) {
+    parts.push(`片段 ${metadata.chunk_index}`);
+  }
+  return parts.join(" · ");
+};
+
+const formatNodeId = (nodeId) => {
+  const value = String(nodeId || "");
+  if (value.length <= 18) return value;
+  return `${value.slice(0, 8)}...${value.slice(-6)}`;
 };
 
 const formatProfileSyncValue = (field, value) => {
@@ -604,21 +732,63 @@ const emitSend = () => {
   inputMessage.value = "";
 };
 
-const handleLogin = () => {
-  user_login(loginForm.value).then((res) => {
+const sendSuggestedPrompt = (query) => {
+  if (!query || !props.isLogin || props.isStreaming) return;
+  inputMessage.value = "";
+  emit("send-message", query);
+};
+
+const openLoginModal = () => {
+  loginError.value = "";
+  showLoginModal.value = true;
+};
+
+const closeLoginModal = () => {
+  if (isLoggingIn.value) return;
+  loginError.value = "";
+  showLoginModal.value = false;
+};
+
+const handleLogin = async () => {
+  const username = loginForm.value.username.trim();
+  const password = loginForm.value.password;
+
+  if (!username || !password) {
+    loginError.value = "请输入用户名和密码";
+    return;
+  }
+  if (isLoggingIn.value) return;
+
+  isLoggingIn.value = true;
+  loginError.value = "";
+  try {
+    const res = await user_login({
+      username,
+      password,
+    });
     if (res.code === 200) {
       localStorage.setItem("token", res.data.access_token);
       localStorage.setItem("userInfo", JSON.stringify(res.data.user));
       showLoginModal.value = false;
       showUserMenu.value = false;
+      loginForm.value.password = "";
+      ElMessage.success("登录成功");
       emit("login-success", { user: res.data.user });
+      return;
     }
-  });
+    loginError.value = res.message || "登录失败，请检查用户名和密码";
+  } catch (error) {
+    console.error("登录失败:", error);
+    loginError.value = error?.response?.data?.detail || error?.response?.data?.message || "登录失败，请稍后重试";
+  } finally {
+    isLoggingIn.value = false;
+  }
 };
 
 const logout = () => {
   showUserMenu.value = false;
   showProfilePanel.value = false;
+  profileSaveError.value = "";
   localStorage.removeItem("token");
   localStorage.removeItem("userInfo");
   emit("logout");
@@ -631,12 +801,21 @@ const goToAdmin = () => {
 
 const openProfilePanel = () => {
   showUserMenu.value = false;
+  profileSaveError.value = "";
   showProfilePanel.value = true;
 };
 
 const handleProfileSave = (payload) => {
-  emit("save-profile", payload);
-  showProfilePanel.value = false;
+  profileSaveError.value = "";
+  emit("save-profile", payload, {
+    onSuccess: () => {
+      profileSaveError.value = "";
+      showProfilePanel.value = false;
+    },
+    onError: (message) => {
+      profileSaveError.value = message || "偏好设置保存失败，请稍后重试";
+    },
+  });
 };
 
 const toggleDetails = (messageId) => {
@@ -693,5 +872,109 @@ watch(
   border-radius: 10px;
   background: #ffffff;
   border: 1px solid #e5e7eb;
+}
+
+.login-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  background: #fef2f2;
+  padding: 8px 10px;
+  color: #b91c1c;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.evidence-panel {
+  border-radius: 10px;
+  border: 1px solid #dbeafe;
+  background: #f8fbff;
+  padding: 10px;
+}
+
+.evidence-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.evidence-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.evidence-source {
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  padding: 9px 10px;
+}
+
+.evidence-title {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+  color: #1f2937;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.evidence-title span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.evidence-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 7px;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.evidence-meta span {
+  border-radius: 999px;
+  background: #f1f5f9;
+  padding: 3px 7px;
+}
+
+.suggestion-button {
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: flex-start;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  padding: 9px 12px;
+  text-align: left;
+  font-size: 13px;
+  line-height: 1.35;
+  color: #334155;
+  transition:
+    border-color 0.16s ease,
+    background 0.16s ease,
+    color 0.16s ease;
+}
+
+.suggestion-button:hover:not(:disabled) {
+  border-color: #93c5fd;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.suggestion-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 </style>

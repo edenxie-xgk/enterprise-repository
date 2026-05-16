@@ -1,15 +1,11 @@
-# Chinese Documents Seed
+# Data Directory
 
-This folder contains a curated seed set of Chinese-language financial documents in `pdf` format.
+This folder is reserved for local datasets, benchmark exports, and document seed files used during development.
 
-Why `pdf`:
-- The project has first-class loaders and chunkers for `pdf`, `doc/docx`, `md/markdown`, `txt`, `xls/xlsx`, `csv`, `pptx`, `json`, and common image formats.
-- `pdf` is the safest choice here because the ingestion path is already implemented and works well for report-style documents.
+Large runtime artifacts are intentionally not committed:
 
-Source profile:
-- Public disclosures from CNINFO (`static.cninfo.com.cn`)
-- Chinese-language insurance and financial reporting documents
-- Verified after download to ensure the saved payload starts with the PDF file header
+- `benchmarks/*.json` stores local benchmark outputs.
+- `chinese_documents_seed/*.pdf` stores optional source documents for ingestion and LoRA-data preparation.
+- The tracked `chinese_documents_seed/manifest.csv` lists the original public document URLs so the PDFs can be downloaded again when needed.
 
-Manifest:
-- See `manifest.csv` in this folder for the document list and original source URLs.
+The project supports `pdf`, `doc/docx`, `md/markdown`, `txt`, `xls/xlsx`, `csv`, `pptx`, `json`, and common image formats in the ingestion path.

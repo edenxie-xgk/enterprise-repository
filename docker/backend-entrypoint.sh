@@ -6,7 +6,7 @@ wait_for_endpoint() {
   port="$2"
   timeout="${WAIT_FOR_TIMEOUT_SECONDS:-90}"
 
-  python - "$host" "$port" "$timeout" <<'PY'
+  uv run --no-sync python - "$host" "$port" "$timeout" <<'PY'
 import socket
 import sys
 import time
@@ -52,7 +52,7 @@ fi
 
 if [ "${RUN_MIGRATIONS:-true}" = "true" ]; then
   echo "[backend] running alembic migrations"
-  python -m alembic upgrade head
+  uv run --no-sync python -m alembic upgrade head
 fi
 
 if [ "$#" -gt 0 ]; then
@@ -60,4 +60,4 @@ if [ "$#" -gt 0 ]; then
 fi
 
 echo "[backend] starting FastAPI server"
-exec uvicorn service.server:create_server --factory --host "${SERVER_HOST:-0.0.0.0}" --port "${SERVER_PORT:-1016}"
+exec uv run --no-sync uvicorn service.server:create_server --factory --host "${SERVER_HOST:-0.0.0.0}" --port "${SERVER_PORT:-1016}"

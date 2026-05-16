@@ -15,8 +15,8 @@ def _enable_lora(model, *, rank: int, alpha: int, dropout: float, target_modules
         from peft import LoraConfig, TaskType, get_peft_model
     except ImportError as exc:
         raise RuntimeError(
-            "LoRA training requires the `peft` package. Install it with `pip install peft` "
-            "or from requirements-train.txt."
+            "LoRA training requires the `peft` package. Install training dependencies with "
+            "`uv sync --group train`."
         ) from exc
 
     peft_config = LoraConfig(

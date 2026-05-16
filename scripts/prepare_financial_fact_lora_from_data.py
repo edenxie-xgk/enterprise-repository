@@ -64,7 +64,7 @@ def _read_pdf_text(path: Path, *, max_pages: int, max_chars: int) -> str:
         import fitz
     except ImportError as exc:
         raise RuntimeError(
-            "PDF input requires PyMuPDF. Install project dependencies with `pip install -r requirements.txt`."
+            "PDF input requires PyMuPDF. Install project dependencies with `uv sync`."
         ) from exc
 
     document = fitz.open(path)

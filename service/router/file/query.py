@@ -9,7 +9,7 @@ from service.models.file import FileModel
 from service.models.users import UserModel
 from service.router.file.index import file_router
 from service.utils.access_control import get_allowed_departments, get_allowed_department_ids
-from service.utils.file_utils import build_file_download_url
+from service.utils.file_utils import build_file_download_url, get_file_state_label, is_file_ready
 
 
 @file_router.get("/departments")
@@ -46,7 +46,6 @@ async def query_file(
         .where(
             FileModel.dept_id.in_(allowed_department_ids),
             FileModel.state != "0",
-            FileModel.state != "4",
         )
         .order_by(FileModel.dept_id, FileModel.create_time.desc())
     )
@@ -63,6 +62,8 @@ async def query_file(
                 "file_name": file_item.file_name,
                 "file_type": file_item.file_type,
                 "state": file_item.state,
+                "state_label": get_file_state_label(file_item.state),
+                "is_ready": is_file_ready(file_item.state),
                 "dept_name": dept_name,
                 "file_path": download_url,
                 "download_url": download_url,

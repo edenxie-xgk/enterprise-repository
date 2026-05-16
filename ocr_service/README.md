@@ -1,6 +1,6 @@
 # OCR Service
 
-This directory contains an isolated OCR microservice so the main application can keep its current dependency tree while OCR runs in a separate virtual environment.
+This directory contains an isolated OCR microservice so the main application can keep its current dependency tree while OCR runs in a separate uv-managed environment.
 
 ## Why it exists
 
@@ -12,11 +12,9 @@ This directory contains an isolated OCR microservice so the main application can
 
 ```powershell
 cd ocr_service
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-uvicorn app:app --host 127.0.0.1 --port 8016
-.\.venv\Scripts\python.exe -m uvicorn app:app --host 127.0.0.1 --port 8016  
+uv python install 3.11
+uv sync
+uv run uvicorn app:app --host 127.0.0.1 --port 8016
 ```
 
 ## Main app configuration

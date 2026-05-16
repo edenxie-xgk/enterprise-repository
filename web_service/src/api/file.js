@@ -18,10 +18,11 @@ export const get_upload_departments = () => {
   });
 };
 
-export const get_file = () => {
+export const get_file = (config = {}) => {
   return request({
     url: "/file/query_file",
     method: "get",
+    ...config,
   });
 };
 

@@ -16,7 +16,9 @@ from service.utils.file_utils import (
     build_archived_file_name,
     build_file_download_url,
     ensure_upload_is_allowed,
+    get_file_state_label,
     get_file_extension,
+    is_file_ready,
     resolve_storage_path,
     sanitize_filename,
 )
@@ -167,7 +169,12 @@ async def upload_document(
                 "file_id": file_id,
                 "file_name": file_data.file_name,
                 "dept_id": file_data.dept_id,
+                "dept_name": department.dept_name,
+                "state": file_data.state,
+                "state_label": get_file_state_label(file_data.state),
+                "is_ready": is_file_ready(file_data.state),
                 "file_path": file_data.file_path,
+                "download_url": file_data.file_path,
             },
         }
     except Exception as exc:

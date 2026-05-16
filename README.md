@@ -121,21 +121,24 @@ enterprise-repository/
 ├─ web_service/                   # Vue 前端与 Nginx 配置
 ├─ ocr_service/                   # 独立 OCR 微服务
 ├─ scripts/                       # 初始化、导入导出、QA 数据、金融事实训练数据脚本
-├─ db/                            # 示例种子数据与导出的数据库数据
+├─ db/                            # 示例种子数据与数据库导入导出目录
 ├─ alembic/                       # 数据库迁移
 ├─ tests/                         # 后端测试
 ├─ docker/                        # 后端容器入口脚本
 ├─ Dockerfile                     # 后端镜像
 ├─ docker-compose.yml             # 本地容器编排
-├─ requirements.txt               # 后端依赖
+├─ pyproject.toml                 # uv 项目依赖与依赖组
+├─ uv.lock                        # uv 锁文件
 └─ .env.example                   # 环境变量模板
 ```
 
-## 🐳 Docker 启动
+## 🚀 启动项目
+
+项目推荐使用 Docker Compose 启动完整本地环境；如果需要调试后端或前端，也可以用源码方式分别启动。后端与 OCR 服务均使用 uv 管理 Python 环境。
 
 ### 1. 准备环境变量
 
-Windows PowerShell：
+先从模板复制一份本地环境变量文件：
 
 ```powershell
 Copy-Item .env.example .env
@@ -167,7 +170,9 @@ BOOTSTRAP_ADMIN_USERNAME=admin
 BOOTSTRAP_ADMIN_PASSWORD=Admin@123456
 ```
 
-### 2. 启动服务
+### 2. Docker Compose 启动
+
+一条命令启动数据库、向量库、后端和前端：
 
 ```bash
 docker compose up -d --build
@@ -185,7 +190,7 @@ docker compose ps
 docker compose logs -f backend
 ```
 
-### 3. 访问地址
+访问地址：
 
 | 入口 | 地址 |
 | --- | --- |
@@ -202,15 +207,13 @@ Docker Compose 当前包含：
 - `backend`：FastAPI 后端
 - `frontend`：Vue 构建产物 + Nginx
 
-## 🛠️ 源码启动
+### 3. 源码启动后端
 
-### 后端
+安装 Python 3.11 并同步 uv 环境：
 
 ```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-Copy-Item .env.example .env
+uv python install 3.11
+uv sync
 ```
 
 启动数据库依赖：
@@ -222,13 +225,13 @@ docker compose up -d postgres mongo milvus
 初始化数据库结构与种子数据：
 
 ```bash
-python scripts/init_project.py --mode auto
+uv run python scripts/init_project.py --mode auto
 ```
 
 启动后端：
 
 ```bash
-python app.py
+uv run python app.py
 ```
 
 源码方式启动后，后端 API 文档地址为：
@@ -237,7 +240,7 @@ python app.py
 http://127.0.0.1:1016/docs
 ```
 
-### 前端
+### 4. 源码启动前端
 
 ```powershell
 cd web_service
@@ -247,18 +250,15 @@ npm run dev
 
 前端 API 地址由 `VITE_API_BASE_URL` 控制；未设置时，前端会访问当前主机的 `1016` 端口。
 
-## 👁️ OCR 服务
+### 5. 启动 OCR 服务
 
 OCR 服务位于 `ocr_service/`，当前没有放入 `docker-compose.yml`。PDF 扫描页和图片解析会调用远程 OCR 接口。
 
-启动 OCR 服务：
-
 ```powershell
 cd ocr_service
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-uvicorn app:app --host 127.0.0.1 --port 8016
+uv python install 3.11
+uv sync
+uv run uvicorn app:app --host 127.0.0.1 --port 8016
 ```
 
 后端 `.env` 中配置：
@@ -354,7 +354,7 @@ OCR_MIN_SCORE=0.5
 | `scripts/prepare_financial_fact_lora_from_data.py` | 从本地 `data/` 目录准备金融事实 LoRA 训练 JSONL |
 | `scripts/train_financial_fact_extractor.py` | 训练金融事实抽取 LoRA 适配器 |
 
-训练相关依赖位于 `requirements-train.txt`。
+训练扩展依赖位于 uv 的 `train` 依赖组；运行训练前执行 `uv sync --group train`。
 
 ## 📏 离线评估
 
@@ -367,8 +367,8 @@ OCR_MIN_SCORE=0.5
 运行方式：
 
 ```bash
-python scripts/run_benchmark.py
-python scripts/run_benchmark.py --export-path data/benchmarks/benchmark_summary.json
+uv run python scripts/run_benchmark.py
+uv run python scripts/run_benchmark.py --export-path data/benchmarks/benchmark_summary.json
 ```
 
 说明：
@@ -376,6 +376,7 @@ python scripts/run_benchmark.py --export-path data/benchmarks/benchmark_summary.
 - 评估数据来自 MongoDB 的 QA 集合。
 - 当前只会读取 `state=0` 的 QA 记录作为 benchmark 数据。
 - 如果返回“暂无新评估数据”，通常表示当前 QA 集合里没有可用于评估的 `state=0` 记录。
+- `data/benchmarks/` 下的导出结果属于本地运行产物，不提交到仓库。
 
 ## 🧪 测试与 CI
 
@@ -384,8 +385,8 @@ GitHub Actions 工作流位于 `.github/workflows/preferred-topics-tests.yml`。
 CI 当前执行：
 
 ```bash
-python -m compileall app.py core service src tests
-python -m unittest \
+uv run python -m compileall app.py core service src tests
+uv run python -m unittest \
   tests.test_preferred_topics \
   tests.test_password_utils \
   tests.test_file_utils \
@@ -396,7 +397,7 @@ python -m unittest \
 本地运行同一组测试：
 
 ```powershell
-python -m unittest `
+uv run python -m unittest `
   tests.test_preferred_topics `
   tests.test_password_utils `
   tests.test_file_utils `

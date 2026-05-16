@@ -10,6 +10,22 @@ from core.settings import settings
 from service.utils.config import upload_dir
 
 _INVALID_FILENAME_CHARS = re.compile(r'[\\/:*?"<>|]+')
+FILE_STATE_LABELS = {
+    "0": "已删除",
+    "1": "已就绪",
+    "2": "处理中",
+    "3": "待处理",
+    "4": "失败",
+}
+READY_FILE_STATES = {"1"}
+
+
+def get_file_state_label(state: str | None) -> str:
+    return FILE_STATE_LABELS.get(str(state or ""), str(state or "未知"))
+
+
+def is_file_ready(state: str | None) -> bool:
+    return str(state or "") in READY_FILE_STATES
 
 
 def sanitize_filename(filename: str) -> str:

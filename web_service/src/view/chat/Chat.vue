@@ -5,6 +5,9 @@
         :sessions="sessions"
         :current-session-id="currentSessionId"
         :is-login="isLogin"
+        :is-streaming="isStreaming"
+        :selecting-session-id="selectingSessionId"
+        :deleting-session-id="deletingSessionId"
         @new-chat="handleNewChat"
         @select-session="handleSelectSession"
         @delete-session="handleDeleteSession"
@@ -51,6 +54,8 @@ const currentSessionId = ref("");
 const messages = ref([]);
 const isStreaming = ref(false);
 const isSavingProfile = ref(false);
+const selectingSessionId = ref("");
+const deletingSessionId = ref("");
 const isLogin = ref(!!localStorage.getItem("token"));
 const userProfile = ref(defaultUserProfile());
 const outputLevel = ref(localStorage.getItem("agentOutputLevel") || "standard");
@@ -109,15 +114,28 @@ const upsertSession = (session) => {
 };
 
 const handleSelectSession = async (sessionId) => {
-  if (!sessionId || !isLogin.value) return;
-  const res = await get_chat_messages(sessionId);
-  currentSessionId.value = sessionId;
-  messages.value = (res.data?.messages || []).map(normalizeMessage);
+  if (!sessionId || !isLogin.value || isStreaming.value) return;
+  if (sessionId === currentSessionId.value && messages.value.length) return;
+
+  selectingSessionId.value = sessionId;
+  try {
+    const res = await get_chat_messages(sessionId);
+    currentSessionId.value = sessionId;
+    messages.value = (res.data?.messages || []).map(normalizeMessage);
+  } catch (error) {
+    console.error("加载会话失败:", error);
+    ElMessage.error("加载会话失败，请稍后重试");
+  } finally {
+    selectingSessionId.value = "";
+  }
 };
 
-const loadSessions = async ({ preferSessionId = "" } = {}) => {
+const loadSessions = async ({ preferSessionId = "", silent = false } = {}) => {
   if (!isLogin.value) return;
-  const res = await list_chat_sessions();
+  const res = await list_chat_sessions({
+    showLoading: !silent,
+    silentError: silent,
+  });
   sessions.value = res.data || [];
 
   const targetSessionId =
@@ -140,21 +158,36 @@ const loadSessions = async ({ preferSessionId = "" } = {}) => {
 };
 
 const handleNewChat = () => {
+  if (isStreaming.value) return;
   currentSessionId.value = "";
   messages.value = [];
 };
 
 const handleDeleteSession = async (sessionId) => {
-  await delete_chat_session(sessionId);
-  sessions.value = sessions.value.filter((item) => item.session_id !== sessionId);
+  if (!sessionId || deletingSessionId.value || isStreaming.value) return;
 
-  if (currentSessionId.value === sessionId) {
-    const nextSessionId = sessions.value[0]?.session_id || "";
-    if (nextSessionId) {
-      await handleSelectSession(nextSessionId);
-    } else {
-      handleNewChat();
+  deletingSessionId.value = sessionId;
+  try {
+    await delete_chat_session(sessionId);
+    sessions.value = sessions.value.filter((item) => item.session_id !== sessionId);
+    ElMessage.success("会话已删除");
+
+    if (currentSessionId.value === sessionId) {
+      const nextSessionId = sessions.value[0]?.session_id || "";
+      if (nextSessionId) {
+        await handleSelectSession(nextSessionId);
+        if (currentSessionId.value === sessionId) {
+          handleNewChat();
+        }
+      } else {
+        handleNewChat();
+      }
     }
+  } catch (error) {
+    console.error("删除会话失败:", error);
+    ElMessage.error("删除会话失败，请稍后重试");
+  } finally {
+    deletingSessionId.value = "";
   }
 };
 
@@ -170,6 +203,8 @@ const handleLogout = () => {
   userInfo.value = { username: "", user_type: "user", is_admin: false };
   userProfile.value = defaultUserProfile();
   sessions.value = [];
+  selectingSessionId.value = "";
+  deletingSessionId.value = "";
   handleNewChat();
 };
 
@@ -178,7 +213,14 @@ const handleOutputLevelChange = (value) => {
   localStorage.setItem("agentOutputLevel", outputLevel.value);
 };
 
-const handleProfileSave = async (payload) => {
+const getRequestErrorMessage = (error, fallback) =>
+  error?.response?.data?.msg ||
+  error?.response?.data?.message ||
+  error?.response?.data?.detail ||
+  error?.message ||
+  fallback;
+
+const handleProfileSave = async (payload, callbacks = {}) => {
   isSavingProfile.value = true;
   try {
     const res = await update_user_profile(payload);
@@ -191,6 +233,12 @@ const handleProfileSave = async (payload) => {
     outputLevel.value = userProfile.value.answer_style || "standard";
     localStorage.setItem("agentOutputLevel", outputLevel.value);
     ElMessage.success("偏好设置已更新");
+    callbacks.onSuccess?.();
+  } catch (error) {
+    console.error("保存偏好设置失败:", error);
+    const message = getRequestErrorMessage(error, "偏好设置保存失败，请稍后重试");
+    ElMessage.error(message);
+    callbacks.onError?.(message);
   } finally {
     isSavingProfile.value = false;
   }
@@ -212,6 +260,37 @@ const ensureAssistantMessage = (messageId) => {
   return messages.value.length - 1;
 };
 
+const getChatErrorMessage = (error) => {
+  if (error?.status === 401) {
+    return "登录已过期，请重新登录后再发送。";
+  }
+  if (error?.status === 403) {
+    return "当前账号没有权限执行这次对话。";
+  }
+  if (error?.message) {
+    return error.message;
+  }
+  return "对话请求失败，请稍后重试。";
+};
+
+const setAssistantErrorMessage = (messageId, content) => {
+  const targetId = messageId || `assistant-error-${Date.now()}`;
+  const index = ensureAssistantMessage(targetId);
+  messages.value[index] = normalizeMessage({
+    message_id: targetId,
+    role: "assistant",
+    content,
+    status: "failed",
+    report_summary: {
+      status: "failed",
+      fail_reason: content,
+      output_level: outputLevel.value,
+      trace: [],
+      action_history: [],
+    },
+  });
+};
+
 const handleSendMessage = async (query) => {
   if (!query?.trim() || isStreaming.value) return;
 
@@ -224,6 +303,7 @@ const handleSendMessage = async (query) => {
   );
 
   let assistantMessageId = "";
+  let hasLocalFailure = false;
   try {
     await stream_agent_chat({
       query: query.trim(),
@@ -269,16 +349,27 @@ const handleSendMessage = async (query) => {
         }
 
         if (event === "error") {
-          const targetId = assistantMessageId || `assistant-error-${Date.now()}`;
-          const index = ensureAssistantMessage(targetId);
-          messages.value[index].content = data.message || "请求失败，请重试。";
-          messages.value[index].status = "failed";
+          hasLocalFailure = true;
+          setAssistantErrorMessage(assistantMessageId, data.message || "请求失败，请重试。");
         }
       },
     });
+  } catch (error) {
+    console.error("对话请求失败:", error);
+    const errorMessage = getChatErrorMessage(error);
+    hasLocalFailure = true;
+    setAssistantErrorMessage(assistantMessageId, errorMessage);
+    ElMessage.error(errorMessage);
   } finally {
     isStreaming.value = false;
-    await loadSessions({ preferSessionId: currentSessionId.value });
+    if (hasLocalFailure || !currentSessionId.value) {
+      return;
+    }
+    try {
+      await loadSessions({ preferSessionId: currentSessionId.value, silent: true });
+    } catch (error) {
+      console.error("刷新会话列表失败:", error);
+    }
   }
 };
 

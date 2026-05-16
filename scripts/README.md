@@ -3,10 +3,10 @@
 `scripts/` 目录存放项目当前可直接运行的辅助脚本。建议从项目根目录执行：
 
 ```bash
-python scripts/<script_name>.py
+uv run python scripts/<script_name>.py
 ```
 
-部分脚本依赖 `.env` 中的数据库和模型配置；LoRA 训练脚本还依赖 `requirements-train.txt` 中的训练扩展依赖。
+部分脚本依赖 `.env` 中的数据库和模型配置；LoRA 训练脚本还依赖 uv 的 `train` 依赖组。
 
 ## 📋 脚本总览
 
@@ -28,10 +28,10 @@ python scripts/<script_name>.py
 用于初始化数据库结构，并按需导入启动种子数据。
 
 ```bash
-python scripts/init_project.py
-python scripts/init_project.py --schema-only
-python scripts/init_project.py --seed-only
-python scripts/init_project.py --seed-file db/seed/bootstrap_seed.example.json
+uv run python scripts/init_project.py
+uv run python scripts/init_project.py --schema-only
+uv run python scripts/init_project.py --seed-only
+uv run python scripts/init_project.py --seed-file db/seed/bootstrap_seed.example.json
 ```
 
 主要参数：
@@ -66,10 +66,10 @@ python scripts/init_project.py --seed-file db/seed/bootstrap_seed.example.json
 - `rag_qa`
 
 ```bash
-python scripts/export_db_exports.py
-python scripts/export_db_exports.py --postgres-only
-python scripts/export_db_exports.py --mongo-only
-python scripts/export_db_exports.py --overwrite
+uv run python scripts/export_db_exports.py
+uv run python scripts/export_db_exports.py --postgres-only
+uv run python scripts/export_db_exports.py --mongo-only
+uv run python scripts/export_db_exports.py --overwrite
 ```
 
 主要参数：
@@ -85,9 +85,9 @@ python scripts/export_db_exports.py --overwrite
 从 `db/postgre/` 和 `db/mongodb/` 目录重新导入数据。
 
 ```bash
-python scripts/import_db_exports.py
-python scripts/import_db_exports.py --postgres-only
-python scripts/import_db_exports.py --mongo-only
+uv run python scripts/import_db_exports.py
+uv run python scripts/import_db_exports.py --postgres-only
+uv run python scripts/import_db_exports.py --mongo-only
 ```
 
 主要参数：
@@ -112,9 +112,9 @@ python scripts/import_db_exports.py --mongo-only
 生成 QA：
 
 ```bash
-python scripts/generate_qa_dataset.py
-python scripts/generate_qa_dataset.py --limit 20 --dry-run
-python scripts/generate_qa_dataset.py --department-id 1 --export-path data/rag_agent.rag_qa.json
+uv run python scripts/generate_qa_dataset.py
+uv run python scripts/generate_qa_dataset.py --limit 20 --dry-run
+uv run python scripts/generate_qa_dataset.py --department-id 1 --export-path data/rag_agent.rag_qa.json
 ```
 
 常用参数：
@@ -146,8 +146,8 @@ python scripts/generate_qa_dataset.py --department-id 1 --export-path data/rag_a
 回滚 QA 源文档状态：
 
 ```bash
-python scripts/generate_qa_dataset.py --rollback-all --rollback-from-state 1 --rollback-to-state 2 --dry-run
-python scripts/generate_qa_dataset.py --rollback-all --rollback-from-state 1 --rollback-to-state 2
+uv run python scripts/generate_qa_dataset.py --rollback-all --rollback-from-state 1 --rollback-to-state 2 --dry-run
+uv run python scripts/generate_qa_dataset.py --rollback-all --rollback-from-state 1 --rollback-to-state 2
 ```
 
 ## 📏 4. 离线评估
@@ -157,8 +157,8 @@ python scripts/generate_qa_dataset.py --rollback-all --rollback-from-state 1 --r
 用于读取 MongoDB 中的 QA 数据并执行当前项目内置的离线评估。
 
 ```bash
-python scripts/run_benchmark.py
-python scripts/run_benchmark.py --export-path data/benchmarks/benchmark_summary.json
+uv run python scripts/run_benchmark.py
+uv run python scripts/run_benchmark.py --export-path data/benchmarks/benchmark_summary.json
 ```
 
 主要参数：
@@ -180,8 +180,8 @@ python scripts/run_benchmark.py --export-path data/benchmarks/benchmark_summary.
 从当前金融事实图谱集合中读取事实数据，并按 `node_id` 聚合后导出为 LoRA 训练 JSONL。
 
 ```bash
-python scripts/export_financial_fact_lora.py
-python scripts/export_financial_fact_lora.py --output data/financial_fact_lora.jsonl --limit 500
+uv run python scripts/export_financial_fact_lora.py
+uv run python scripts/export_financial_fact_lora.py --output data/financial_fact_lora.jsonl --limit 500
 ```
 
 主要参数：
@@ -215,9 +215,9 @@ data/financial_fact_lora_from_data.jsonl
 运行示例：
 
 ```bash
-python scripts/prepare_financial_fact_lora_from_data.py
-python scripts/prepare_financial_fact_lora_from_data.py --input-dir data/chinese_documents_seed --max-documents 20
-python scripts/prepare_financial_fact_lora_from_data.py --patterns "*.pdf,*.txt,*.jsonl" --recursive
+uv run python scripts/prepare_financial_fact_lora_from_data.py
+uv run python scripts/prepare_financial_fact_lora_from_data.py --input-dir data/chinese_documents_seed --max-documents 20
+uv run python scripts/prepare_financial_fact_lora_from_data.py --patterns "*.pdf,*.txt,*.jsonl" --recursive
 ```
 
 主要参数：
@@ -256,8 +256,8 @@ python scripts/prepare_financial_fact_lora_from_data.py --patterns "*.pdf,*.txt,
 使用 JSONL 训练集训练金融事实抽取 LoRA 适配器。
 
 ```bash
-python scripts/train_financial_fact_extractor.py --model-name Qwen/Qwen2.5-7B-Instruct
-python scripts/train_financial_fact_extractor.py --model-name Qwen/Qwen2.5-7B-Instruct --train-file data/financial_fact_lora_from_data.jsonl --output-dir outputs/financial_fact_extractor_lora
+uv run --group train python scripts/train_financial_fact_extractor.py --model-name Qwen/Qwen2.5-7B-Instruct
+uv run --group train python scripts/train_financial_fact_extractor.py --model-name Qwen/Qwen2.5-7B-Instruct --train-file data/financial_fact_lora_from_data.jsonl --output-dir outputs/financial_fact_extractor_lora
 ```
 
 主要参数：
@@ -290,5 +290,5 @@ python scripts/train_financial_fact_extractor.py --model-name Qwen/Qwen2.5-7B-In
 训练扩展依赖：
 
 ```bash
-pip install -r requirements-train.txt
+uv sync --group train
 ```

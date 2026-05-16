@@ -7,6 +7,8 @@ from service.utils.file_utils import (
     build_archived_file_name,
     build_file_download_url,
     ensure_upload_is_allowed,
+    get_file_state_label,
+    is_file_ready,
     sanitize_filename,
 )
 
@@ -19,6 +21,13 @@ class FileUtilsTests(unittest.TestCase):
 
     def test_build_file_download_url_uses_private_download_route(self):
         self.assertEqual(build_file_download_url(42), "/file/files/42/download")
+
+    def test_file_state_helpers_expose_user_facing_status(self):
+        self.assertEqual(get_file_state_label("1"), "已就绪")
+        self.assertEqual(get_file_state_label("4"), "失败")
+        self.assertTrue(is_file_ready("1"))
+        self.assertFalse(is_file_ready("2"))
+        self.assertFalse(is_file_ready("4"))
 
     def test_build_archived_file_name_appends_timestamp(self):
         archived_name = build_archived_file_name(

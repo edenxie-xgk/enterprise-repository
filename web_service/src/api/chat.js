@@ -1,9 +1,10 @@
 ﻿import request, { baseURL } from "./request";
 
-export const list_chat_sessions = () =>
+export const list_chat_sessions = (config = {}) =>
   request({
     url: "/agent/sessions",
     method: "get",
+    ...config,
   });
 
 export const get_chat_messages = (sessionId) =>
@@ -41,6 +42,24 @@ const parseSseChunk = (block) => {
   };
 };
 
+const parseErrorMessage = (errorText, fallback) => {
+  if (!errorText) return fallback;
+
+  try {
+    const payload = JSON.parse(errorText);
+    if (typeof payload.detail === "string") return payload.detail;
+    if (typeof payload.message === "string") return payload.message;
+    if (typeof payload.msg === "string") return payload.msg;
+    if (Array.isArray(payload.detail)) {
+      return payload.detail.map((item) => item.msg || item.message || String(item)).join("；");
+    }
+  } catch {
+    return errorText;
+  }
+
+  return fallback;
+};
+
 export const stream_agent_chat = async ({ query, sessionId, outputLevel, onEvent }) => {
   const response = await fetch(`${baseURL}/agent/chat/stream`, {
     method: "POST",
@@ -57,7 +76,9 @@ export const stream_agent_chat = async ({ query, sessionId, outputLevel, onEvent
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(errorText || "对话请求失败");
+    const error = new Error(parseErrorMessage(errorText, "对话请求失败"));
+    error.status = response.status;
+    throw error;
   }
 
   if (!response.body) {
